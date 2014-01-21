@@ -63,8 +63,6 @@ double toc();
  */
 std::string timestamp();
 
-void itoa(int value, char* str, int base);
-
 } // NAMESPACE SUSA
 
 #endif

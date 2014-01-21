@@ -186,6 +186,17 @@ double ncdf(const double x);
 double qfunc(const double x);
 
 
+/**
+ * @brief Modular operation
+ *
+ * @return lint_a "mod" lint_mod 
+ *
+ * @ingroup Math
+ */
+long int mod(long int lint_a,long int lint_mod);
+
+
+
 
 template <class T> std::vector <T> diff(std::vector <T> &vec_arg) {
   std::vector <T> vec_diff( vec_arg.size() - 1, 0 );

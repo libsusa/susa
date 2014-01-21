@@ -28,78 +28,56 @@ namespace susa {
 
 // Elapsed time utility functions
 unsigned int ___uint_stamp;
+
 void tic() { ___uint_stamp = clock(); }
+
 void toc_print() {std::cout << std::endl << "Elapsed time is " << ((double)(clock() - ___uint_stamp)/CLOCKS_PER_SEC) << " seconds.";}
+
 double toc() {return((double)(clock() - ___uint_stamp)/CLOCKS_PER_SEC);}
 
 std::string timestamp() {
 
-  std::string str_ret("20");
   time_t rawtime;
-  char char_buffer[5];
+  std::stringstream ss_itos;
+  std::stringstream ss_ret;
   tm *ptm;
 
 
   time(&rawtime);
   ptm = localtime(&rawtime);
+  ss_ret << std::string("20");
 
-  itoa(ptm->tm_year-100,char_buffer,10);
-  str_ret += std::strlen(char_buffer) > 1 ? std::string(char_buffer) : std::string("0") + std::string(char_buffer);
+  ss_itos.str(std::string());
+  ss_itos << ptm->tm_year - 100;
+  if (ss_itos.str().length() > 1) ss_ret << ss_itos.str();
+  else ss_ret << std::string("0") << ss_itos.str();
 
-  itoa(ptm->tm_mon+1,char_buffer,10);
-  str_ret += std::strlen(char_buffer) > 1 ? std::string(char_buffer) : std::string("0") + std::string(char_buffer);
+  ss_itos.str(std::string());
+  ss_itos << ptm->tm_mon+1;
+  if (ss_itos.str().length() > 1) ss_ret << ss_itos.str();
+  else ss_ret << std::string("0") << ss_itos.str();
 
-  itoa(ptm->tm_mday,char_buffer,10);
-  str_ret += std::strlen(char_buffer) > 1 ? std::string(char_buffer) : std::string("0") + std::string(char_buffer);
+  ss_itos.str(std::string());
+  ss_itos << ptm->tm_mday;
+  if (ss_itos.str().length() > 1) ss_ret << ss_itos.str();
+  else ss_ret << std::string("0") << ss_itos.str();
 
-  itoa(ptm->tm_hour,char_buffer,10);
-  str_ret += std::strlen(char_buffer) > 1 ? std::string(char_buffer) : std::string("0") + std::string(char_buffer);
+  ss_itos.str(std::string());
+  ss_itos << ptm->tm_hour;
+  if (ss_itos.str().length() > 1) ss_ret << ss_itos.str();
+  else ss_ret << std::string("0") << ss_itos.str();
 
-  itoa(ptm->tm_min,char_buffer,10);
-  str_ret += std::strlen(char_buffer) > 1 ? std::string(char_buffer) : std::string("0") + std::string(char_buffer);
+  ss_itos.str(std::string());
+  ss_itos << ptm->tm_min;
+  if (ss_itos.str().length() > 1) ss_ret << ss_itos.str();
+  else ss_ret << std::string("0") << ss_itos.str();
 
-  itoa(ptm->tm_sec,char_buffer,10);
-  str_ret += std::strlen(char_buffer) > 1 ? std::string(char_buffer) : std::string("0") + std::string(char_buffer);
+  ss_itos.str(std::string());
+  ss_itos << ptm->tm_sec;
+  if (ss_itos.str().length() > 1) ss_ret << ss_itos.str();
+  else ss_ret << std::string("0") << ss_itos.str();
   
-  return str_ret;
-}
-
-// Temporary Utility for Utility
-// Taken from a web resource.
-	
-void strreverse(char* begin, char* end) {
-	char aux;
-	while(end>begin) aux=*end, *end--=*begin, *begin++=aux;
-}
-	
-void itoa(int value, char* str, int base) {
-  static char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-  char* wstr=str;
-  int sign;
-  div_t res;
-
-  // Validate base
-
-  if (base<2 || base>35) { 
-    *wstr='\0';
-	return;
-  }
-
-  // Take care of sign
-  sign = value;
-  if (value < 0) value = -value;
-	
-  // Conversion. Number is reversed.
-  do {
-    res = div(value,base);
-    *wstr++ = num[res.rem];
-    value=res.quot;
-	} while(value);
-	if(sign<0) *wstr++='-';
-	*wstr='\0';	
-	
-	// Reverse string
-	strreverse(str,wstr-1);
+  return ss_ret.str();
 }
 
 

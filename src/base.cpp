@@ -96,4 +96,8 @@ int pow(int int_b, unsigned int uint_p) {
 }
 
 
+long int mod(long int lint_a, long int lint_mod) {
+  return(lint_a - std::floor((float)lint_a/lint_mod) * lint_mod);
+}
+
 } // NAMESPACE SUSA
