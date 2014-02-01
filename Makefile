@@ -9,6 +9,7 @@ CFLAGXX = -c -Wall
 SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(addprefix $(ODIR)/,$(notdir $(SOURCES:%.cpp=%.o)))
 
+
 all: $(LDIR) $(ODIR) $(OBJECTS)
 	ar rcs $(TARGET) $(OBJECTS)
 
