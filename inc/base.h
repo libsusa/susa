@@ -219,7 +219,7 @@ template <class T> matrix <T> sum(matrix <T> &mat_arg) {
   } else {
     mat_ret = matrix <T> (1,mat_arg.no_cols());
     for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++) {
-      for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++) mat_ret(uint_col) += mat_arg(uint_row);
+      for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++) mat_ret(uint_col) += mat_arg(uint_row,uint_col);
     }
   }
 

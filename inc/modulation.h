@@ -44,16 +44,23 @@ class qam {
   qam(unsigned int uint_m);
   ~qam();
 
+  matrix < std::complex <double> > get_constellation() {return mat_s;};
+  double get_noise_deviation(double dbl_arg);
+
   matrix < std::complex <double> > modulate_bits(matrix <char> mat_bits);
 
-  
+
   matrix <char> demodulate_bits(matrix < std::complex <double> > mat_symbols);
   matrix <int> demodulate_symbols(matrix < std::complex <double> > mat_symbols);
 
+
+  std::complex <double> demodulate_symbol(std::complex <double> complex_arg);
+
   private :
-  double dEs; // Energy per symbol
-  double dEb; // Energy per bit
-  unsigned int uint_K; // Number of bits per symbol
+  double dbl_es;          // Energy per symbol
+  double dbl_eb;          // Energy per bit
+  unsigned int uint_bps;  // Number of bits per symbol
+  unsigned int uint_m;    // Number of symbols in constellation
 
   matrix < std::complex <double> > mat_s;
   matrix < std::complex <double> > mat_axis;
@@ -68,42 +75,6 @@ template <class T> matrix <T> bpsk(const matrix <T> &mat_arg) {
   for (unsigned int uint_index = 0; uint_index < uint_length; uint_index++) mat_ret(uint_index) = (mat_arg(uint_index) == 1) ? 1 : -1;
   return mat_ret;
 }
-
-
-
-/*
-std::vector < std::complex <double> > qam::modulate_bits(std::vector <char> vec_bits) {
-  unsigned int uint_length = vec_bits.size();
-  
-  uint_length -= uint_length % uint_K; // Trim the bit stream if the size is not a factor of K
-
-  unsigned int uint_symbol_length = uint_length / uint_K;
-
-  std::vector < std::complex <double> >  vec_modulated(uint_symbol_length, std::complex <double> (0,0));
-
-  return vec_modulated;
-    
-}
-
-std::vector < std::complex <double> > qam::modulate_symbols(std::vector <short> vec_symbols) {
-  //unsigned int uint_length = vec_symbols.size();
-  
-
-  std::vector < std::complex <double> >  vec_modulated(1, std::complex <double> (0,0));
-
-  return vec_modulated;
-    
-}
-*/
-/*
- * std::vector <char> demodulate_symbols(std::vector <double> vec_symbols) {
-  unsigned int uint_length = vec-symbols.size();
-
-  for (unsigned int i=0; i < uint_length; i++) {
-    cmat_t_symbols(i,0) = vec_s[];
-  }
-}*/
-
 
 } // NAMESPACE SUSA
 #endif // MODULATION_H
