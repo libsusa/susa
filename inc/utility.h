@@ -21,7 +21,7 @@
  * @author Behrooz, Kamary Aliabadi
  * @version 1.0.0
  * @defgroup Utility
- * 
+ *
  */
 
 #ifndef UTILITY_H

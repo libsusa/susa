@@ -21,8 +21,8 @@
  * This file containes special search routines.
  * @author Behrooz, Kamary Aliabadi
  * @version 1.0.0
- * 
- * @defgroup Search Search 
+ *
+ * @defgroup Search Search
  */
 
 #ifndef SEARCH_H
@@ -41,7 +41,7 @@ namespace susa {
 template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg, unsigned int uint_num);
 
 /**
- * @brief Finds the <i>uint_num</i> least elements of the input vector among a selected number of 
+ * @brief Finds the <i>uint_num</i> least elements of the input vector among a selected number of
  elements that their indeces are specified by <i>mat_limited_index</i>.
  *
  * @param mat_arg Input vector
@@ -58,98 +58,98 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
 // Implementation
 template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg, unsigned int uint_num) {
 
-  unsigned int uint_size = mat_arg.size();
-  matrix <T> mat_ret = mat_arg;
-  matrix <unsigned int> mat_index(uint_num,1);
-  
-  if (uint_size < uint_num) {
-    std::cout << std::endl << "[select_least()] number of elements to be sorted is bigger than the matrix size.";
-	return mat_index;
-  }
-  
-  unsigned int uint_min_index;
-  T T_min;
+    unsigned int uint_size = mat_arg.size();
+    matrix <T> mat_ret = mat_arg;
+    matrix <unsigned int> mat_index(uint_num,1);
 
-  for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
-    uint_min_index = uint_i;
-    T_min = mat_ret(uint_i);
-   for (unsigned int uint_j = 0; uint_j < uint_size; uint_j++) {
-     if (mat_ret(uint_j) < T_min) {
-        uint_min_index = uint_j;
-        T_min = mat_ret(uint_j);
-      }
+    if (uint_size < uint_num) {
+        std::cout << std::endl << "[select_least()] number of elements to be sorted is bigger than the matrix size.";
+        return mat_index;
     }
-       
-    mat_index(uint_i) = uint_min_index;
 
-    mat_ret(uint_min_index) = std::numeric_limits<T>::max();
-  }
+    unsigned int uint_min_index;
+    T T_min;
 
-  return mat_index;
+    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
+        uint_min_index = uint_i;
+        T_min = mat_ret(uint_i);
+        for (unsigned int uint_j = 0; uint_j < uint_size; uint_j++) {
+            if (mat_ret(uint_j) < T_min) {
+                uint_min_index = uint_j;
+                T_min = mat_ret(uint_j);
+            }
+        }
+
+        mat_index(uint_i) = uint_min_index;
+
+        mat_ret(uint_min_index) = std::numeric_limits<T>::max();
+    }
+
+    return mat_index;
 }
 
 template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &mat_arg, const matrix <unsigned int> &mat_limited_index, unsigned int uint_num) {
 
-  unsigned int uint_size = mat_arg.size();
-  matrix <T> mat_ret = mat_arg;
-  matrix <unsigned int> mat_index(uint_num,1);
-  
-  if (uint_size < uint_num) {
-    std::cout << std::endl << "[select_limited_least()] number of elements to be sorted is bigger than the matrix size.";
-	return mat_index;
-  }
-  
-  unsigned int uint_min_index;
-  T T_min;
+    unsigned int uint_size = mat_arg.size();
+    matrix <T> mat_ret = mat_arg;
+    matrix <unsigned int> mat_index(uint_num,1);
 
-  for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
-    uint_min_index = uint_i;
-    T_min = mat_ret(uint_i);
-    for (unsigned int uint_j = 0; uint_j < mat_limited_index.size(); uint_j++) {
-     if (mat_ret(mat_limited_index(uint_j)) < T_min) {
-        uint_min_index = mat_limited_index(uint_j);
-        T_min = mat_ret(mat_limited_index(uint_j));
-      }
+    if (uint_size < uint_num) {
+        std::cout << std::endl << "[select_limited_least()] number of elements to be sorted is bigger than the matrix size.";
+        return mat_index;
     }
-       
-    mat_index(uint_i) = uint_min_index;
 
-    mat_ret(uint_min_index) = std::numeric_limits<T>::max();
-  }
+    unsigned int uint_min_index;
+    T T_min;
 
-  return mat_index;
+    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
+        uint_min_index = uint_i;
+        T_min = mat_ret(uint_i);
+        for (unsigned int uint_j = 0; uint_j < mat_limited_index.size(); uint_j++) {
+            if (mat_ret(mat_limited_index(uint_j)) < T_min) {
+                uint_min_index = mat_limited_index(uint_j);
+                T_min = mat_ret(mat_limited_index(uint_j));
+            }
+        }
+
+        mat_index(uint_i) = uint_min_index;
+
+        mat_ret(uint_min_index) = std::numeric_limits<T>::max();
+    }
+
+    return mat_index;
 }
 
 template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, unsigned int uint_num) {
 
-  unsigned int uint_size = mat_arg.size();
-  matrix <T> mat_ret = mat_arg;
-  matrix <unsigned int> mat_index(uint_num,1);
-  
-  if (uint_size < uint_num) {
-    std::cout << std::endl << "[select_most()] number of elements to be sorted is bigger than the matrix size.";
-	return mat_index;
-  }
-  
-  unsigned int uint_max_index;
-  T T_max;
+    unsigned int uint_size = mat_arg.size();
+    matrix <T> mat_ret = mat_arg;
+    matrix <unsigned int> mat_index(uint_num,1);
 
-  for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
-    uint_max_index = uint_i;
-    T_max = mat_ret(uint_i);
-   for (unsigned int uint_j = 0; uint_j < uint_size; uint_j++) {
-     if (mat_ret(uint_j) > T_max) {
-        uint_max_index = uint_j;
-        T_max = mat_ret(uint_j);
-      }
+    if (uint_size < uint_num) {
+        std::cout << std::endl << "[select_most()] number of elements to be sorted is bigger than the matrix size.";
+        return mat_index;
     }
-       
-    mat_index(uint_i) = uint_max_index;
 
-    mat_ret(uint_max_index) = std::numeric_limits<T>::min();
-  }
+    unsigned int uint_max_index;
+    T T_max;
 
-  return mat_index;
+    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
+        uint_max_index = uint_i;
+        T_max = mat_ret(uint_i);
+        for (unsigned int uint_j = 0; uint_j < uint_size; uint_j++) {
+            if (mat_ret(uint_j) > T_max) {
+                uint_max_index = uint_j;
+                T_max = mat_ret(uint_j);
+            }
+        }
+
+        mat_index(uint_i) = uint_max_index;
+
+        mat_ret(uint_max_index) = std::numeric_limits<T>::min();
+    }
+
+    return mat_index;
 }
 } // NAMESPACE SUSA
 #endif // SEARCH_H

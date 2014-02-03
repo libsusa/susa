@@ -53,7 +53,7 @@ class mt {
     int mti;              /* mti==N+1 means mt[N] is not initialized */
 
   public:
-    
+
     mt(void);
     mt(unsigned long ul_seed);
     ~mt();
@@ -70,7 +70,7 @@ class mt {
     double genrand_res53(void);        // generates uniform real in [0,1) with 53-bit resolution.
 
     unsigned int rand_mask(unsigned int uint_mask);
-    matrix <unsigned int> rand_mask(unsigned int uint_mask, unsigned int uint_N);  
+    matrix <unsigned int> rand_mask(unsigned int uint_mask, unsigned int uint_N);
     matrix <double> randn(unsigned int uint_N);
     matrix <double> rand(unsigned int uint_N);
 

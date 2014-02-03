@@ -28,11 +28,11 @@
  * @author Behrooz, Kamary Aliabadi
  *
  * @section intro Introduction
- * <p> Susa is a library of utility classes and functions to be used in signal processing and mathematic applications. 
- * This library package is portable and light. It does not need complicated and time consuming installation of other 
- * mathematical libraries to work with. Because of this independency at the moment it's limited basic operations. 
+ * <p> Susa is a library of utility classes and functions to be used in signal processing and mathematic applications.
+ * This library package is portable and light. It does not need complicated and time consuming installation of other
+ * mathematical libraries to work with. Because of this independency at the moment it's limited basic operations.
  * Developers of Susa have a long term plan to improve the library. It is published publicly under Lesser GPL license.</p>
- * 
+ *
  */
 
 #include <cmath>

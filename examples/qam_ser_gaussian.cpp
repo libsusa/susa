@@ -15,60 +15,66 @@
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ This program simulates a 16-QAM modem over AWGN channel using Susa.
+ The output is a list of Eb/N0 vs. Symbol Error Rate (SER). 
+ */
+
+
 
 #include "susa.h"
 
 using namespace std;
 using namespace susa;
 
-int main(void){
-	
-	fstream fs_matlab;
-	fs_matlab.open("result.txt",fstream::out);
-	rng _rng(2987549);
+int main(void) {
+
+    fstream fs_result;
+    fs_result.open("result.txt",fstream::out);
+    rng _rng(2987549);
 
 
 
-	unsigned int uintM = 16;
-	unsigned int uintN = 1000000;
-  double dbl_min_noise_db = -2;
-  double dbl_max_noise_db = 10;
-  unsigned int uint_num_steps = 12;
+    unsigned int uint_m = 16;         // Modulation order
+    unsigned int uint_n = 1000000;    // Number of transmitted symbols
+    double dbl_min_noise_db = -2;     // Minimum Eb/N0 in dB
+    double dbl_max_noise_db = 10;     // Maximum Eb/N0 in dB
+    unsigned int uint_num_steps = 12; // Number of simulation points
 
-  matrix <unsigned int> mat_num_errors(uint_num_steps,1);
+    matrix <unsigned int> mat_num_errors(uint_num_steps,1);
 
-	qam _qam(uintM);
+    qam _qam(uint_m);
 
-	/* Uniform symbol generation */
-	matrix < std::complex <double> > cmat_symbols =
-        matrix < std::complex <double> > (uintN, 1, std::complex <double>(0,0));
-  for (unsigned int uint_i = 0; uint_i < uintN; uint_i++) cmat_symbols(uint_i) = _qam.get_constellation()(_rng.rand_mask(0xF));
-  
-  /* AWGN channel generation */
-  matrix < std::complex <double> > cmat_noise(uintN,1);
-  matrix < std::complex <double> > cmat_noisy_symbols;
+    /* Uniform symbol generation */
+    matrix < std::complex <double> > cmat_symbols =
+        matrix < std::complex <double> > (uint_n, 1, std::complex <double>(0,0));
+    for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++) cmat_symbols(uint_i) = _qam.get_constellation()(_rng.rand_mask(0xF));
 
-  for (unsigned int uint_noise_step = 0; uint_noise_step < uint_num_steps; uint_noise_step++) {
+    /* AWGN channel generation */
+    matrix < std::complex <double> > cmat_noise(uint_n,1);
+    matrix < std::complex <double> > cmat_noisy_symbols;
 
-    double dbl_noise_db = dbl_min_noise_db + uint_noise_step * (dbl_max_noise_db - dbl_min_noise_db)/(uint_num_steps - 1);
-    double dbl_noise_dev = _qam.get_noise_deviation(dbl_noise_db);
+    for (unsigned int uint_noise_step = 0; uint_noise_step < uint_num_steps; uint_noise_step++) {
 
-    for (unsigned int uint_i = 0; uint_i < uintN; uint_i++)
-      cmat_noise(uint_i) = dbl_noise_dev * std::complex <double> (_rng.randn(), _rng.randn());
+        double dbl_noise_db = dbl_min_noise_db + uint_noise_step * (dbl_max_noise_db - dbl_min_noise_db)/(uint_num_steps - 1);
+        double dbl_noise_dev = _qam.get_noise_deviation(dbl_noise_db);
 
-    /* The QAM symbols pass AWGN channel */
-    cmat_noisy_symbols = cmat_symbols + cmat_noise;
+        for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++)
+            cmat_noise(uint_i) = dbl_noise_dev * std::complex <double> (_rng.randn(), _rng.randn());
 
-
-    /* Demodulate the noisy symbols */
-    for (unsigned int uint_i = 0; uint_i < uintN; uint_i++)
-      if (_qam.demodulate_symbol(cmat_noisy_symbols(uint_i)) != cmat_symbols(uint_i)) mat_num_errors(uint_noise_step)++;
+        /* The QAM symbols pass AWGN channel */
+        cmat_noisy_symbols = cmat_symbols + cmat_noise;
 
 
-    cout << "Noise : " << dbl_noise_db << " \t \t" << "SER : " << (double) mat_num_errors(uint_noise_step)/uintN << endl;
-    fs_matlab << dbl_noise_db << "   " <<  (double) mat_num_errors(uint_noise_step)/uintN << endl;
-  }
+        /* Demodulate the noisy symbols */
+        for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++)
+            if (_qam.demodulate_symbol(cmat_noisy_symbols(uint_i)) != cmat_symbols(uint_i)) mat_num_errors(uint_noise_step)++;
 
-	fs_matlab.close();
-	return 0;
+
+        cout << "Noise : " << dbl_noise_db << " \t \t" << "SER : " << (double) mat_num_errors(uint_noise_step)/uint_n << endl;
+        fs_result << dbl_noise_db << "   " <<  (double) mat_num_errors(uint_noise_step)/uint_n << endl;
+    }
+
+    fs_result.close();
+    return 0;
 }

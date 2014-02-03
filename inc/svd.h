@@ -31,17 +31,17 @@ namespace susa {
 
 
 /**
- * @brief Singular Value Decomposition (SVD) 
+ * @brief Singular Value Decomposition (SVD)
  *
  * Takes a m by n <i>real</i> matrix a and decomposes it into udv, where u,v are
- * left and right orthogonal transformation matrices, and d is a 
+ * left and right orthogonal transformation matrices, and d is a
  * diagonal matrix of singular values.
  *
  *
  * A = U * W * V
  *
  * @param mat_arg_a The input matrix A that will be replaced by U
- * @param mat_arg_w The diagonal values of W (eigenvalues of A) 
+ * @param mat_arg_w The diagonal values of W (eigenvalues of A)
  * @param mat_arg_v The right orthogonal transformation matrix
  *
  * @ingroup LALG

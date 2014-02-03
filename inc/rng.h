@@ -44,7 +44,7 @@ namespace susa {
 * l = 18<br>
 *
 */
-class rng{
+class rng {
   public:
     //! Constructor
     rng();
@@ -55,7 +55,7 @@ class rng{
      * @param intSeed RNG initial seed
      */
     rng(unsigned int intSeed);
-    
+
     /**
      * @brief Initializes the RNG
      *
@@ -90,7 +90,7 @@ class rng{
      * The output numbers will be masked to get uniformly distributed numbers
      * in a limited range. As an example masking with 0x0F would produce random
      * numbers between 0 to 15.
-     * 
+     *
      * @param uint_mask used to mask output numbers
      */
     unsigned int rand_mask(unsigned int uint_mask);
@@ -101,7 +101,7 @@ class rng{
      * The output numbers will be masked to get uniformly distributed numbers
      * in a limited range. As an example masking with 0x0F would produce random
      * numbers between 0 to 15.
-     * 
+     *
      * @param uint_mask used to mask output numbers
      * @param uint_N number of output samples
      */
@@ -112,7 +112,7 @@ class rng{
      *
      * @param uint_N Number of random numbers
      * @return Susa matrix
-     */    
+     */
     matrix <double> randn(unsigned int uint_N);
     /**
      * @brief Returns uniformly distributed random double
@@ -121,7 +121,7 @@ class rng{
      * @return Susa matrix
      */
     matrix <double> rand(unsigned int uint_N);
-    
+
     unsigned int GetUInt();
     unsigned int GetNonUniform(double* pr, unsigned int n);
     unsigned int nonUniform(std::vector <float>);
@@ -130,7 +130,7 @@ class rng{
     unsigned int MT[624];
     unsigned int y;
     int intIndex;
-  
+
     void generateNumbers();
     unsigned int extractNumber(int);
 };

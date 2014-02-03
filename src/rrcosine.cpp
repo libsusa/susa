@@ -32,52 +32,52 @@ namespace susa {
 // RRCosine
 
 RRCosine::RRCosine() { }
-  
-RRCosine::RRCosine(double dFs, double dFd, double dAlpha, int intN) {
-  cmat_g_T = matrix <std::complex <double> > (intN,1,std::complex<double>(0,0));
-  double rc_norm = 0;
-    
-  if (intN%2 == 1) {
-    for (int i=0;i<intN;i++) {
-      for ( int m=-(intN - 1)/2; m <= (intN - 1)/2 ;m++ ) {
-        cmat_g_T(i) += sqrt(xrc(dFs*m/intN,dAlpha,dFd))*exp(std::complex<double>(0,2*PI*m*(i - (intN - 1)/2)/intN));
-      }
-    }
-    mat_g_T = real(cmat_g_T);
-  
-    for (unsigned int i=0;i<mat_g_T.size();i++) {
-      rc_norm += mat_g_T(i) * mat_g_T(cmat_g_T.size() - i - 1);
-    }
 
-    for (unsigned int i=0;i<mat_g_T.size();i++) {
-      mat_g_T(i) = mat_g_T(i) / sqrt(rc_norm);
+RRCosine::RRCosine(double dFs, double dFd, double dAlpha, int intN) {
+    cmat_g_T = matrix <std::complex <double> > (intN,1,std::complex<double>(0,0));
+    double rc_norm = 0;
+
+    if (intN%2 == 1) {
+        for (int i=0; i<intN; i++) {
+            for ( int m=-(intN - 1)/2; m <= (intN - 1)/2 ; m++ ) {
+                cmat_g_T(i) += sqrt(xrc(dFs*m/intN,dAlpha,dFd))*exp(std::complex<double>(0,2*PI*m*(i - (intN - 1)/2)/intN));
+            }
+        }
+        mat_g_T = real(cmat_g_T);
+
+        for (unsigned int i=0; i<mat_g_T.size(); i++) {
+            rc_norm += mat_g_T(i) * mat_g_T(cmat_g_T.size() - i - 1);
+        }
+
+        for (unsigned int i=0; i<mat_g_T.size(); i++) {
+            mat_g_T(i) = mat_g_T(i) / sqrt(rc_norm);
+        }
+    } else {
+        std::cout << std::endl <<">> [RRCosine::RRCosine()] The filter order must be ODD. (to be fixed)"<<std::endl;
     }
-  }else {
-    std::cout << std::endl <<">> [RRCosine::RRCosine()] The filter order must be ODD. (to be fixed)"<<std::endl;
-  }
 }
 
 matrix <double> RRCosine::get() {
-  return mat_g_T;
+    return mat_g_T;
 }
 
 // Private methods
 
 double RRCosine::xrc(double dF, double dAlpha, double dT) {
-  if (std::abs(dF) > (1 + dAlpha)/(2*dT))
-    return 0;
-  else if (std::abs(dF) > ((1 - dAlpha)/(2*dT)))
-    return (dT/2.0)*(1+cos((PI*dT/dAlpha)*(std::abs(dF)-(1-dAlpha)/(2*dT))));
-  else return dT;
-  
+    if (std::abs(dF) > (1 + dAlpha)/(2*dT))
+        return 0;
+    else if (std::abs(dF) > ((1 - dAlpha)/(2*dT)))
+        return (dT/2.0)*(1+cos((PI*dT/dAlpha)*(std::abs(dF)-(1-dAlpha)/(2*dT))));
+    else return dT;
+
 }
 
 
 
 // Methodes
 template <class T> int antipodal(T T_arg) {
-  if (T_arg == 0) return -1;
-  else return 1;
+    if (T_arg == 0) return -1;
+    else return 1;
 }
 
 }

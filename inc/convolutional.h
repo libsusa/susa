@@ -37,54 +37,60 @@ namespace susa {
  * As it is expected the input/output of the methods in this class are all binary.
  * @ingroup Communications
  */
-class convolutional_codec{
+class convolutional_codec {
   public:
     convolutional_codec(unsigned int uint_n, unsigned int uint_k, unsigned int uint_m);
     convolutional_codec();
     ~convolutional_codec();
 
-  
-    /** 
-	 * @brief Set the generator polynomail for each output
+
+    /**
+     * @brief Set the generator polynomail for each output
      *
      * @param uintGen Generator in octal format
      * @param uintGenID  Generator polynomial output identifier
      **/
     void set_generator(unsigned int uint_gen, unsigned int uint_gen_id);  // Set generators
-    
-    /** 
-	 * @brief Set the internal memory directly through this method
+
+    /**
+     * @brief Set the internal memory directly through this method
      * @param uint_state The internal state to be set
      **/
-    void set_internal_state(unsigned int uint_state) {uint_current_state = uint_state;}    // Set Internal State
-    
+    void set_internal_state(unsigned int uint_state) {
+        uint_current_state = uint_state;   // Set Internal State
+    }
+
     unsigned int next_state(unsigned int uint_state, bool b_input);  // Next state (Current state,input)
     unsigned int next_state(bool b_input);                           // Next state using internal state
     unsigned int next_output(unsigned int uint_state, bool b_input);
     unsigned int next_output(bool b_input);
-  
+
     unsigned int prev_state(unsigned int uint_state, bool b_input);  // Previous state (Current state,input)
     unsigned int prev_state(bool b_input);                           // Previous state using internal state
-    std::vector <unsigned int> prev_states(unsigned int uint_state); // Previous states    
+    std::vector <unsigned int> prev_states(unsigned int uint_state); // Previous states
     unsigned int prev_internal_state();                              // Previous state using internal state
     unsigned int prev_output(unsigned int uint_state, bool b_input);
     unsigned int prev_output(bool b_input);
-  
-    unsigned int get_current_state() {return uint_current_state;}
-    unsigned int get_last_state() {return uint_last_state;}
-    
+
+    unsigned int get_current_state() {
+        return uint_current_state;
+    }
+    unsigned int get_last_state() {
+        return uint_last_state;
+    }
+
     void zero_state();         // Zero internal state
     void out_states();         // Print out states
     void out_outputs();        // Print out outputs
-    
+
     /**
      * @brief MUST BE CALLED after initialization of generator polynomials
-	 *
+     *
      * This methos builds Previous and Next vectors
      **/
     void build_trellis();
-    
-    /** 
+
+    /**
      * @brief Returns the rate of the convolutional code
      **/
     double rate();
@@ -112,11 +118,11 @@ class convolutional_codec{
     std::vector <std::vector <unsigned int> > vec_uint_next_states;
 
     std::vector <std::vector <unsigned int> > vec_uint_outputs;
-  
+
     unsigned int OctToDec(unsigned int);    // Converts Octal to Decimal
     std::string UIntToBinChar(unsigned int);    // Converts unsigned intergers to string
     bool EvenParity(unsigned int);      // Checks even parity of unsigned integers
-    
+
     unsigned int uint_current_state;
     unsigned int uint_last_state;
 };

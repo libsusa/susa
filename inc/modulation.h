@@ -28,7 +28,7 @@
 namespace susa {
 /**
  * @brief BPSK Modulation
- * Converts the input matrix with 0,1 elements to -1,1 elements. 
+ * Converts the input matrix with 0,1 elements to -1,1 elements.
  * @ingroup Communications
 */
 template <class T> matrix <T> bpsk(const matrix <T> &mat_arg);
@@ -41,39 +41,41 @@ template <class T> matrix <T> bpsk(const matrix <T> &mat_arg);
 class qam {
 
   public :
-  qam(unsigned int uint_m);
-  ~qam();
+    qam(unsigned int uint_m);
+    ~qam();
 
-  matrix < std::complex <double> > get_constellation() {return mat_s;};
-  double get_noise_deviation(double dbl_arg);
+    matrix < std::complex <double> > get_constellation() {
+        return mat_s;
+    };
+    double get_noise_deviation(double dbl_arg);
 
-  matrix < std::complex <double> > modulate_bits(matrix <char> mat_bits);
-
-
-  matrix <char> demodulate_bits(matrix < std::complex <double> > mat_symbols);
-  matrix <int> demodulate_symbols(matrix < std::complex <double> > mat_symbols);
+    matrix < std::complex <double> > modulate_bits(matrix <char> mat_bits);
 
 
-  std::complex <double> demodulate_symbol(std::complex <double> complex_arg);
+    matrix <char> demodulate_bits(matrix < std::complex <double> > mat_symbols);
+    matrix <int> demodulate_symbols(matrix < std::complex <double> > mat_symbols);
+
+
+    std::complex <double> demodulate_symbol(std::complex <double> complex_arg);
 
   private :
-  double dbl_es;          // Energy per symbol
-  double dbl_eb;          // Energy per bit
-  unsigned int uint_bps;  // Number of bits per symbol
-  unsigned int uint_m;    // Number of symbols in constellation
+    double dbl_es;          // Energy per symbol
+    double dbl_eb;          // Energy per bit
+    unsigned int uint_bps;  // Number of bits per symbol
+    unsigned int uint_m;    // Number of symbols in constellation
 
-  matrix < std::complex <double> > mat_s;
-  matrix < std::complex <double> > mat_axis;
-  
-  unsigned int log2(unsigned int uint_x);
+    matrix < std::complex <double> > mat_s;
+    matrix < std::complex <double> > mat_axis;
+
+    unsigned int log2(unsigned int uint_x);
 
 };
 
 template <class T> matrix <T> bpsk(const matrix <T> &mat_arg) {
-  matrix <char> mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
-  unsigned int uint_length = mat_arg.no_cols() * mat_arg.no_rows();
-  for (unsigned int uint_index = 0; uint_index < uint_length; uint_index++) mat_ret(uint_index) = (mat_arg(uint_index) == 1) ? 1 : -1;
-  return mat_ret;
+    matrix <char> mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
+    unsigned int uint_length = mat_arg.no_cols() * mat_arg.no_rows();
+    for (unsigned int uint_index = 0; uint_index < uint_length; uint_index++) mat_ret(uint_index) = (mat_arg(uint_index) == 1) ? 1 : -1;
+    return mat_ret;
 }
 
 } // NAMESPACE SUSA

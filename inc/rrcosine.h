@@ -34,17 +34,17 @@ namespace susa {
  *
  * @ingroup Communications
  **/
-class RRCosine{
+class RRCosine {
   private:
-  
+
     double xrc(double, double, double);
-    
+
     matrix < std::complex <double> > cmat_g_T;
     matrix <double>  mat_g_T;
   public:
     RRCosine();
     RRCosine(double, double, double, int);
-    
+
     matrix <double> get();
 };
 

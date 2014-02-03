@@ -55,37 +55,37 @@ template <class T> double stdv(std::vector <T> vec_arg);
 
 
 template <class T> T mean(std::vector <T> vec_arg) {
-  T tMean=0;
-  for (int i=0;i<vec_arg.size();i++) {
-      tMean += vec_arg[i];
-  }
+    T tMean=0;
+    for (int i=0; i<vec_arg.size(); i++) {
+        tMean += vec_arg[i];
+    }
 
-  return (tMean/vec_arg.size());
+    return (tMean/vec_arg.size());
 }
 
 
 
 template <class T> double var(std::vector <T> vec_arg) {
-  T tMean = mean(vec_arg);
-  T tVar = 0;
-  for (int i=0;i<vec_arg.size();i++) {
-      tVar += (vec_arg[i] - tMean)*(vec_arg[i] - tMean);
-  }
+    T tMean = mean(vec_arg);
+    T tVar = 0;
+    for (int i=0; i<vec_arg.size(); i++) {
+        tVar += (vec_arg[i] - tMean)*(vec_arg[i] - tMean);
+    }
 
-  return (tVar/vec_arg.size());
+    return (tVar/vec_arg.size());
 }
 
 
 
 
 template <class T> double stdv(std::vector <T> vec_arg) {
-  T tMean = mean(vec_arg);
-  T tStd = 0;
-  for (int i=0;i<vec_arg.size();i++) {
-      tStd += (vec_arg[i] - tMean)*(vec_arg[i] - tMean);
-  }
+    T tMean = mean(vec_arg);
+    T tStd = 0;
+    for (int i=0; i<vec_arg.size(); i++) {
+        tStd += (vec_arg[i] - tMean)*(vec_arg[i] - tMean);
+    }
 
-  return (sqrt(tStd/vec_arg.size()));
+    return (sqrt(tStd/vec_arg.size()));
 }
 } // NAMESPACE SUSA
 #endif // STATISTICS_H
