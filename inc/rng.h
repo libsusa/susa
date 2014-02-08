@@ -45,7 +45,9 @@ namespace susa {
 *
 */
 class rng {
+
   public:
+
     //! Constructor
     rng();
 
@@ -77,6 +79,7 @@ class rng {
      *
      */
     double randn();
+
     /**
      * @brief Returns uniformly distributed random double
      *
@@ -114,6 +117,7 @@ class rng {
      * @return Susa matrix
      */
     matrix <double> randn(unsigned int uint_N);
+
     /**
      * @brief Returns uniformly distributed random double
      *
@@ -123,8 +127,11 @@ class rng {
     matrix <double> rand(unsigned int uint_N);
 
     unsigned int GetUInt();
+
     unsigned int GetNonUniform(double* pr, unsigned int n);
+
     unsigned int nonUniform(std::vector <float>);
+
   private:
     // Create a length 624 array to store the state of the generator
     unsigned int MT[624];

@@ -224,11 +224,15 @@ template <class T> class matrix {
 
     operator matrix <int> ();
 
+    operator matrix <char> ();
+
     operator matrix <std::complex <double> > ();
 
     operator matrix <std::complex <float> > ();
 
     operator matrix <std::complex <int> > ();
+
+    operator matrix <std::complex <char> > ();
 
     // Friend methods are used to speed up matrix operations.
     // This because they can access '_matrix' directly.
@@ -340,6 +344,7 @@ template <class T> matrix <T>::matrix(const matrix <T> &mat_arg) {
 }
 
 template <class T> matrix <T>::matrix(std::string str_string) {
+
     this->uint_rows = 0;
     this->uint_cols = 0;
 
@@ -623,6 +628,19 @@ template <class T> matrix<T>::operator matrix <int> () {
 }
 
 
+template <class T> matrix<T>::operator matrix <char> () {
+
+    matrix <char> mat_ret(uint_rows, uint_cols);
+
+    unsigned int uint_size = uint_rows * uint_cols;
+
+    for (unsigned int uint_elem = 0; uint_elem < uint_size; uint_elem++) {
+        mat_ret(uint_elem) = (char)_matrix[uint_elem];
+    }
+    return mat_ret;
+}
+
+
 template <class T> matrix<T>::operator matrix <std::complex <double> > () {
 
     matrix <std::complex <double> > mat_ret(uint_rows, uint_cols);
@@ -655,6 +673,20 @@ template <class T> matrix<T>::operator matrix <std::complex <int> > () {
 
     for (unsigned int uint_elem = 0; uint_elem < uint_size; uint_elem++) {
         mat_ret(uint_elem) = std::complex <int> ((int)_matrix[uint_elem].real(), (int)_matrix[uint_elem].imag());
+    }
+    return mat_ret;
+}
+
+
+
+template <class T> matrix<T>::operator matrix <std::complex <char> > () {
+
+    matrix <std::complex <char> > mat_ret(uint_rows, uint_cols);
+
+    unsigned int uint_size = uint_rows * uint_cols;
+
+    for (unsigned int uint_elem = 0; uint_elem < uint_size; uint_elem++) {
+        mat_ret(uint_elem) = std::complex <char> ((char)_matrix[uint_elem].real(), (char)_matrix[uint_elem].imag());
     }
     return mat_ret;
 }

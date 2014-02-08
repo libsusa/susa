@@ -29,7 +29,6 @@
 namespace susa {
 
 // Constructors and Destructor
-
 rng::rng() {
     intIndex = -1;
 }

@@ -30,17 +30,19 @@ namespace susa {
 
 /**
  * @brief Convolutional encoder/decoder wrapper class.
- * This class is performing encoding and decoding of convolutional
- * codes. The constructor setup the internal wiring of the state-machine
- * using a number in octal format. This number can be determined as it is stated
- * in <i>Fundamentals of convolutional coding, Rolf Johannesson and Kamil Zigangirov, IEEE Press, 1999</i>.
- * As it is expected the input/output of the methods in this class are all binary.
+ * This class implements encoding and decoding of the convolutional error correction codes.
+ * The constructor sets up the internal wiring of the state-machine.
+ * This setup is define by the constructor arguments that are a set of numbers in octal format.
+ * To know more about it refer to <i>Fundamentals of convolutional coding, Rolf Johannesson and Kamil Zigangirov, IEEE Press, 1999</i>.
+ * The input/output of the methods in this class are all binary.
  * @ingroup Communications
  */
 class convolutional_codec {
   public:
     convolutional_codec(unsigned int uint_n, unsigned int uint_k, unsigned int uint_m);
+
     convolutional_codec();
+
     ~convolutional_codec();
 
 
@@ -84,7 +86,7 @@ class convolutional_codec {
     void out_outputs();        // Print out outputs
 
     /**
-     * @brief MUST BE CALLED after initialization of generator polynomials
+     * @brief MUST BE CALLED after initialization of the generator polynomials are set
      *
      * This methos builds Previous and Next vectors
      **/
@@ -119,12 +121,13 @@ class convolutional_codec {
 
     std::vector <std::vector <unsigned int> > vec_uint_outputs;
 
-    unsigned int OctToDec(unsigned int);    // Converts Octal to Decimal
-    std::string UIntToBinChar(unsigned int);    // Converts unsigned intergers to string
-    bool EvenParity(unsigned int);      // Checks even parity of unsigned integers
+    unsigned int OctToDec(unsigned int);        // Converts Octal to Decimal
+    std::string UIntToBinChar(unsigned int);    // Converts unsigned integers to string
+    bool EvenParity(unsigned int);              // Checks even parity of unsigned integers
 
     unsigned int uint_current_state;
     unsigned int uint_last_state;
 };
+
 }
 #endif // CONVOLUTIONAL_H

@@ -35,18 +35,29 @@ template <class T> matrix <T> bpsk(const matrix <T> &mat_arg);
 
 /**
  * @brief QAM Modulation
- * This is a wrapper class for QAM modulation and demodulation.
+ * This is a wrapper class for QAM modulation and demodulation methods.
  * @ingroup Communications
 */
 class qam {
 
   public :
+    /**
+     * @brief The constructor of the QAM modulation class
+     * @param uint_m The modulation order, e.g., 4,8,16,64,256
+     **/
     qam(unsigned int uint_m);
+
     ~qam();
 
     matrix < std::complex <double> > get_constellation() {
         return mat_s;
     };
+
+
+    /**
+     * @brief This method computes the AWGN noise deviation.
+     * @param dbl_arg The well known Eb / N_0 in dB.
+     **/
     double get_noise_deviation(double dbl_arg);
 
     matrix < std::complex <double> > modulate_bits(matrix <char> mat_bits);

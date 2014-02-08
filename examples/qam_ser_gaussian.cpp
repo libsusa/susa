@@ -71,7 +71,7 @@ int main(void) {
             if (_qam.demodulate_symbol(cmat_noisy_symbols(uint_i)) != cmat_symbols(uint_i)) mat_num_errors(uint_noise_step)++;
 
 
-        cout << "Noise : " << dbl_noise_db << " \t \t" << "SER : " << (double) mat_num_errors(uint_noise_step)/uint_n << endl;
+        cout << "Eb/N0 = " << dbl_noise_db << " \t \t" << "SER = " << (double) mat_num_errors(uint_noise_step)/uint_n << endl;
         fs_result << dbl_noise_db << "   " <<  (double) mat_num_errors(uint_noise_step)/uint_n << endl;
     }
 

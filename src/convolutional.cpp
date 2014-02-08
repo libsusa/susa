@@ -124,6 +124,7 @@ void convolutional_codec::build_trellis() {
 }
 
 unsigned int convolutional_codec::next_state(unsigned int uint_state, bool b_input) {
+
     if (b_input)
         return ((uint_state>>1) | (1<<(uint_m - 1)));
     else
@@ -138,7 +139,9 @@ unsigned int convolutional_codec::next_state(bool b_input) {
 
 
 unsigned int convolutional_codec::next_output(unsigned int uint_state, bool b_input) {
+
     unsigned int uintTmp = 0;
+
     if (!b_input) {
         // Input = 0
         for (unsigned int j=0; j<uint_n; j++) uintTmp |=  (EvenParity((uint_state & (~(1<<uint_m)))&uint_gen[j]) << j);
@@ -222,23 +225,22 @@ matrix <double> convolutional_codec::decode_bcjr(const matrix <double> &mat_arg,
     unsigned int uint_num_stages = mat_arg.size() / uint_n;
     unsigned int uint_num_states = (1 << uint_m);
 
-// Gamma
+    // Gamma
     matrix <double> mat_gamma(uint_num_states, uint_num_states);
     std::vector <matrix <double> > vec_gamma(uint_num_stages);
 
-// Alpha
+    // Alpha
     matrix <double> mat_alpha(uint_num_states, 1);
     std::vector <matrix <double> > vec_alpha(uint_num_stages + 1, matrix <double> (uint_num_states,1));
     vec_alpha[0](0,0) = 1;
 
-// Beta
+    // Beta
     matrix <double> mat_beta(uint_num_states, 1);
     std::vector <matrix <double> > vec_beta(uint_num_stages + 1, matrix <double> (uint_num_states,1));
     vec_beta[uint_num_stages](0,0) = 1;
 
 
-// Forward calculation of Gamma/Alpha
-
+    // Forward calculation of Gamma/Alpha
     std::vector <unsigned int> vec_uint_prev_states;
 
     unsigned int uint_next_zero, uint_next_one;
@@ -247,7 +249,6 @@ matrix <double> convolutional_codec::decode_bcjr(const matrix <double> &mat_arg,
     for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++) {
 
         // Gamma Calculation
-
         for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
 
             uint_next_zero =  this->next_state(uint_state,false);
@@ -268,13 +269,11 @@ matrix <double> convolutional_codec::decode_bcjr(const matrix <double> &mat_arg,
             mat_gamma(uint_state,uint_next_one) = c_k * exp(0.5 * l_c * dbl_arg);
 
         }
+
         vec_gamma[uint_stage] = mat_gamma;
 
 
-
         // Alpha Calculation
-
-
         for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
 
             vec_uint_prev_states = this->prev_states(uint_state);
@@ -294,8 +293,7 @@ matrix <double> convolutional_codec::decode_bcjr(const matrix <double> &mat_arg,
     }
 
 
-// Beta Calculation
-
+    // Beta Calculation
     for (unsigned int uint_stage = uint_num_stages; uint_stage > 0; uint_stage--) {
 
         for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
@@ -357,7 +355,7 @@ matrix <double> convolutional_codec::decode_bcjr(const matrix <double> &mat_arg,
 
 
 
-// Private domain methods
+// Private methods
 
 unsigned int convolutional_codec::OctToDec(unsigned int uintMask) {
 
@@ -390,5 +388,6 @@ std::string convolutional_codec::UIntToBinChar(unsigned int uint_register) {
 
     return strBuffer;
 }
+
 }      // NAMESPACE SUSA
 
