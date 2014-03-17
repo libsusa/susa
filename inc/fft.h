@@ -18,7 +18,7 @@
 /**
  * @file fft.h
  * @brief The Fast Fourier Transform
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Aliabadi
  * @version 1.0.0
  */
 
@@ -56,10 +56,10 @@ template <class T> std::vector <T> fft<T>::radix2(std::vector <T> vec_arg) {
     int l=0;
     unsigned short int usiStage = log2(N);
 
-    for (int i=0; i<usiStage; i++) {      // Stage counter
-        for (int j=0; j<(1<<(usiStage-i-1)); j++) { // Seperated butterflies
+    for (int i=0; i<usiStage; i++) {                    // Stage counter
+        for (int j=0; j<(1<<(usiStage-i-1)); j++) {     // Seperated butterflies
             l = (j == 0) ? j:j*(1<<(i+1));
-            for (int k=0; k<(1<<i); k++) {    // Adjacent butterflies
+            for (int k=0; k<(1<<i); k++) {              // Adjacent butterflies
                 tTemp = vec_BitReverse[k+l];
                 vec_BitReverse[k+l] = tTemp + vec_BitReverse[k+(1<<i)+l]*exp(std::complex<double>(0,(-2*k*PI*(1<<(usiStage-i-1)))/N));
                 vec_BitReverse[k+(1<<i)+l] = tTemp - vec_BitReverse[k+(1<<i)+l]*exp(std::complex<double>(0,(-2*k*PI*(1<<(usiStage-i-1)))/N));

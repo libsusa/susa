@@ -18,7 +18,7 @@
 /**
  * @file linalg.h
  * @brief Basic matrix and linear algebra operations on Susa types.
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Aliabadi
  * @version 1.0.0
  *
  * @defgroup LALG Linear Algebra
@@ -35,7 +35,7 @@ namespace susa {
  *
  * @param mat_argl
  * @param mat_argr
- * @return Returns multiplication of the two input matrices
+ * @return Multiplication of the two input matrices
  * @ingroup LALG
  */
 template <class T> matrix <T> mult( const matrix <T> &mat_argl,const matrix <T> &mat_argr ) {
@@ -60,7 +60,7 @@ template <class T> matrix <T> mult( const matrix <T> &mat_argl,const matrix <T> 
             }
         }
     } else {
-        std::cout << std::endl << "[mult()] Matrices' demensions mismatch.";
+        std::cout << std::endl << "[mult()] Matrices' dimensions mismatch.";
 #ifdef _SUSA_TERMINATE_ON_ERROR
         exit(1);
 #endif
@@ -102,17 +102,17 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg) {
  * @return Returns determinant of the input matrices
  * @ingroup LALG
  */
-template <class T> T det(const matrix <T> &mat_arg) {
-    T T_ret;
+template <class T> double det(const matrix <T> &mat_arg) {
+    double dbl_ret = 0.0;
 
     unsigned int uint_rows = mat_arg.no_rows();
     unsigned int uint_cols = mat_arg.no_cols();
 
     if (uint_rows == uint_cols) {
         if (uint_rows == 1) { // 1 x 1
-            T_ret = mat_arg(0);
+            dbl_ret = mat_arg(0);
         } else if (uint_rows == 2) { // 2 x 2
-            T_ret = mat_arg(0, 0) * mat_arg(1, 1) - mat_arg(1, 0) * mat_arg(0, 1);
+            dbl_ret = mat_arg(0, 0) * mat_arg(1, 1) - mat_arg(1, 0) * mat_arg(0, 1);
         } else { // 3 x 3 and more
             for (unsigned int  uint_col = 0; uint_col < uint_cols; uint_col++) {
                 matrix <T> mat_minor = mat_arg.shrink(0, uint_col);
@@ -122,14 +122,14 @@ template <class T> T det(const matrix <T> &mat_arg) {
                     // iterations. To stop such a unwanted loop this if() returns from method.
                     // THIS METHOD IS NOT STABLE BUT WORKS.
                     std::cout << "[det()] Infinite loop avoided.";
-                    return T_ret;
+                    return dbl_ret;
                 }
-                T_ret +=  (-2 * (int)(uint_col%2) + 1) * mat_arg(0, uint_col) * det(mat_minor);
+                dbl_ret +=  (-2 * (int)(uint_col%2) + 1) * mat_arg(0, uint_col) * det(mat_minor);
             }
         }
     }
 
-    return T_ret;
+    return dbl_ret;
 }
 
 

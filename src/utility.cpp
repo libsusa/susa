@@ -18,7 +18,7 @@
 /**
  * @file utility.cpp
  * @brief The utility functions.
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Aliabadi
  * @version 1.0.0
  */
 

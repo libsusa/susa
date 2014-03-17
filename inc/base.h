@@ -18,7 +18,7 @@
 /**
  * @file base.h
  * @brief Basic mathematical operations on STL and Susa types
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Aliabadi
  * @version 1.0.0
  *
  * @defgroup Math Basic Mathematics
@@ -208,8 +208,6 @@ template <class T> std::vector <T> diff(std::vector <T> &vec_arg) {
     return (vec_diff);
 }
 
-
-
 template <class T> matrix <T> sum(matrix <T> &mat_arg) {
     matrix <T> mat_ret;
 
@@ -249,7 +247,6 @@ template <class T> std::vector <T> abs(std::vector <T> &vec_arg) {
     return vec_abs;
 }
 
-
 template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg) {
     matrix <unsigned int> mat_ret;
     T T_min;
@@ -279,7 +276,6 @@ template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg) {
     return mat_ret;
 }
 
-
 template <class T> matrix <unsigned int> max(const matrix <T> &mat_arg) {
     matrix <unsigned int> mat_ret;
     T T_max;
@@ -308,7 +304,6 @@ template <class T> matrix <unsigned int> max(const matrix <T> &mat_arg) {
 
     return mat_ret;
 }
-
 
 template <class T> matrix <std::complex <T> > conj(const matrix < std::complex <T> > &mat_arg) {
     matrix < std::complex <T> > mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
@@ -350,8 +345,6 @@ template <class T> matrix <T> real(const matrix < std::complex <T> > &mat_arg) {
 
     return mat_ret;
 }
-
-
 
 template <class T> matrix <T> imag(const matrix < std::complex <T> > &mat_arg) {
     matrix < std::complex <T> > mat_ret(mat_arg.no_rows(), mat_arg.no_cols());

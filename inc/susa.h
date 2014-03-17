@@ -18,20 +18,21 @@
 /**
  * @file susa.h
  * @brief Package Header
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Aliabadi
  * @version 1.0.0
  */
 
 /**
  * @mainpage Susa Documentation
  *
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Aliabadi
  *
  * @section intro Introduction
- * <p> Susa is a library of utility classes and functions to be used in signal processing and mathematic applications.
- * This library package is portable and light. It does not need complicated and time consuming installation of other
- * mathematical libraries to work with. Because of this independency at the moment it's limited basic operations.
- * Developers of Susa have a long term plan to improve the library. It is published publicly under Lesser GPL license.</p>
+ * <p> Susa is a library of utility classes and methods (functions) for signal processing and mathematics applications.
+ * It is portable and stand-alone, therefore it does not need complicated and time consuming installation of third
+ * party libraries. Susa also provides a framework for embedded devices. You may use it to develop quick and efficient
+ * signal processing methods for mobile platforms such as Android using the companion Native Development Kit (NDK). 
+ * It is published under GNU Lesser General Public License.</p>
  *
  */
 
@@ -39,6 +40,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <complex>
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,7 +58,7 @@
 #define PI  3.1415926535897932384626433
 
 // Compile Switches
-#define _SUSA_TERMINATE_ON_ERROR  // If defined the program will be terminated by 'exit(1)' when error occurs.
+#define _SUSA_TERMINATE_ON_ERROR  // If defined the process terminates with 'exit(1)' on fatal errors.
 
 #include "matrix.h"
 #include "base.h"

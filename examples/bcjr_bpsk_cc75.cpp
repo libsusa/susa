@@ -15,7 +15,7 @@
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+/**
  * This program simulates a communication system with BPSK modulation
  * with a R=1/2 convolutional code G(1 + D^2, 1 + D + D^2) over an AWGN noisy channel,
  */

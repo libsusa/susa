@@ -18,9 +18,12 @@
 /**
  * @file matrix.h
  * @brief The matrix operation wrapper class.
- * This file contains the <i>matrix template class</i>. This is the only non-intrinsic data type that all
- * Susa methods work with.
- * @author Behrooz, Kamary Aliabadi
+ * This file contains the <i>matrix template class</i>. This is a non-intrinsic data type that is
+ * exploited in Susa. Use this method if you need two dimensional matrices or vectors. It has been
+ * designed such that the matrix elements can be accessed as vector elements. This class handles
+ * the cloning of the matrices when the assignment operator used. It has the mechanisms to release
+ * the allocated memory.
+ * @author Behrooz, Aliabadi
  * @version 1.0.0
  */
 
@@ -61,7 +64,6 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg);
  *
  * @ingroup LALG
  *
- * @todo There is no feature to initialize/set elements of the matrix through an input string.
  */
 template <class T> class matrix {
   private:
@@ -80,27 +82,27 @@ template <class T> class matrix {
 
     // This parses the strings and initialize the matrix elements.
     // The string initialization can be done using a constructor method
-    // and an overloaded assignement operator (=) method
+    // and an overloaded assignment operator (=) method
     void parser(std::string str_string);
 
   public:
     //! The default constructor
     matrix();
 
-    /** The constructor
+    /** Constructor
      * @param uint_row Number of rows
      * @param uint_col Number of columns
      * @param Tinitial Initial value of all rows and columns. If not set, initial value will be zero.
      */
     matrix( unsigned int uint_rows, unsigned int uint_cols, T Tinitial);
 
-    /** The constructor
+    /** Constructor
      * @param uint_row Number of rows
      * @param uint_col Number of columns.
      */
     matrix( unsigned int uint_rows, unsigned int uint_cols );
 
-    //! The destructor
+    //! Destructor
     ~matrix();
 
     //! Copy constructor
@@ -150,7 +152,7 @@ template <class T> class matrix {
     //! Elementwise Assignment by Addition operator
     matrix <T> operator+=( const matrix <T> &mat_arg );
 
-    //! Elementwise Assignment by Substraction
+    //! Elementwise Assignment by Subtraction
     matrix <T> operator-=( const matrix <T> &mat_arg );
 
     //! Elementwise Assignment operator
@@ -162,13 +164,13 @@ template <class T> class matrix {
     //! Elementwise Assignment operator
     matrix <T>& operator=( std::string str_string );
 
-    //! Elementwise Substraction operator
+    //! Elementwise Subtraction operator
     friend matrix <T> operator-<>( const matrix <T> &mat_argl, T T_arg);
 
-    //! Elementwise Substraction operator
+    //! Elementwise Subtraction operator
     friend matrix <T> operator-<>( T T_arg, const matrix <T> &mat_argr );
 
-    //! Elementwise Substraction operator
+    //! Elementwise Subtraction operator
     friend matrix <T> operator-<>( const matrix <T> &mat_argl, const matrix <T> &mat_argr);
 
 
@@ -235,7 +237,7 @@ template <class T> class matrix {
     operator matrix <std::complex <char> > ();
 
     // Friend methods are used to speed up matrix operations.
-    // This because they can access '_matrix' directly.
+    // Because they can access '_matrix' directly.
     // They are defined in 'linalg.h'
     friend matrix <T> mult<>( const matrix <T> &mat_argl,const matrix <T> &mat_argr);
     friend matrix <T> transpose<>(const matrix <T> &mat_arg);
@@ -993,10 +995,10 @@ template <class T> void matrix <T>::parser(std::string str_string) {
 
     pre_parser(str_string);
 
-    unsigned int uint_size = 0; // linear size of the matrix (#rows * #columns)
+    unsigned int uint_size = 0;           // linear size of the matrix (#rows * #columns)
     int int_length = str_string.length(); // length of the input string
-    unsigned int uint_cols_ = 0; // number of columns
-    unsigned int uint_rows_ = 0; // number of rows
+    unsigned int uint_cols_ = 0;          // number of columns
+    unsigned int uint_rows_ = 0;          // number of rows
 
     // This loop gets total number of rows and columns
     for (int int_i = 0; int_i < int_length; int_i++) {
@@ -1004,7 +1006,7 @@ template <class T> void matrix <T>::parser(std::string str_string) {
         case ';':
             uint_rows_++;
             // since the number of rows are counted by number of space and the
-            // spaces around ';' are cut, we count a column here too !
+            // spaces around ';' are cut, we also count a column here !
             uint_cols_++;
             break;
 
@@ -1020,10 +1022,11 @@ template <class T> void matrix <T>::parser(std::string str_string) {
             break;
         };
     }
-    uint_rows_++;
-    uint_cols_ = uint_cols_ + 1;
-    uint_size = uint_cols_ * uint_rows_;
 
+    uint_cols_++;
+    uint_rows_++;
+    uint_size = uint_cols_ * uint_rows_;
+    
     if (uint_cols_ % uint_rows_ != 0) {
         std::cout << std::endl << "[matrix::parser] number of columns are not equal in each row." <<std::endl;
         return;
@@ -1055,13 +1058,15 @@ template <class T> void matrix <T>::parser(std::string str_string) {
         std::stringstream ss_all(str_string);
         char* char_buff;
         char_buff = new char [4096];
+        T T_tmp;
 
         for (unsigned int uint_row = 0; uint_row < uint_rows; uint_row++) {
             ss_all.getline(char_buff,4096,';');
             std::stringstream ssrow(char_buff);
             for (unsigned int uint_col = 0; uint_col < uint_cols; uint_col++) {
                 ssrow.getline(char_buff,4096,' ');
-                std::stringstream(char_buff) >> _matrix[uint_row + uint_col * uint_rows];
+		if (!(std::istringstream(char_buff) >> T_tmp)) T_tmp = 0;
+                 _matrix[uint_row + uint_col * uint_rows] = T_tmp;
             }
         }
 

@@ -15,7 +15,7 @@
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+/**
  This program simulates a 16-QAM modem over AWGN channel using Susa.
  The output is a list of Eb/N0 vs. Symbol Error Rate (SER). 
  */

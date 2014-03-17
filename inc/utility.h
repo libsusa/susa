@@ -18,7 +18,7 @@
 /**
  * @file utility.h
  * @brief Utility functions.
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Aliabadi
  * @version 1.0.0
  * @defgroup Utility
  *
@@ -57,7 +57,7 @@ double toc();
 /**
  * @brief Gives a time-stamp in string format.
  *
- * @return A string that contains year/month/day/houre/minutes/seconds.
+ * @return A string that contains year/month/day/hour/minutes/seconds.
  *
  * @ingroup Utility
  */

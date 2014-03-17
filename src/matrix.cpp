@@ -66,7 +66,10 @@ void pre_parser(std::string &str_string) {
         if (str_string[int_i] != 0x20 && str_string[int_i] != ']' && str_string[int_i] != '[') {
             str_string[int_counter] = str_string[int_i];
             int_counter++;
-        } else if (str_string[int_i] == 0x20 && str_string[int_i + 1] != ';' && ((str_string[int_i + 1] > 0x2F || str_string[int_i + 1] == '.'))) {
+        } else if (str_string[int_i] == 0x20 && str_string[int_i + 1] != ';' && (str_string[int_i + 1] > 0x2F
+                                                                                  || str_string[int_i + 1] == '.'      // decimal
+                                                                                  || str_string[int_i + 1] == 0x2B     // '+'
+                                                                                  || str_string[int_i + 1] == 0x2D)) { // '-'
             if (int_counter != 0) { // To avoid the 0x20 in the begining of the string
                 str_string[int_counter] = 0x20;
                 int_counter++;
@@ -75,7 +78,7 @@ void pre_parser(std::string &str_string) {
     }
 
     // (3) shrink the string to its real size (delete extra 0x20 that was created in the loop above)
-    if (str_string[int_counter-1] == 0x20) str_string.erase(int_counter-1,int_length - 1);
+    if (str_string[int_counter - 1] == 0x20) str_string.erase(int_counter - 1, int_length - 1);
     else str_string.erase(int_counter,int_length - 1);
 
     //std::cout << std::endl << str_string;

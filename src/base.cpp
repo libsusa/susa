@@ -18,7 +18,7 @@
 /**
  * @file base.cpp
  * @brief Basic mathematical operations on STL and Susa types.
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Aliabadi
  * @version 1.0.0
  */
 
