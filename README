@@ -1,1 +1,3 @@
-Susa Open Source Project
+# Susa Open Source Project
+
+Susa is a mathematics and signal processing C++ framework based on KISS principle. The mobility is the key feature of Susa. It is a stand-alone and modern signal processing framework that can easily be ported to mobile platforms. It is designed not to have any dependencies to any none standard third party library. A C++11 compiler is neccessary and sufficient in order to compile it. Therefore, Susa can be exploited in mobile platforms such as Android NDK (Native Development Toolkit) without restriction. This brings the power and speed of the C++ native code to the user friendly Java based mobile applications. Susa is also a simulation framework for the researchers and engineers who design computational systems. It has linear algebra, signal processing and communications common methods.
