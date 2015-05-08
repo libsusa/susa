@@ -16,6 +16,8 @@
  */
 
 
+// #define SUSA_NDEBUG
+
 #include <susa.h>
 
 int main(void) {
@@ -34,6 +36,8 @@ int main(void) {
   std::cout << std::endl << "mat_a .* mat_b = " << mat_a * mat_b;
   std::cout << std::endl << "mat_a * mat_b = " << mult(mat_a,mat_b);
 
+  // this line demonstrate SUSA_ASSERT_MESSAGE macro usage.
+  // to disable the message and abortion of the software uncomment "#define SUSA_NDEBUG"
   std::cout << std::endl << "mat_a = " << std::endl << mat_a(mat_a.size() + 1);
 
   return 0;

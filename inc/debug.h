@@ -48,6 +48,7 @@ namespace susa {
 
 #ifdef SUSA_NDEBUG
 #define SUSA_ASSERT(EX) ((void)0)
+#define SUSA_ASSERT_MESSAGE(EX,MSG) ((void)0)
 #else
 #define SUSA_ASSERT(EX) ((EX) ? (void)0 : assert(EX))
 #define SUSA_ASSERT_MESSAGE(EX,MSG) ((EX) ? (void)0 : susa::assert_log(__FILE__, __func__, __LINE__, #EX,#MSG))

@@ -1051,7 +1051,7 @@ template <class T> void matrix <T>::parser(std::string str_string) {
     uint_rows_++;
     uint_size = uint_cols_ * uint_rows_;
 
-    SUSA_ASSERT_MESSAGE(uint_cols_ % uint_rows_ != 0,
+    SUSA_ASSERT_MESSAGE(uint_cols_ % uint_rows_ == 0,
       "the number of columns are not equal in each row");
 
     if (uint_cols_ % uint_rows_ != 0) {
