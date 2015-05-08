@@ -17,8 +17,8 @@
 
 /**
  * @file fft.h
- * @brief The Fast Fourier Transform
- * @author Behrooz, Aliabadi
+ * @brief The Fast Fourier Transform (FFT)
+ * @author Behrooz Aliabadi
  * @version 1.0.0
  */
 
@@ -43,14 +43,14 @@ template <class T> class fft {
     */
     std::vector <T> radix2(std::vector <T> vec_arg);
   private:
-    std::vector <T> BitReverse(std::vector <T>);
+    std::vector <T> bit_reverse(std::vector <T>);
     unsigned short int log2(unsigned short int);
 };
 
 
 template <class T> std::vector <T> fft<T>::radix2(std::vector <T> vec_arg) {
     unsigned short int N = vec_arg.size();
-    std::vector <T> vec_BitReverse = BitReverse(vec_arg);
+    std::vector <T> vec_BitReverse = bit_reverse(vec_arg);
     std::complex <double> ct;
     T tTemp=0;
     int l=0;
@@ -69,7 +69,7 @@ template <class T> std::vector <T> fft<T>::radix2(std::vector <T> vec_arg) {
     return vec_BitReverse;
 }
 
-template <class T> std::vector <T> fft<T>::BitReverse(std::vector <T> vec_arg) {
+template <class T> std::vector <T> fft<T>::bit_reverse(std::vector <T> vec_arg) {
     unsigned int N = vec_arg.size();
     unsigned short int intBR;
     T TSwap=0;

@@ -31,10 +31,13 @@
  * <p> Susa is a library of utility classes and methods (functions) for signal processing and mathematics applications.
  * It is portable and stand-alone, therefore it does not need complicated and time consuming installation of third
  * party libraries. Susa also provides a framework for embedded devices. You may use it to develop quick and efficient
- * signal processing methods for mobile platforms such as Android using the companion Native Development Kit (NDK). 
+ * signal processing methods for mobile platforms such as Android using the companion Native Development Kit (NDK).
  * It is published under GNU Lesser General Public License.</p>
  *
  */
+
+#ifndef SUSA_H
+#define SUSA_H
 
 #include <cmath>
 #include <vector>
@@ -50,9 +53,6 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
-
-#ifndef SUSA_H
-#define SUSA_H
 
 // Constants
 #define PI  3.1415926535897932384626433
@@ -75,9 +75,6 @@
 #include "linalg.h"
 #include "search.h"
 #include "signal.h"
+#include "debug.h"
 
 #endif // SUSA_H
-
-
-
-

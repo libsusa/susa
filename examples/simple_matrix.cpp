@@ -15,12 +15,13 @@
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "susa.h"
+
+#include <susa.h>
 
 int main(void) {
 
   susa::matrix <double> mat_a("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]");
-  
+
   susa::matrix <double> mat_b(3,3);
   mat_b(0,0) = 1;mat_b(0,1) = 2;mat_b(0,2) = 3;
   mat_b(1,0) = 4;mat_b(1,1) = 5;mat_b(1,2) = 6;
@@ -32,6 +33,8 @@ int main(void) {
   std::cout << std::endl << "det(mat_a) = " << det(mat_a) << std::endl;
   std::cout << std::endl << "mat_a .* mat_b = " << mat_a * mat_b;
   std::cout << std::endl << "mat_a * mat_b = " << mult(mat_a,mat_b);
+
+  std::cout << std::endl << "mat_a = " << std::endl << mat_a(mat_a.size() + 1);
 
   return 0;
 }
