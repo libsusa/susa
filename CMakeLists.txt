@@ -29,6 +29,8 @@ set(SRC_FILES src/rng.cpp
 
 add_library(susa ${SRC_FILES})
 
+add_subdirectory (examples)
+
 add_subdirectory (test)
 enable_testing ()
 add_test (NAME check COMMAND ./test/check)

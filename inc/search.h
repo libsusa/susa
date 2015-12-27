@@ -19,7 +19,7 @@
  * @file search.h
  * @brief Search routines
  * This file containes special search routines.
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  *
  * @defgroup Search Search
@@ -27,6 +27,8 @@
 
 #ifndef SEARCH_H
 #define SEARCH_H
+
+#include "debug.h"
 
 namespace susa {
 /**

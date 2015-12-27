@@ -15,11 +15,10 @@
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  * @file rrcosine.cpp
  * @brief Basic communiaction blocks
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 

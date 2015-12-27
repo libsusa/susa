@@ -18,11 +18,11 @@
 /**
  * @file svd.cpp
  * @brief Singular Value Decomposition (SVD)
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
-#include "../inc/susa.h"
+#include "susa.h"
 
 namespace susa {
 

@@ -18,11 +18,11 @@
 /**
  * @file mt.cpp
  * @brief Random Number Generator
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
-#include "../inc/susa.h"
+#include "susa.h"
 
 namespace susa {
 

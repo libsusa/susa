@@ -19,12 +19,12 @@
  * @file modulation.cpp
  * @brief This file contains methods that implement digital base-band communication schemes.
  * <i>Modulation</i> is the term that is being used in the communications theory.
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
 
-#include "../inc/susa.h"
+#include "susa.h"
 
 namespace susa {
 
