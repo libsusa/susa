@@ -9,7 +9,7 @@ Susa is a mathematics and signal processing C++ framework based on KISS principl
  - Channel equalizers (Viterbi and BCJR decoders).
 
 ## Build and Test Susa
-To build Susa you need to have [CMake](https://cmake.org) installed.
+To build Susa you need to have a C++ compiler, *Make* and [CMake](https://cmake.org) installed.
 
 ```
 mkdir build
@@ -22,7 +22,7 @@ It is highly recommended to run the tests after the build.
 ```
 make test
 ```
-should you verify which test(s) has/have been failed, run the following for more detailed report.
+Should you verify which test(s) has/have been failed, run the following for a more detailed report.
 
 ```
 ctest -V
