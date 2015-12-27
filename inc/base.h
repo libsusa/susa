@@ -170,12 +170,12 @@ unsigned int pow(unsigned int uint_b, unsigned int uint_p);
 int pow(int int_b, unsigned int uint_p);
 
 /**
- * @brief ncdf
+ * @brief Normal Cumulative Distribution Function (CDF)
  *
  * @param x input argument
  * @ingroup Math
  */
-double ncdf(const double x);
+double normcdf(const double x);
 
 /**
  * @brief qfunc
@@ -385,5 +385,3 @@ template <class T> matrix <T> log(const matrix <T> &mat_arg) {
 
 } // NAMESPACE SUSA
 #endif
-
-

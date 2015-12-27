@@ -24,7 +24,7 @@
 
 
 
-#include "../inc/susa.h"
+#include "susa.h"
 
 namespace susa {
 
@@ -226,4 +226,3 @@ unsigned int rng::extractNumber(int i) {
 }
 
 }
-

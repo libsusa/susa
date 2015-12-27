@@ -17,7 +17,7 @@
 
 /**
  This program simulates a 16-QAM modem over AWGN channel using Susa.
- The output is a list of Eb/N0 vs. Symbol Error Rate (SER). 
+ The output is a list of Eb/N0 vs. Symbol Error Rate (SER).
  */
 
 

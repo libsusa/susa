@@ -37,9 +37,10 @@ int main(int argc, char const *argv[]) {
   SUSA_TEST_EQ_DOUBLE(susa::normcdf(0.5),0.6915, "Normal Cumulative Distribution Function");
 
   std::cout << std::endl << " -----------------";
-  std::cout << std::endl << "NUMBER OF FAILED TESTS(" << uint_failed <<")";
-  std::cout << std::endl << "NUMBER OF PASSED TESTS(" << uint_passed <<")";
-  std::cout << std::endl << "TOTAL NUMBER OF TESTS (" << uint_total <<")";
+  std::cout << std::endl << " NUMBER OF FAILED TESTS(" << uint_failed <<")";
+  std::cout << std::endl << " NUMBER OF PASSED TESTS(" << uint_passed <<")";
+  std::cout << std::endl << " TOTAL NUMBER OF TESTS (" << uint_total <<")";
+  std::cout << std::endl;
 
   return (uint_failed);
 }

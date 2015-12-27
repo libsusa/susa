@@ -89,4 +89,3 @@ template <class T> double stdv(std::vector <T> vec_arg) {
 }
 } // NAMESPACE SUSA
 #endif // STATISTICS_H
-

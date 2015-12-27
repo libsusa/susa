@@ -52,4 +52,3 @@ class RRCosine {
 template <class T> int antipodal(T T_arg);
 }
 #endif
-

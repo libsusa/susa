@@ -144,5 +144,3 @@ class rng {
 }
 
 #endif // RNG_H
-
-

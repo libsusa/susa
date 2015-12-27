@@ -23,11 +23,11 @@
  */
 
 
-#include "../inc/susa.h"
+#include "susa.h"
 
 namespace susa {
 
-double ncdf(const double x) {
+double normcdf(const double x) {
     // maximum absolute error : 7.5E-8
 
     double dbl_ret = 0;

@@ -81,4 +81,3 @@ template <class T> int antipodal(T T_arg) {
 }
 
 }
-

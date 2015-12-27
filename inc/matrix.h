@@ -109,6 +109,11 @@ template <class T> class matrix {
     //! Copy constructor
     matrix(const matrix <T> &mat_arg);
 
+#ifdef HAS_MOVE_SEMANTICS
+    //! Copy Constructor for rvalue
+    matrix(matrix <T> &&mat_arg);
+#endif
+
     matrix(std::string str_string);
 
     //! Returns the value of a specific (row, column)
@@ -322,7 +327,7 @@ template <class T> matrix <T>::matrix(const matrix <T> &mat_arg) {
             _matrix = new T [uint_size];
         } catch ( std::bad_alloc ex) {
           SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
-          std::exit(EXIT_FAILURE); // assert may be disabled but we exit anyway !
+          std::exit(EXIT_FAILURE); // the assert may be disabled but we exit anyway !
         }
 
         uint_rows = mat_arg.uint_rows;
@@ -350,6 +355,19 @@ template <class T> matrix <T>::matrix(const matrix <T> &mat_arg) {
     uint_object_counter++;
 
 }
+
+#ifdef HAS_MOVE_SEMANTICS
+
+template <class T> matrix <T>::matrix(matrix&& mat_arg) {
+
+    uint_rows = mat_arg.uint_rows;
+    uint_cols = mat_arg.uint_cols;
+
+    _matrix = mat_arg._matrix;
+    mat_arg._matrix = nullptr;
+}
+
+#endif
 
 template <class T> matrix <T>::matrix(std::string str_string) {
 
@@ -864,8 +882,10 @@ template <class T> matrix<T> operator/( T T_arg, const matrix <T> &mat_argr ) {
     //
     // NOT IMPLEMENTED YET
     //
+    SUSA_ASSERT_MESSAGE(false, "NOT IMPLEMENTED YET");
     return mat_temp;
 }
+
 //  -=
 template <class T> matrix<T> matrix <T>::operator-=(const matrix <T> &mat_arg) {
 

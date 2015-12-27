@@ -66,4 +66,3 @@ std::string timestamp();
 } // NAMESPACE SUSA
 
 #endif
-

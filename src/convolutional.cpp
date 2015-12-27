@@ -390,4 +390,3 @@ std::string convolutional_codec::UIntToBinChar(unsigned int uint_register) {
 }
 
 }      // NAMESPACE SUSA
-
