@@ -61,7 +61,7 @@ template <class T> matrix <T> mult(const matrix <T> &mat_argl,const matrix <T> &
 template <class T> matrix <T> transpose(const matrix <T> &mat_arg);
 
 /**
- * @brief Matrix template class
+ * @brief The <i>matrix</i> class
  *
  * @ingroup LALG
  *
@@ -71,13 +71,8 @@ template <class T> class matrix {
     unsigned int uint_rows;
     unsigned int uint_cols;
 
-    unsigned int uint_id;
-    unsigned int *uint_gc_index;
-    static unsigned int uint_object_counter;
-
-
     T* _matrix;
-    T Tfake;
+    T* T_fake;
 
     // UTILITY METHODS
 
@@ -95,7 +90,7 @@ template <class T> class matrix {
      * @param uint_col Number of columns
      * @param initial Initial value of all rows and columns. If not set, the initial value will be zero.
      */
-    matrix( unsigned int uint_rows, unsigned int uint_cols, T Tinitial);
+    matrix( unsigned int uint_rows, unsigned int uint_cols, T Tinitial );
 
     /** Constructor
      * @param uint_row Number of rows
@@ -103,17 +98,19 @@ template <class T> class matrix {
      */
     matrix( unsigned int uint_rows, unsigned int uint_cols );
 
-    //! Destructor
-    ~matrix();
-
     //! Copy constructor
     matrix(const matrix <T> &mat_arg);
 
 #ifdef HAS_MOVE_SEMANTICS
-    //! Copy Constructor for rvalue
+    //! Copy Constructor for rvalues
     matrix(matrix <T> &&mat_arg);
 #endif
+    //! Destructor
+    ~matrix();
 
+    /** Constructor
+    * @param str_string string representation of the matrix
+    */
     matrix(std::string str_string);
 
     //! Returns the value of a specific (row, column)
@@ -122,8 +119,6 @@ template <class T> class matrix {
     //! Returns the value of a specific (elem)
     T get( unsigned int uint_elem ) const;
 
-    //! Returns the value of specific (elem)
-    unsigned int get_id() const;
 
     //! Returns the number of columns
     unsigned int no_cols() const;
@@ -249,27 +244,19 @@ template <class T> class matrix {
     friend matrix <T> transpose<>(const matrix <T> &mat_arg);
 };
 
-// Static constants
-template <class T> unsigned int matrix <T>::uint_object_counter = 100;
-
 // Constructor and Destructor
 
-template <class T> matrix <T>::matrix() {
-    this->uint_rows = 0;
-    this->uint_cols = 0;
-
-    _matrix = NULL;
-
-    Tfake = 0;
-
-    uint_gc_index = new unsigned int;
-    *uint_gc_index = 0;
-
-    uint_id = uint_object_counter;
-    uint_object_counter++;
+template <class T> matrix <T>::matrix()
+: T_fake(new T)
+{
+  uint_rows = 0;
+  uint_cols = 0;
+  _matrix = NULL;
 }
 
-template <class T> matrix <T>::matrix(unsigned int uint_rows, unsigned int uint_cols, T Tinitial) {
+template <class T> matrix <T>::matrix(unsigned int uint_rows, unsigned int uint_cols, T Tinitial)
+: T_fake(new T)
+{
 
   SUSA_ASSERT(uint_cols > 0 && uint_rows > 0);
 
@@ -283,19 +270,11 @@ template <class T> matrix <T>::matrix(unsigned int uint_rows, unsigned int uint_
         SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
         std::exit(EXIT_FAILURE); // assert may be disabled but we exit anyway !
     }
-
-    Tfake = 0;
-
-    uint_gc_index = new unsigned int;
-    *uint_gc_index = 0;
-
-    uint_id = uint_object_counter;
-    uint_object_counter++;
-
 }
 
-template <class T> matrix <T>::matrix( unsigned int uint_rows, unsigned int uint_cols ) {
-
+template <class T> matrix <T>::matrix( unsigned int uint_rows, unsigned int uint_cols )
+: T_fake(new T)
+{
     SUSA_ASSERT(uint_cols > 0 && uint_rows > 0);
 
     this->uint_rows = uint_rows < 2 ? 1 : uint_rows;
@@ -308,17 +287,11 @@ template <class T> matrix <T>::matrix( unsigned int uint_rows, unsigned int uint
         SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
         std::exit(EXIT_FAILURE); // assert may be disabled but we exit anyway !
     }
-    Tfake = 0;
-
-    uint_gc_index = new unsigned int;
-    *uint_gc_index = 0;
-
-    uint_id = uint_object_counter;
-    uint_object_counter++;
-
 }
 
-template <class T> matrix <T>::matrix(const matrix <T> &mat_arg) {
+template <class T> matrix <T>::matrix(const matrix <T> &mat_arg)
+: T_fake(new T)
+{
     unsigned int uint_size = mat_arg.uint_rows * mat_arg.uint_cols;
 
     if (uint_size != 0) {
@@ -345,47 +318,30 @@ template <class T> matrix <T>::matrix(const matrix <T> &mat_arg) {
             _matrix = NULL;
         }
     }
-
-    Tfake = 0;
-
-    uint_gc_index = new unsigned int;
-    *uint_gc_index = 0;
-
-    uint_id = uint_object_counter;
-    uint_object_counter++;
-
 }
 
 #ifdef HAS_MOVE_SEMANTICS
 
 template <class T> matrix <T>::matrix(matrix&& mat_arg) {
 
-    uint_rows = mat_arg.uint_rows;
-    uint_cols = mat_arg.uint_cols;
+  uint_rows = mat_arg.uint_rows;
+  uint_cols = mat_arg.uint_cols;
 
-    _matrix = mat_arg._matrix;
-    mat_arg._matrix = nullptr;
+  _matrix = mat_arg._matrix;
+  mat_arg._matrix = nullptr;
 }
 
 #endif
 
-template <class T> matrix <T>::matrix(std::string str_string) {
+template <class T> matrix <T>::matrix(std::string str_string)
+: T_fake(new T)
+{
+  uint_rows = 0;
+  uint_cols = 0;
+  _matrix = NULL;
 
-    this->uint_rows = 0;
-    this->uint_cols = 0;
-
-    _matrix = NULL;
-
-    parser(str_string);
-    Tfake = 0;
-
-    uint_gc_index = new unsigned int;
-    *uint_gc_index = 0;
-
-    uint_id = uint_object_counter;
-    uint_object_counter++;
+  parser(str_string);
 }
-
 
 template <class T> matrix <T>::~matrix() {
 
@@ -394,12 +350,7 @@ template <class T> matrix <T>::~matrix() {
         _matrix = NULL;
     }
 
-    if (uint_gc_index != NULL) {
-        delete uint_gc_index;
-        uint_gc_index = NULL;
-    }
-
-    uint_object_counter--;
+    delete T_fake;
 }
 
 // Public methods
@@ -414,24 +365,20 @@ template <class T> T matrix <T>::get( unsigned int uint_row, unsigned int uint_c
       return _matrix[uint_row + uint_col * uint_rows];
   }
 
-  return Tfake;
+  return *T_fake;
 }
 
 template <class T> T matrix <T>::get( unsigned int uint_elem ) const {
 
   SUSA_ASSERT(_matrix != NULL);
 
-  SUSA_ASSERT_MESSAGE(uint_elem < uint_cols * uint_rows, "the element index is out of range");
+  SUSA_ASSERT_MESSAGE(uint_elem >= uint_cols * uint_rows, "the element index is out of range");
 
   if (uint_elem < uint_cols * uint_rows && _matrix != NULL) {
     return _matrix[uint_elem];
   }
 
-  return Tfake;
-}
-
-template <class T> unsigned int matrix <T>::get_id() const {
-    return uint_id;
+  return *T_fake;
 }
 
 template <class T> unsigned int  matrix <T>::no_cols() const {
@@ -453,10 +400,12 @@ template <class T> void  matrix <T>::set_all(T T_arg) {
 }
 
 template <class T> matrix <T> matrix <T>::row(unsigned int uint_row) const {
-    matrix <T> mat_ret(1,uint_cols);
+    matrix <T> mat_ret(1, uint_cols);
 
     if (uint_row < uint_rows) {
-        for (unsigned int uint_i = 0; uint_i < uint_cols; uint_i++) mat_ret(uint_i) = _matrix[uint_i*uint_rows + uint_row];
+        for (unsigned int uint_i = 0; uint_i < uint_cols; uint_i++) {
+          mat_ret(uint_i) = _matrix[uint_i * uint_rows + uint_row];
+        }
     }
 
     return mat_ret;
@@ -467,7 +416,7 @@ template <class T> matrix <T> matrix <T>::col(unsigned int uint_col) const {
 
     if (uint_col < uint_cols) {
         for (unsigned int uint_i = 0; uint_i < uint_rows; uint_i++) {
-          mat_ret(uint_i) = _matrix[uint_col*uint_rows + uint_i];
+          mat_ret(uint_i) = _matrix[uint_col * uint_rows + uint_i];
         }
     }
 
@@ -568,7 +517,9 @@ template <class T> matrix <T> matrix <T>::mid(unsigned int uint_begin, unsigned 
         else if (uint_rows != 1 && uint_cols == 1) mat_ret = matrix <T> (uint_mid + 1,1);
         else if (uint_rows != 1 && uint_cols != 1) mat_ret = matrix <T> (uint_mid + 1,1);
 
-        for (unsigned int uint_i = uint_begin; uint_i <= uint_end; uint_i++) mat_ret(uint_i - uint_begin) = _matrix[uint_i];
+        for (unsigned int uint_i = uint_begin; uint_i <= uint_end; uint_i++) {
+          mat_ret(uint_i - uint_begin) = _matrix[uint_i];
+        }
     }
 
     return mat_ret;
@@ -587,7 +538,7 @@ template <class T> T &matrix<T>::operator ()( unsigned int uint_row, unsigned in
       return _matrix[uint_row + uint_col * uint_rows];
   }
 
-  return Tfake;
+  return *T_fake;
 }
 
 template <class T> T matrix<T>::operator ()( unsigned int uint_row, unsigned int uint_col ) const {
@@ -604,7 +555,7 @@ template <class T> T &matrix<T>::operator ()( unsigned int uint_elem ) {
       return _matrix[uint_elem];
     }
 
-    return Tfake;
+    return *T_fake;
 }
 
 template <class T> T matrix<T>::operator ()( unsigned int uint_elem ) const {
