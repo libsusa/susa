@@ -16,7 +16,7 @@
  */
 
 
-// #define SUSA_NDEBUG
+//#define SUSA_NDEBUG
 
 #include "susa.h"
 
@@ -35,6 +35,17 @@ int main(void) {
   std::cout << std::endl << "det(mat_a) = " << det(mat_a) << std::endl;
   std::cout << std::endl << "mat_a .* mat_b = " << mat_a * mat_b;
   std::cout << std::endl << "mat_a * mat_b = " << mult(mat_a,mat_b);
+
+  susa::mmatrix <double> mat_m({21,6,5,15,43});
+  mat_m(2,4,3,0,1) = 55.4;
+  std::cout << std::endl << "mat_m = " << mat_m.get({2,4,3,0,1});
+  std::cout << std::endl << "mat_m = " << mat_m.get(2,4,3,0,1);
+  std::cout << std::endl << "mat_m = " << mat_m(2,4,3,0,1);
+
+  std::cout << std::endl << "mat_m = " << mat_m.get(21*6*5*15*4);
+
+
+
 
   // this line demonstrate SUSA_ASSERT_MESSAGE macro usage.
   // to disable the message and the abortion of the software uncomment "#define SUSA_NDEBUG"

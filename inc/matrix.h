@@ -17,12 +17,12 @@
 
 /**
  * @file matrix.h
- * @brief The matrix operation wrapper class.
+ * @brief The matrix class.
  * This file contains the <i>matrix template class</i>. This is a non-intrinsic data type that is
- * exploited in Susa. Use this method if you need two dimensional matrices or vectors. It has been
+ * used in Susa. Use this class if you need two dimensional matrices or vectors. It has been
  * designed such that the matrix elements can be accessed as vector elements. This class handles
- * the cloning of the matrices when the assignment operator used. It has the mechanisms to release
- * the allocated memory.
+ * the cloning of the matrices when the assignment operator is used.
+ * It has the necessary memeory management mechanisms to release the allocated memory.
  * @author Behrooz Aliabadi
  * @version 1.0.0
  */

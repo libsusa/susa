@@ -18,14 +18,14 @@
 /**
  * @file susa.h
  * @brief Package Header
- * @author Behrooz, Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
 /**
  * @mainpage Susa Documentation
  *
- * @author Behrooz, Aliabadi
+ * @author Behrooz Kamary Aliabadi
  *
  * @section intro Introduction
  * <p> Susa is a library of utility classes and methods (functions) for signal processing and mathematics applications.
@@ -53,14 +53,14 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
+#include <initializer_list>
+#include <typeinfo>
 
 // Constants
 #define PI  3.1415926535897932384626433
 
-// Compile Switches
-#define _SUSA_TERMINATE_ON_ERROR  // If defined the process terminates with 'exit(1)' on fatal errors.
-
 #include "matrix.h"
+#include "mmatrix.h"
 #include "base.h"
 #include "svd.h"
 #include "statistics.h"
