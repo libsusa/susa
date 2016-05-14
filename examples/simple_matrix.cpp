@@ -29,22 +29,21 @@ int main(void) {
   mat_b(1,0) = 4;mat_b(1,1) = 5;mat_b(1,2) = 6;
   mat_b(2,0) = 7;mat_b(2,1) = 8;mat_b(2,2) = 9;
 
-  std::cout << std::endl << "mat_a = " << std::endl << mat_a;
-  std::cout << std::endl << "mat_b = " << std::endl << mat_b;
+  std::cout << std::endl << "mat_a            = " << std::endl << mat_a;
+  std::cout << std::endl << "mat_b            = " << std::endl << mat_b;
   std::cout << std::endl << "transpose(mat_a) = " << std::endl << transpose(mat_a);
-  std::cout << std::endl << "det(mat_a) = " << det(mat_a) << std::endl;
-  std::cout << std::endl << "mat_a .* mat_b = " << mat_a * mat_b;
-  std::cout << std::endl << "mat_a * mat_b = " << mult(mat_a,mat_b);
+  std::cout << std::endl << "det(mat_a)       = " << det(mat_a) << std::endl;
+  std::cout << std::endl << "mat_a .* mat_b   = " << mat_a * mat_b;
+  std::cout << std::endl << "mat_a * mat_b    = " << mult(mat_a,mat_b);
 
-  susa::mmatrix <double> mat_m({21,6,5,15,43});
-  mat_m(2,4,3,0,1) = 55.4;
-  std::cout << std::endl << "mat_m = " << mat_m.get({2,4,3,0,1});
-  std::cout << std::endl << "mat_m = " << mat_m.get(2,4,3,0,1);
-  std::cout << std::endl << "mat_m = " << mat_m(2,4,3,0,1);
-
-  std::cout << std::endl << "mat_m = " << mat_m.get(21*6*5*15*4);
-
-
+  susa::array <double> arr({21,6,5,15,43});
+  arr(2,4,3,0,1) = 55.4;
+  std::cout << std::endl << "arr.get({2,4,3,0,1})         = " << arr.get({2,4,3,0,1});
+  std::cout << std::endl << "arr.get(2,4,3,0,1)           = " << arr.get(2,4,3,0,1);
+  std::cout << std::endl << "arr(2,4,3,0,1)               = " << arr(2,4,3,0,1);
+  std::cout << std::endl << "arr.get(21*6*5*15*4)         = " << arr.get(21*6*5*15*4);
+  std::cout << std::endl << "arr.get_raw_index(2,4,3,0,1) = " << arr.get_raw_index(2,4,3,0,1);
+  std::cout << std::endl;
 
 
   // this line demonstrate SUSA_ASSERT_MESSAGE macro usage.

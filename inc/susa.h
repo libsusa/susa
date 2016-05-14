@@ -60,7 +60,7 @@
 #define PI  3.1415926535897932384626433
 
 #include "matrix.h"
-#include "mmatrix.h"
+#include "array.h"
 #include "base.h"
 #include "svd.h"
 #include "statistics.h"
