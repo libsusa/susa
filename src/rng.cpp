@@ -113,7 +113,7 @@ double rng::rand() {
 double rng::randn() {
     // Returns a single Gaussian random number
     // Box-Muller transform
-    double x1, x2, w, y1, y2;
+    double x1, x2, w, y1;
 
     do {
         x1 = 2.0 * rand() - 1.0;
@@ -123,7 +123,6 @@ double rng::randn() {
 
     w = std::sqrt( (-2.0 * std::log( w ) ) / w );
     y1 = x1 * w;
-    y2 = x2 * w;
 
     return (y1);
 }

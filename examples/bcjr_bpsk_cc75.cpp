@@ -80,9 +80,9 @@ int main(void) {
         mat_l_ln = susa::log(mat_l);
         mat_l_sign = susa::sign(mat_l_ln);
 
-        for (int inti = 0; inti < uint_num_stages; inti++) if (mat_l_sign(inti) == -1) mat_l_sign(inti) = 0;
+        for (unsigned int inti = 0; inti < uint_num_stages; inti++) if (mat_l_sign(inti) == -1) mat_l_sign(inti) = 0;
 
-        for (int inti = 0; inti < uint_num_stages; inti++) if (mat_l_sign(inti) != mat_bits(inti)) mat_err(EbN0db)++;
+        for (unsigned int inti = 0; inti < uint_num_stages; inti++) if (mat_l_sign(inti) != mat_bits(inti)) mat_err(EbN0db)++;
 
 
         cout << "Eb/N0 = " << EbN0db << " \t \t" << "BER  =  " << ((double)mat_err(EbN0db)/_N) << endl;
