@@ -1,33 +1,32 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 project(susa)
 
 set(BUILD_SHARED_LIBS ON)
 
 if(APPLE)
+  message (STATUS "Mac OSX detected.")
   set(CMAKE_MACOSX_RPATH ON)
 endif(APPLE)
 
-if(UNIX)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
-endif(UNIX)
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (${OPTIMIZED_BUILD})
-  message(STATUS "Optimized build is ON")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-endif(${OPTIMIZED_BUILD})
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-include_directories(inc)
-set(SRC_FILES src/rng.cpp
-              src/mt.cpp
-              src/base.cpp
-              src/convolutional.cpp
-              src/matrix.cpp
-              src/modulation.cpp
-              src/rrcosine.cpp
-              src/svd.cpp
-              src/utility.cpp)
 
-add_library(susa ${SRC_FILES})
+include_directories (inc)
+set (SRC_FILES src/rng.cpp
+               src/mt.cpp
+               src/base.cpp
+               src/convolutional.cpp
+               src/matrix.cpp
+               src/modulation.cpp
+               src/rrcosine.cpp
+               src/svd.cpp
+               src/utility.cpp)
+
+add_library (susa ${SRC_FILES})
 
 add_subdirectory (examples)
 
