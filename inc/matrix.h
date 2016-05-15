@@ -267,7 +267,7 @@ template <class T> matrix <T>::matrix(unsigned int uint_rows, unsigned int uint_
         _matrix = new T [this->uint_rows * this->uint_cols];
         for (unsigned int uint_counter = 0; uint_counter < this->uint_rows * this->uint_cols; uint_counter++) _matrix[uint_counter] = Tinitial;
     } catch ( std::bad_alloc ex) {
-        SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
+        SUSA_ASSERT_MESSAGE(false, "memory allocation exception.");
         std::exit(EXIT_FAILURE); // assert may be disabled but we exit anyway !
     }
 }
@@ -284,7 +284,7 @@ template <class T> matrix <T>::matrix( unsigned int uint_rows, unsigned int uint
         _matrix = new T [this->uint_rows * this->uint_cols];
         for (unsigned int uint_counter = 0; uint_counter < this->uint_rows * this->uint_cols; uint_counter++) _matrix[uint_counter] = 0;
     } catch ( std::bad_alloc ex) {
-        SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
+        SUSA_ASSERT_MESSAGE(false, "memory allocation exception.");
         std::exit(EXIT_FAILURE); // assert may be disabled but we exit anyway !
     }
 }
@@ -299,7 +299,7 @@ template <class T> matrix <T>::matrix(const matrix <T> &mat_arg)
         try {
             _matrix = new T [uint_size];
         } catch ( std::bad_alloc ex) {
-          SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
+          SUSA_ASSERT_MESSAGE(false, "memory allocation exception.");
           std::exit(EXIT_FAILURE); // the assert may be disabled but we exit anyway !
         }
 
@@ -359,7 +359,7 @@ template <class T> T matrix <T>::get( unsigned int uint_row, unsigned int uint_c
 
   SUSA_ASSERT(_matrix != NULL);
 
-  SUSA_ASSERT_MESSAGE(uint_row < uint_rows && uint_col < uint_cols, "one or more indices are out of range");
+  SUSA_ASSERT_MESSAGE(uint_row < uint_rows && uint_col < uint_cols, "one or more indices are out of range.");
 
   if (uint_row < uint_rows && uint_col < uint_cols && _matrix != NULL) {
       return _matrix[uint_row + uint_col * uint_rows];
@@ -372,7 +372,7 @@ template <class T> T matrix <T>::get( unsigned int uint_elem ) const {
 
   SUSA_ASSERT(_matrix != NULL);
 
-  SUSA_ASSERT_MESSAGE(uint_elem >= uint_cols * uint_rows, "the element index is out of range");
+  SUSA_ASSERT_MESSAGE(uint_elem < uint_cols * uint_rows, "the element index is out of range.");
 
   if (uint_elem < uint_cols * uint_rows && _matrix != NULL) {
     return _matrix[uint_elem];
@@ -433,7 +433,7 @@ template <class T> matrix <T> matrix <T>::shrink(unsigned int uint_elim_row, uns
     //TODO: it should be verified; this condition may be incorrect
     SUSA_ASSERT_MESSAGE(uint_cols > 1 && uint_rows > 1
       && uint_elim_row >= 0 && uint_elim_col >= 0,
-      "the input arguments error");
+      "the input arguments error.");
 
     if (uint_cols > 1 && uint_rows > 1 && uint_elim_row >= 0 && uint_elim_col >= 0) {
         mat_ret = matrix <T> (uint_rows - 1,uint_cols - 1);
@@ -443,7 +443,7 @@ template <class T> matrix <T> matrix <T>::shrink(unsigned int uint_elim_row, uns
 
 
     SUSA_ASSERT_MESSAGE(uint_elim_col < uint_cols && uint_elim_row < uint_rows,
-      "the input arguments exceed matrix size");
+      "the input arguments exceed matrix size.");
 
     if (uint_elim_col < uint_cols && uint_elim_row < uint_rows) {
         for ( unsigned int uint_row = 0; uint_row < uint_rows; uint_row++ ) {
@@ -532,7 +532,7 @@ template <class T> T &matrix<T>::operator ()( unsigned int uint_row, unsigned in
 
   SUSA_ASSERT(_matrix != NULL);
 
-  SUSA_ASSERT_MESSAGE(uint_row < uint_rows && uint_col < uint_cols, "one or more indices are out of range");
+  SUSA_ASSERT_MESSAGE(uint_row < uint_rows && uint_col < uint_cols, "one or more indices are out of range.");
 
   if (uint_row < uint_rows && uint_col < uint_cols && _matrix != NULL) {
       return _matrix[uint_row + uint_col * uint_rows];
@@ -549,7 +549,7 @@ template <class T> T &matrix<T>::operator ()( unsigned int uint_elem ) {
 
     SUSA_ASSERT(_matrix != NULL);
 
-    SUSA_ASSERT_MESSAGE(uint_elem < uint_cols * uint_rows, "the index is out of range");
+    SUSA_ASSERT_MESSAGE(uint_elem < uint_cols * uint_rows, "the index is out of range.");
 
     if (uint_elem < uint_cols * uint_rows && _matrix != NULL) {
       return _matrix[uint_elem];
@@ -673,7 +673,7 @@ template <class T> matrix<T> operator+(const matrix <T> &mat_argl, const matrix 
 
     SUSA_ASSERT_MESSAGE((mat_argl.uint_rows == mat_argr.uint_rows)
       && (mat_argl.uint_cols == mat_argr.uint_cols),
-      "the matrices have different sizes");
+      "the matrices have different sizes.");
 
     if ((mat_argl.uint_rows == mat_argr.uint_rows) && (mat_argl.uint_cols == mat_argr.uint_cols)) {
         for ( unsigned int uint_index = 0; uint_index < uint_size; uint_index++ ) {
@@ -718,7 +718,7 @@ template <class T> matrix<T> operator-( const matrix <T> &mat_argl, const matrix
 
     SUSA_ASSERT_MESSAGE((mat_argl.uint_rows == mat_argr.uint_rows)
       && (mat_argl.uint_cols == mat_argr.uint_cols),
-      "the matrices have different sizes");
+      "the matrices have different sizes.");
 
     if ((mat_argl.uint_rows == mat_argr.uint_rows) && (mat_argl.uint_cols == mat_argr.uint_cols)) {
         for ( unsigned int uint_index = 0; uint_index < uint_size; uint_index++ ) {
@@ -761,7 +761,7 @@ template <class T> matrix<T> operator*( const matrix <T> &mat_argl, const matrix
 
     SUSA_ASSERT_MESSAGE((mat_argl.uint_rows == mat_argr.uint_rows)
       && (mat_argl.uint_cols == mat_argr.uint_cols),
-      "the matrices have different sizes");
+      "the matrices have different sizes.");
 
     if ((mat_argl.uint_rows == mat_argr.uint_rows) && (mat_argl.uint_cols == mat_argr.uint_cols)) {
         for ( unsigned int uint_index = 0; uint_index < uint_size; uint_index++ ) {
@@ -804,7 +804,7 @@ template <class T> matrix<T> operator/( const matrix <T> &mat_argl, const matrix
 
     SUSA_ASSERT_MESSAGE((mat_argl.uint_rows == mat_argr.uint_rows)
       && (mat_argl.uint_cols == mat_argr.uint_cols),
-      "the matrices have different sizes");
+      "the matrices have different sizes.");
 
     if ((mat_argl.uint_rows == mat_argr.uint_rows) && (mat_argl.uint_cols == mat_argr.uint_cols)) {
         for ( unsigned int uint_index = 0; uint_index < uint_size; uint_index++ ) {
@@ -833,7 +833,7 @@ template <class T> matrix<T> operator/( T T_arg, const matrix <T> &mat_argr ) {
     //
     // NOT IMPLEMENTED YET
     //
-    SUSA_ASSERT_MESSAGE(false, "NOT IMPLEMENTED YET");
+    SUSA_ASSERT_MESSAGE(false, "NOT IMPLEMENTED YET.");
     return mat_temp;
 }
 
@@ -846,7 +846,7 @@ template <class T> matrix<T> matrix <T>::operator-=(const matrix <T> &mat_arg) {
 
     SUSA_ASSERT_MESSAGE((mat_arg.uint_rows == uint_rows)
       && (mat_arg.uint_cols == uint_cols),
-      "the matrices have different sizes");
+      "the matrices have different sizes.");
 
     if ((mat_arg.uint_rows == uint_rows) && (mat_arg.uint_cols == uint_cols) && _matrix != NULL) {
         for (unsigned int uint_index = 0; uint_index < uint_size; uint_index++) {
@@ -866,7 +866,7 @@ template <class T> matrix<T> matrix <T>::operator+=(const matrix <T> &mat_arg) {
 
     SUSA_ASSERT_MESSAGE((mat_arg.uint_rows == uint_rows)
       && (mat_arg.uint_cols == uint_cols),
-      "the matrices have different sizes");
+      "the matrices have different sizes.");
 
     if ((mat_arg.uint_rows == uint_rows) && (mat_arg.uint_cols == uint_cols) && _matrix != NULL) {
         for (unsigned int uint_index = 0; uint_index < uint_size; uint_index++) {
@@ -895,7 +895,7 @@ template <class T> matrix<T>& matrix <T>::operator=( const matrix <T> &mat_arg )
                 try {
                     _matrix = new T [uint_size];
                 } catch ( std::bad_alloc ex) {
-                    SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
+                    SUSA_ASSERT_MESSAGE(false, "memory allocation exception.");
                     std::exit(EXIT_FAILURE);
                 }
 
@@ -939,7 +939,7 @@ template <class T> matrix<T> matrix <T>::operator=( const matrix <T> &mat_arg ) 
                 try {
                     _matrix = new T [uint_size];
                 } catch ( std::bad_alloc ex) {
-                  SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
+                  SUSA_ASSERT_MESSAGE(false, "memory allocation exception.");
                   std::exit(EXIT_FAILURE);
                 }
 
@@ -1023,7 +1023,7 @@ template <class T> void matrix <T>::parser(std::string str_string) {
     uint_size = uint_cols_ * uint_rows_;
 
     SUSA_ASSERT_MESSAGE(uint_cols_ % uint_rows_ == 0,
-      "the number of columns are not equal in each row");
+      "the number of columns are not equal in each row.");
 
     if (uint_cols_ % uint_rows_ != 0) {
         return;
@@ -1042,7 +1042,7 @@ template <class T> void matrix <T>::parser(std::string str_string) {
             try {
                 _matrix = new T [uint_size];
             } catch ( std::bad_alloc ex) {
-              SUSA_ASSERT_MESSAGE(false, "memory allocation exception");
+              SUSA_ASSERT_MESSAGE(false, "memory allocation exception.");
               std::exit(EXIT_FAILURE);
             }
 
