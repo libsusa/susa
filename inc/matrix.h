@@ -129,6 +129,9 @@ template <class T> class matrix {
     //! Returns the size of matrix
     unsigned int size() const;
 
+    //! Returns true if the matrix is square
+    bool is_square() const;
+
     //! Returns the size of matrix
     void set_all(T T_arg);
 
@@ -391,6 +394,10 @@ template <class T> unsigned int  matrix <T>::no_rows() const {
 
 template <class T> unsigned int  matrix <T>::size() const {
     return (uint_rows * uint_cols);
+}
+
+template <class T> bool matrix <T>::is_square() const {
+    return (uint_rows == uint_cols);
 }
 
 template <class T> void  matrix <T>::set_all(T T_arg) {
