@@ -44,7 +44,6 @@ template <class T> class fft {
     std::vector <T> radix2(std::vector <T> vec_arg);
   private:
     std::vector <T> bit_reverse(std::vector <T>);
-    unsigned short int log2(unsigned short int);
 };
 
 
@@ -54,7 +53,7 @@ template <class T> std::vector <T> fft<T>::radix2(std::vector <T> vec_arg) {
     std::complex <double> ct;
     T tTemp=0;
     int l=0;
-    unsigned short int usiStage = log2(N);
+    unsigned short int usiStage = susa::log2(N);
 
     for (int i=0; i<usiStage; i++) {                    // Stage counter
         for (int j=0; j<(1<<(usiStage-i-1)); j++) {     // Seperated butterflies
@@ -77,8 +76,8 @@ template <class T> std::vector <T> fft<T>::bit_reverse(std::vector <T> vec_arg) 
 
     for (unsigned short int i=1; i < N/2; i++ ) {
         intBR = 0;
-        for (unsigned short int j=0; j < log2(N); j++) {
-            intBR = intBR | (( i >> j)&1)<<(log2(N)-j-1);
+        for (unsigned short int j=0; j < susa::log2(N); j++) {
+            intBR = intBR | (( i >> j)&1)<<(susa::log2(N)-j-1);
         }
         TSwap = vec_arg[i];
         vec_arg[i] = vec_arg[intBR];
@@ -87,13 +86,5 @@ template <class T> std::vector <T> fft<T>::bit_reverse(std::vector <T> vec_arg) 
     return vec_arg;
 }
 
-template <class T> unsigned short int fft<T>::log2(unsigned short int x) {
-    unsigned short int r = 0;
-
-    while( (x >> r) != 0) {
-        r++;
-    }
-    return (r-1);
-}
 } // NAMESPACE SUSA
 #endif // FFT_H

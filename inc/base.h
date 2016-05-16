@@ -24,15 +24,15 @@
  * @defgroup Math Basic Mathematics
  */
 
-#ifndef BASE_H
-#define BASE_H
+#ifndef SUSA_BASE_H
+#define SUSA_BASE_H
 
 namespace susa {
 /**
- * @brief Min
+ * @brief Minimum value indices
  *
  * @param mat_arg
- * @return Returns minimum value in the input vector
+ * @return Returns minimum value indices in the input matrix
  * @ingroup Math
  */
 template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg);
@@ -40,10 +40,10 @@ template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg);
 
 
 /**
- * @brief Max
+ * @brief Maximum
  *
  * @param mat_arg
- * @return Returns maximum value in the input vector
+ * @return Returns maximum value in the input matrix
  * @ingroup Math
  */
 template <class T> matrix <unsigned int> max(const matrix <T> &mat_arg);
@@ -168,6 +168,14 @@ unsigned int pow(unsigned int uint_b, unsigned int uint_p);
  * @ingroup Math
  */
 int pow(int int_b, unsigned int uint_p);
+
+/**
+ * @brief log2
+ *
+ * @param uint_arg input argument
+ * @ingroup Math
+ */
+unsigned int log2(unsigned short int int_arg);
 
 /**
  * @brief Normal Cumulative Distribution Function (CDF)
@@ -383,5 +391,5 @@ template <class T> matrix <T> log(const matrix <T> &mat_arg) {
 }
 
 
-} // NAMESPACE SUSA
-#endif
+}       // NAMESPACE SUSA
+#endif  // SUSA_BASE_H
