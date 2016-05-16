@@ -18,6 +18,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 include_directories (inc)
 set (SRC_FILES src/rng.cpp
                src/mt.cpp
+               src/sets.cpp
                src/base.cpp
                src/convolutional.cpp
                src/matrix.cpp

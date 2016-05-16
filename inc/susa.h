@@ -59,6 +59,7 @@
 // Constants
 #define PI  3.1415926535897932384626433
 
+#include "sets.h"
 #include "matrix.h"
 #include "array.h"
 #include "base.h"
