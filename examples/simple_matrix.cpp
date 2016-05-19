@@ -1,16 +1,16 @@
 /*
  * This file is part of Susa.
-
+ *
  * Susa is free software: you can redistribute it and/or modify
  * it under the terms of the Lesser GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
-
+ *
  * Susa is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * Lesser GNU General Public License for more details.
-
+ *
  * You should have received a copy of the Lesser GNU General Public License
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,9 +18,10 @@
 
 //#define SUSA_NDEBUG
 
-#include "susa.h"
+#include <susa.h>
 
-int main(void) {
+int main(void)
+{
 
   susa::matrix <double> mat_a("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]");
 
@@ -45,6 +46,9 @@ int main(void) {
   std::cout << std::endl << "arr.get_raw_index(2,4,3,0,1) = " << arr.get_raw_index(2,4,3,0,1);
   std::cout << std::endl;
 
+
+
+  SUSA_LOG_INFO("Logs can be disabled by defining SUSA_NDEBUG.");
 
   // this line demonstrate SUSA_ASSERT_MESSAGE macro usage.
   // to disable the message and the abortion of the software uncomment "#define SUSA_NDEBUG"
