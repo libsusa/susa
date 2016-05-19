@@ -25,8 +25,8 @@
  * @version 1.0.0
  */
 
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef SUSA_DEBUG_H
+#define SUSA_DEBUG_H
 
 #include <iostream>
 #include <cassert>
@@ -54,5 +54,11 @@ namespace susa {
 #define SUSA_ASSERT_MESSAGE(EX,MSG) ((EX) ? (void)0 : susa::assert_log(__FILE__, __func__, __LINE__, #EX,#MSG))
 #endif
 
-
-#endif // DEBUG_H
+#ifdef SUSA_NDEBUG
+#define SUSA_LOG_INFO(MSG) ((void)0)
+#define SUSA_LOG_ERR(MSG)  ((void)0)
+#else
+#define SUSA_LOG_INFO(MSG) (std::cout << std::endl << "[INFO]"  << "[" << __func__ << "()]" << "[" << __LINE__ << "]  : " << MSG)
+#define SUSA_LOG_ERR(MSG)  (std::cerr << std::endl << "[ERROR]" << "[" << __func__ << "()]" << "[" << __LINE__ << "]  : " << MSG)
+#endif
+#endif // SUSA_DEBUG_H
