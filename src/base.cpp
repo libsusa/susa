@@ -1,16 +1,16 @@
 /*
  * This file is part of Susa.
-
+ *
  * Susa is free software: you can redistribute it and/or modify
  * it under the terms of the Lesser GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
-
+ *
  * Susa is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * Lesser GNU General Public License for more details.
-
+ *
  * You should have received a copy of the Lesser GNU General Public License
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,7 @@
  */
 
 
-#include "susa.h"
+#include <susa.h>
 
 namespace susa {
 
@@ -91,6 +91,18 @@ int pow(int int_b, unsigned int uint_p) {
     if (uint_p == 0) return 1;
     for (unsigned int uint_i = 0; uint_i < uint_p; uint_i++) int_ret *= int_b;
     return int_ret;
+}
+
+unsigned int log2(unsigned short int x)
+{
+    unsigned short int r = 0;
+
+    while ((x >> r) != 0)
+    {
+        r++;
+    }
+
+    return (r - 1);
 }
 
 
