@@ -6,3 +6,7 @@ target_link_libraries (bcjr_bpsk_cc75 susa)
 
 add_executable (qam_ser_gaussian qam_ser_gaussian.cpp)
 target_link_libraries (qam_ser_gaussian susa)
+
+add_executable (dijkstra dijkstra.cpp)
+target_link_libraries (dijkstra susa)
+

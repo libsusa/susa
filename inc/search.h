@@ -25,8 +25,8 @@
  * @defgroup Search Search
  */
 
-#ifndef SEARCH_H
-#define SEARCH_H
+#ifndef SUSA_SEARCH_H
+#define SUSA_SEARCH_H
 
 #include "debug.h"
 
@@ -39,7 +39,7 @@ namespace susa {
  * @return Returns a vector that contains indeces of elements in the input vector that have least values.
  *
  * @ingroup Search
-*/
+ */
 template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg, unsigned int uint_num);
 
 /**
@@ -51,11 +51,34 @@ template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg,
  * @return Returns a vector that contains indeces of elements in the input vector that have least values.
  *
  * @ingroup Search
-*/
+ */
 template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &mat_arg, const matrix <unsigned int> &mat_limited_index, unsigned int uint_num);
 
+
+/**
+ * @brief Finds the <i>uint_num</i> greatest elements of the input vector among a selected number of
+ elements that their indeces are specified by <i>mat_limited_index</i>.
+ *
+ * @param mat_arg Input vector
+ * @param uint_num Number of elements to be find before the routine terminates
+ * @return Returns a vector that contains indeces of elements in the input vector that have least values.
+ *
+ * @ingroup Search
+ */
 template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, unsigned int uint_num);
 
+
+/**
+ * @brief Finds the first occurence of an element in a matrix
+ * @param  mat_arg
+ * @param  T_arg
+ *
+ * @return The index of the elements that are equal to T_arg
+ * @ingroup Search
+ */
+template <class T> index_set find(const matrix <T> &mat_arg, T &T_arg);
+
+template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, unsigned int uint_source);
 
 // Implementation
 template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg, unsigned int uint_num) {
@@ -64,8 +87,8 @@ template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg,
     matrix <T> mat_ret = mat_arg;
     matrix <unsigned int> mat_index(uint_num,1);
 
+    SUSA_ASSERT_MESSAGE(uint_size > uint_num, "The number of elements to be selected is larger than the matrix size.");
     if (uint_size < uint_num) {
-        std::cout << std::endl << "[select_least()] number of elements to be sorted is bigger than the matrix size.";
         return mat_index;
     }
 
@@ -96,8 +119,8 @@ template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &
     matrix <T> mat_ret = mat_arg;
     matrix <unsigned int> mat_index(uint_num,1);
 
+    SUSA_ASSERT_MESSAGE(uint_size > uint_num, "The number of elements to be selected is larger than the matrix size.");
     if (uint_size < uint_num) {
-        std::cout << std::endl << "[select_limited_least()] number of elements to be sorted is bigger than the matrix size.";
         return mat_index;
     }
 
@@ -128,8 +151,9 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
     matrix <T> mat_ret = mat_arg;
     matrix <unsigned int> mat_index(uint_num,1);
 
+
+    SUSA_ASSERT_MESSAGE(uint_size > uint_num, "The number of elements to be selected is larger than the matrix size.");
     if (uint_size < uint_num) {
-        std::cout << std::endl << "[select_most()] number of elements to be sorted is bigger than the matrix size.";
         return mat_index;
     }
 
@@ -153,5 +177,73 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
 
     return mat_index;
 }
-} // NAMESPACE SUSA
-#endif // SEARCH_H
+
+
+template <class T> index_set find(const matrix <T> &mat_arg, T &T_arg)
+{
+  susa::index_set iset(mat_arg.size() + 1); // lets have at least one index
+
+  for (unsigned int uint_index = 0; uint_index < mat_arg.size(); uint_index++)
+  {
+    if (mat_arg(uint_index) == T_arg) iset.add(uint_index);
+  }
+
+  return iset;
+}
+
+
+template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, unsigned int uint_src)
+{
+
+  SUSA_ASSERT_MESSAGE(mat_graph.is_square(), "the weight matrix must be square");
+
+  if (!mat_graph.is_square()) return (matrix <unsigned int> ());
+
+  unsigned int uint_num_nodes = mat_graph.no_cols();
+  susa::matrix <unsigned int> dist(uint_num_nodes, 1, std::numeric_limits<int>::max());
+  susa::matrix <unsigned int> prev(uint_num_nodes, 1);
+
+  dist(uint_src) = 0;
+
+  index_set iset(uint_num_nodes);
+  iset.add_all();
+
+
+  unsigned int uint_min = 0;
+  unsigned int uint_min_index = 0;
+  unsigned int uint_alt = 0;
+  while (iset.is_not_empty())
+  {
+
+    uint_min = std::numeric_limits <unsigned int>::max();
+    for (unsigned int uint_index = 0; uint_index < uint_num_nodes; uint_index++)
+    {
+      if (iset.exists(uint_index) && dist(uint_index) < uint_min)
+      {
+        uint_min_index = uint_index;
+        uint_min = dist(uint_index);
+      }
+    }
+
+    iset.remove(uint_min_index);
+
+
+    for (unsigned int uint_i = 0; uint_i < uint_num_nodes; uint_i++)
+    {
+      if (mat_graph(uint_min_index,uint_i)) // if zero then there is no way
+      {
+        uint_alt = dist(uint_min_index) + mat_graph(uint_min_index,uint_i);
+        if (uint_alt < dist(uint_i))
+        {
+          dist(uint_i) = uint_alt;
+          prev(uint_i) = uint_min_index;
+        }
+      }
+    }
+  }
+
+  return prev;
+}
+
+}      // NAMESPACE SUSA
+#endif // SUSA_SEARCH_H

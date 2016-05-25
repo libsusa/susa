@@ -35,7 +35,7 @@ int main(void)
   std::cout << std::endl << "transpose(mat_a) = " << std::endl << transpose(mat_a);
   std::cout << std::endl << "det(mat_a)       = " << det(mat_a) << std::endl;
   std::cout << std::endl << "mat_a .* mat_b   = " << mat_a * mat_b;
-  std::cout << std::endl << "mat_a * mat_b    = " << mult(mat_a,mat_b);
+  std::cout << std::endl << "mat_a * mat_b    = " << matmul(mat_a,mat_b);
 
   susa::array <double> arr({21,6,5,15,43});
   arr(2,4,3,0,1) = 55.4;
@@ -50,7 +50,7 @@ int main(void)
 
   SUSA_LOG_INFO("Logs can be disabled by defining SUSA_NDEBUG.");
 
-  // this line demonstrate SUSA_ASSERT_MESSAGE macro usage.
+  // this line demonstrates SUSA_ASSERT_MESSAGE macro usage.
   // to disable the message and the abortion of the software uncomment "#define SUSA_NDEBUG"
   std::cout << std::endl << "mat_a = " << std::endl << mat_a(mat_a.size() + 1);
 
