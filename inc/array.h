@@ -1,16 +1,16 @@
 /*
  * This file is part of Susa.
-
+ *
  * Susa is free software: you can redistribute it and/or modify
  * it under the terms of the Lesser GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
-
+ *
  * Susa is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * Lesser GNU General Public License for more details.
-
+ *
  * You should have received a copy of the Lesser GNU General Public License
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,8 +26,8 @@
  * @version 1.0.0
  */
 
-#ifndef ARRAY_H
-#define ARRAY_H
+#ifndef SUSA_ARRAY_H
+#define SUSA_ARRAY_H
 
 #include "debug.h"
 
@@ -53,6 +53,11 @@ namespace susa
       T get(const std::vector<unsigned int>& list ) const;
 
 
+      /** Clone
+       * @brief Clone the data by pointer that may be read from the disk
+       *
+       * @param pointer to the data
+       */
       void clone(T* data);
 
       template <typename... Args> T get(unsigned int uint_elem, Args... uint_args);
@@ -99,6 +104,8 @@ namespace susa
       unsigned int uint_get_step;
       T T_get_value;
   };
+
+  // Implementations
 
   template <class T> array<T>::array( std::initializer_list<unsigned int> list )
     : vec_dims(list)
@@ -163,14 +170,15 @@ namespace susa
 
     SUSA_ASSERT(_matrix != NULL);
 
-    unsigned int uint_elem = 0;
+    unsigned int uint_elem      = 0;
     unsigned int uint_dim_count = 0;
-    unsigned int uint_factor = 1;
+    unsigned int uint_factor    = 1;
 
     for (auto dim_size : list) {
 
       uint_factor = 1;
-      for (unsigned int indx = 0; indx < uint_dim_count; ++indx) {
+      for (unsigned int indx = 0; indx < uint_dim_count; ++indx)
+      {
         uint_factor *= vec_dims[indx];
       }
 
@@ -180,7 +188,8 @@ namespace susa
 
     SUSA_ASSERT_MESSAGE(uint_elem < uint_total, "the element index is out of range.");
 
-    if (uint_elem < uint_total && _matrix != NULL) {
+    if (uint_elem < uint_total && _matrix != NULL)
+    {
       return _matrix[uint_elem];
     }
 
@@ -196,7 +205,8 @@ namespace susa
 
     SUSA_ASSERT_MESSAGE(uint_index < uint_total, "the element index is out of range.");
 
-    if (uint_index < uint_total && _matrix != NULL) {
+    if (uint_index < uint_total && _matrix != NULL)
+    {
       return _matrix[uint_index];
     }
 
@@ -214,7 +224,8 @@ namespace susa
 
       SUSA_ASSERT_MESSAGE(uint_index < uint_total, "the element index is out of range.");
 
-      if (uint_index < uint_total && _matrix != NULL) {
+      if (uint_index < uint_total && _matrix != NULL)
+      {
         return _matrix[uint_index];
       }
 
@@ -228,10 +239,12 @@ namespace susa
     unsigned int uint_dim_count = 0;
     unsigned int uint_factor = 1;
 
-    for (auto dim_size : list) {
+    for (auto dim_size : list)
+    {
 
       uint_factor = 1;
-      for (unsigned int indx = 0; indx < uint_dim_count; ++indx) {
+      for (unsigned int indx = 0; indx < uint_dim_count; ++indx)
+      {
         uint_factor *= vec_dims[indx];
       }
 
@@ -288,4 +301,4 @@ namespace susa
     }
 
 }      // NAMESPACE SUSA
-#endif // ARRAY_H
+#endif // SUSA_ARRAY_H

@@ -1,16 +1,16 @@
 /*
  * This file is part of Susa.
-
+ *
  * Susa is free software: you can redistribute it and/or modify
  * it under the terms of the Lesser GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
-
+ *
  * Susa is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * Lesser GNU General Public License for more details.
-
+ *
  * You should have received a copy of the Lesser GNU General Public License
  * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,7 +32,8 @@
 #include <cassert>
 #include <cstdlib>
 
-namespace susa {
+namespace susa
+{
 
   inline void assert_log(const char* file, const char* func, int line, const char* cond, const char* msg) {
     std::cerr << "Assertion failed: " << "(" << cond <<")";
@@ -44,7 +45,7 @@ namespace susa {
     std::abort();
   }
 
-  } // NAMESAPCE SUSA
+} // NAMESAPCE SUSA
 
 #ifdef SUSA_NDEBUG
 #define SUSA_ASSERT(EX) ((void)0)
@@ -61,4 +62,5 @@ namespace susa {
 #define SUSA_LOG_INFO(MSG) (std::cout << std::endl << "[INFO]"  << "[" << __func__ << "()]" << "[" << __LINE__ << "]  : " << MSG)
 #define SUSA_LOG_ERR(MSG)  (std::cerr << std::endl << "[ERROR]" << "[" << __func__ << "()]" << "[" << __LINE__ << "]  : " << MSG)
 #endif
+
 #endif // SUSA_DEBUG_H

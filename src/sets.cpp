@@ -16,8 +16,8 @@
  */
 
 /**
- * @file set.cpp
- * @brief Basic mathematical operations on STL and Susa types.
+ * @file sets.cpp
+ * @brief Set types and operations.
  * @author Behrooz, Aliabadi
  * @version 1.0.0
  */
