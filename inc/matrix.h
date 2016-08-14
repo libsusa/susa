@@ -17,12 +17,14 @@
 
 /**
  * @file matrix.h
- * @brief The matrix class.
+ * @brief The matrix type definition and declaration.
+ *
  * This file contains the <i>matrix template class</i>. This is a non-intrinsic data type that is
  * used in Susa. Use this class if you need two dimensional matrices or vectors. It has been
  * designed such that the matrix elements can be accessed as vector elements. This class handles
  * the cloning of the matrices when the assignment operator is used.
  * It has the necessary memeory management mechanisms to release the allocated memory.
+ *
  * @author Behrooz Aliabadi
  * @version 1.0.0
  */
@@ -62,9 +64,9 @@ template <class T> matrix <T> matmul(const matrix <T> &mat_argl,const matrix <T>
 template <class T> matrix <T> transpose(const matrix <T> &mat_arg);
 
 /**
- * @brief The <i>matrix</i> class
+ * @brief The <i>matrix</i> class.
  *
- * @ingroup LALG
+ * @ingroup TYPES
  *
  */
 template <class T> class matrix {

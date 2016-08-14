@@ -17,11 +17,16 @@
 
 /**
  * @file array.h
- * @brief The multi-dimensional matrix i.e. array class.
+ * @brief The multi-dimensional array type definition and declaration.
+ *
  * This file contains the <i>array template class</i>. This is a non-intrinsic
- * data type of Susa. Use this class if you need multi dimensional matrices.
- * This class handles the cloning of the matrices when the assignment operator is used.
- * It has the necessary memeory management mechanisms to release the allocated memory.
+ * data type of Susa. Use this class if you need multi-dimensional arrays.
+ * This class handles the cloning when the assignment operator is used.
+ * It also has the necessary memeory management mechanisms to release
+ * the allocated memory.
+ *
+ * @defgroup TYPES Types
+ *
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
@@ -33,7 +38,12 @@
 
 namespace susa
 {
-
+  /**
+   * @brief The <i>array</i> class.
+   *
+   * @ingroup TYPES
+   *
+   */
   template <class T> class array
   {
 

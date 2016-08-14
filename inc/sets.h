@@ -17,11 +17,10 @@
 
 /**
  * @file sets.h
- * @brief Set types and operations.
+ * @brief The <i>set</i> type definition and declaration.
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  *
- * @defgroup Set Set
  */
 
 #ifndef SUSA_SETS_H
@@ -32,6 +31,12 @@
 namespace susa
 {
 
+/**
+* @brief The <i>index_set</i> class.
+*
+* @ingroup TYPES
+*
+*/
 class index_set
 {
   public :
@@ -42,17 +47,17 @@ class index_set
     void add(unsigned int index);
 
     void remove(unsigned int index);
-    
+
     unsigned int pop();
 
     void push(unsigned int index);
 
     bool exists(unsigned int index);
-    
+
     void add_all();
-    
+
     void remove_all();
-    
+
     bool is_not_empty();
 
   private:
