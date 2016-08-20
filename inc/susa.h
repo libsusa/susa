@@ -25,7 +25,6 @@
 /**
  * @mainpage Susa Documentation
  *
- * @author Behrooz Kamary Aliabadi
  *
  * @section intro Introduction
  * <p> Susa is a library of utility classes and methods (functions) for signal processing and mathematics applications.
