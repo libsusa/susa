@@ -1,36 +1,70 @@
 /**
  * This file is part of Susa
  * Doxygen 1.8.12
-*/
-body, table, div, p, dl {
-	font: 13px "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
-}
-#main-menu, .sm, .sm-dox {
-	background-image: none;
-	background-color: #34535e;//#2f3a48;
-	color: white;
+ */
+body,
+table,
+div,
+p,
+dl {
+  font: 13px "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
 }
 
-.sm-dox a, .sm-dox a:focus,
-.sm-dox a:active, .sm-dox a:hover,
+#main-menu,
+.sm,
+.sm-dox {
+  background-image: none;
+  background-color: #34535e;
+  color: white;
+}
+
+.sm-dox a,
+.sm-dox a:focus,
+.sm-dox a:active,
+.sm-dox a:hover {
+  background-image: none;
+  background-color: #34535e;
+  text-shadow: none;
+  color: white;
+}
+
+.sm-dox ul a:hover {
+  background-image: none;
+  background-color: #aaa;
+}
+
 .sm-dox a.highlighted {
-   background-image: none;
-	 background-color: #34535e;//#2f3a48;
-	 text-shadow: none;
-	 color: white;
+  background-image: none;
+  background-color: #aaa;
 }
 
 .sm-dox a span.sub-arrow {
   border-color: transparent;
 }
 
+.navpath,
+.navpath ul {
+  border: none;
+  background-image: none;
+  background-color: #e0e0e0;
+}
+
+.navpath li.navelem a {
+  text-shadow: none;
+}
+
+.navpath li {
+  background-image: none;
+}
+
 #titlearea {
   border-bottom: 0px;
 }
+
 #projectlogo img {
   display: block;
-  max-width:230px;
-  max-height:95px;
+  max-width: 230px;
+  max-height: 95px;
   width: auto;
   height: auto;
 }
