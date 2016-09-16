@@ -34,3 +34,11 @@ add_subdirectory (examples)
 add_subdirectory (test)
 enable_testing ()
 add_test (NAME check COMMAND ./test/check)
+
+install (TARGETS susa
+         LIBRARY DESTINATION lib
+         ARCHIVE DESTINATION lib/static)
+
+install (DIRECTORY inc/
+         DESTINATION include/susa
+         FILES_MATCHING PATTERN "*.h")
