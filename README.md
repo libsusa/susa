@@ -16,6 +16,7 @@ mkdir build
 cd build
 cmake ..
 make
+make install
 ```
 It is highly recommended to run the tests after the build.
 
