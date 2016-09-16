@@ -34,9 +34,9 @@ In the [examples](https://github.com/behrooza/susa/tree/master/examples) directo
 Susa was born in April 2008 out of a university project course in digital communications. At the time the libraries
 that could be used for digital communications simulation had many dependencies (e.g. LAPACK, BLAS and ATLAS).
 Once it took about six hours on a decent PC to compile one of them. On the other hand those weighty codes had nested
-bugs that sometimes stemed from their third party dependencies. The answer to these problems was Susa that was
+bugs that sometimes stemmed from their third party dependencies. The answer to these problems was Susa that was
 [released](http://sourceforge.net/projects/susa) in November 2008.
 
-Later in early 2009, Susa was used for a bandwidth efficient coding scheme, namely, [Faster Than Nyquist](http://www.eit.lth.se/fileadmin/eit/courses/eit085f/AndersonFasterThanNyquistSignaling.pdf). It required performant equalizers to decode up to some twenty taps (compared to the fading channel with few taps). The simulation of such systems took a long time between an hour to a few days. This library could simulate an FTN system with thirteen taps using a modified BCJR algorithm (a suboptimal variant that could outperform the original algorithm) in about an hour wheras a similar script in a commercial computing software took at least twelve hours.
+Later in early 2009, Susa was used for a bandwidth efficient coding scheme, namely, [Faster Than Nyquist](http://www.eit.lth.se/fileadmin/eit/courses/eit085f/AndersonFasterThanNyquistSignaling.pdf). It required performant equalizers to decode up to some twenty taps (compared to the fading channel with few taps). The simulation of such systems took a long time between an hour to a few days. This library could simulate an FTN system with thirteen taps using a modified BCJR algorithm (a suboptimal variant that could outperform the original algorithm) in about an hour whereas a similar script in a commercial computing software took at least twelve hours.
 ## License
 [Susa](http://susalib.org) has been released under GNU Lesser General Public License (LGPL).
