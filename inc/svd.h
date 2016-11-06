@@ -24,8 +24,8 @@
  * @defgroup LALG Linear Algebra
  */
 
-#ifndef SVD_H
-#define SVD_H
+#ifndef SUSA_SVD_H
+#define SUSA_SVD_H
 
 namespace susa {
 
@@ -33,20 +33,23 @@ namespace susa {
 /**
  * @brief Singular Value Decomposition (SVD)
  *
- * Takes a m by n <i>real</i> matrix a and decomposes it into udv, where u,v are
- * left and right orthogonal transformation matrices, and d is a
- * diagonal matrix of singular values.
+ * Takes a m by n <i>real</i> matrix a and decomposes it into U * S * V, where U and V are
+ * left and right orthogonal transformation matrices, and S is diagonal matrix of singular values.
  *
  *
- * A = U * W * V
+ * A = U * S * V
  *
- * @param mat_arg_a The input matrix A that will be replaced by U
- * @param mat_arg_w The diagonal values of W (eigenvalues of A)
- * @param mat_arg_v The right orthogonal transformation matrix
+ * @param mat_arg_a The input matrix A
+ * @param mat_arg_u The left orthogonal transformation matrix U
+ * @param mat_arg_s The diagonal values of the eignevalue matrix S (eigenvalues of A)
+ * @param mat_arg_v The right orthogonal transformation matrix V
  *
  * @ingroup LALG
-*/
-int svd(matrix <float> &mat_arg_a, matrix <float> &mat_arg_w, matrix <float> &mat_arg_v);
+ */
+int svd(const matrix <float> &mat_arg_a,
+              matrix <float> &mat_arg_u,
+              matrix <float> &mat_arg_s,
+              matrix <float> &mat_arg_v);
 
 } // NAMESPACE SUSA
-#endif // SVD_H
+#endif // SUSA_SVD_H

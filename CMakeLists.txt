@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(susa)
+enable_testing()
 
 set(BUILD_SHARED_LIBS ON)
 
@@ -32,8 +33,6 @@ add_library (susa ${SRC_FILES})
 add_subdirectory (examples)
 
 add_subdirectory (test)
-enable_testing ()
-add_test (NAME check COMMAND ./test/check)
 
 install (TARGETS susa
          LIBRARY DESTINATION lib

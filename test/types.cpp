@@ -12,7 +12,7 @@
  * Lesser GNU General Public License for more details.
 
  * You should have received a copy of the Lesser GNU General Public License
- * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Susa. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,15 +24,16 @@
 
 #include "test.h"
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char const *argv[])
+{
 
   std::cout << std::endl << " --- SUSA UNIT TEST SUIT ---";
 
   susa::matrix <double> mat_a("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]");
   SUSA_TEST_EQ(mat_a(1,1),    4.5, "matrix parser");
-  SUSA_TEST_EQ(mat_a(1),      8,   "matrix parser");
+  SUSA_TEST_EQ(mat_a(1),        8, "matrix parser");
   SUSA_TEST_EQ(mat_a(4),      4.5, "matrix parser");
-  SUSA_TEST_EQ(mat_a(2,2),    -5,  "matrix parser");
+  SUSA_TEST_EQ(mat_a(2,2),     -5, "matrix parser");
 
   mat_a(1,1) = 6.6;
   SUSA_TEST_EQ(mat_a(1,1),    6.6, "matrix parser");
@@ -41,11 +42,9 @@ int main(int argc, char const *argv[]) {
     susa::matrix <double> ("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]") +
     susa::matrix <double> ("[0 0 0;5 -1 1.2;9.1 3 -6]") );
   SUSA_TEST_EQ(mat_c(1,1),    3.5, "move semantic");
-  SUSA_TEST_EQ(mat_c(1),      13,   "move semantic");
+  SUSA_TEST_EQ(mat_c(1),       13, "move semantic");
   SUSA_TEST_EQ(mat_c(4),      3.5, "move semantic");
-  SUSA_TEST_EQ(mat_c(2,2),    -11,  "move semantic");
-
-  SUSA_TEST_EQ_DOUBLE(susa::normcdf(0.5),0.6915, "Normal Cumulative Distribution Function");
+  SUSA_TEST_EQ(mat_c(2,2),    -11, "move semantic");
 
   std::cout << std::endl << " -----------------";
   std::cout << std::endl << " NUMBER OF FAILED TESTS(" << uint_failed <<")";

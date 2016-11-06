@@ -22,26 +22,36 @@
  * @version 1.0.0
  */
 
-#include "../inc/susa.h"
+#include <susa.h>
+#include <chrono>
 
 namespace susa {
 
 // Elapsed time utility functions
-unsigned int ___uint_stamp;
+static std::chrono::time_point<std::chrono::high_resolution_clock> __susa_start;
+static std::chrono::time_point<std::chrono::high_resolution_clock> __susa_end;
 
-void tic() {
-    ___uint_stamp = clock();
+
+void tic()
+{
+    __susa_start = std::chrono::high_resolution_clock::now();
 }
 
-void toc_print() {
-    std::cout << std::endl << "Elapsed time is " << ((double)(clock() - ___uint_stamp)/CLOCKS_PER_SEC) << " seconds.";
+void toc_print()
+{
+    __susa_end = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(__susa_end - __susa_start);
+    std::cout << "Elapsed time is " << elapsed.count()/1000.0f << " seconds." << std::endl;
 }
 
 double toc() {
-    return((double)(clock() - ___uint_stamp)/CLOCKS_PER_SEC);
+    __susa_end = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(__susa_end - __susa_start);
+    return((double)elapsed.count()/1000.0f);
 }
 
-std::string timestamp() {
+std::string timestamp()
+{
 
     time_t rawtime;
     std::stringstream ss_itos;

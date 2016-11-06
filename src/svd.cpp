@@ -22,14 +22,16 @@
  * @version 1.0.0
  */
 
-#include "susa.h"
+#include <susa.h>
+#include <svd.h>
 
 namespace susa {
 
 #define MAX(x,y) ((x)>(y)?(x):(y))
 #define SIGN(a, b) ((b) >= 0.0 ? fabs(a) : -fabs(a))
 
-static double _susa_svd_pythag( double a, double b ) {
+static double _susa_svd_pythag( double a, double b )
+{
     /* This routine is adapted from svdecomp.c in XLISP-STAT 2.1 which is
      * a code from Numerical Recipes adapted by Luke Tierney and David Betz.
      * http://www.public.iastate.edu/~dicook/JSS/paper/code/svd.c
@@ -47,7 +49,11 @@ static double _susa_svd_pythag( double a, double b ) {
 }
 
 
-int svd(matrix <float> &mat_arg_a, matrix <float> &mat_arg_w, matrix <float> &mat_arg_v) {
+int svd(const matrix <float> &mat_arg_a,
+              matrix <float> &mat_arg_u,
+              matrix <float> &mat_arg_s,
+              matrix <float> &mat_arg_v)
+{
     /* This routine is adapted from svdecomp.c in XLISP-STAT 2.1 which is
      * a code from Numerical Recipes adapted by Luke Tierney and David Betz.
      * http://www.public.iastate.edu/~dicook/JSS/paper/code/svd.c
@@ -55,92 +61,106 @@ int svd(matrix <float> &mat_arg_a, matrix <float> &mat_arg_w, matrix <float> &ma
     */
     int m = mat_arg_a.no_rows();
     int n = mat_arg_a.no_cols();
+    int p = (m > n)?n:m;
 
     int flag, i, its, j, jj, k, l, nm;
     double c, f, h, s, x, y, z;
     double anorm = 0.0, g = 0.0, scale = 0.0;
-    matrix <double> rv1(n,1);
+    matrix <double> rv1(n, 1);
 
-
-    if ( mat_arg_a.no_rows() < mat_arg_a.no_cols()) {
-        // The rest of the matrix should be filled with zeros.
-        return(0);
-    }
+    mat_arg_u = mat_arg_a;
+    mat_arg_s.resize(p, 1);
+    mat_arg_v.resize(p, p);
 
     /* Householder reduction to bidiagonal form */
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++)
+    {
         /* left-hand reduction */
         l = i + 1;
         rv1(i) = scale * g;
         g = s = scale = 0.0;
-        if (i < m) {
+        if (i < m)
+        {
             for (k = i; k < m; k++)
-                scale += fabs((double)mat_arg_a(k,i));
-            if (scale) {
-                for (k = i; k < m; k++) {
-                    mat_arg_a(k,i) = (float)((double)mat_arg_a(k,i)/scale);
-                    s += ((double)mat_arg_a(k,i) * (double)mat_arg_a(k,i));
+                scale += fabs((double)mat_arg_u(k,i));
+            if (scale)
+            {
+                for (k = i; k < m; k++)
+                {
+                    mat_arg_u(k,i) = (float)((double)mat_arg_u(k,i)/scale);
+                    s += ((double)mat_arg_u(k,i) * (double)mat_arg_u(k,i));
                 }
-                f = (double)mat_arg_a(i,i);
+                f = (double)mat_arg_u(i,i);
                 g = -SIGN(sqrt(s), f);
                 h = f * g - s;
-                mat_arg_a(i,i) = (float)(f - g);
-                if (i != n - 1) {
-                    for (j = l; j < n; j++) {
+                mat_arg_u(i,i) = (float)(f - g);
+                if (i != n - 1)
+                {
+                    for (j = l; j < n; j++)
+                    {
                         for (s = 0.0, k = i; k < m; k++)
-                            s += ((double)mat_arg_a(k,i) * (double)mat_arg_a(k,j));
+                            s += ((double)mat_arg_u(k,i) * (double)mat_arg_u(k,j));
                         f = s / h;
                         for (k = i; k < m; k++)
-                            mat_arg_a(k,j) += (float)(f * (double)mat_arg_a(k,i));
+                            mat_arg_u(k,j) += (float)(f * (double)mat_arg_u(k,i));
                     }
                 }
                 for (k = i; k < m; k++)
-                    mat_arg_a(k,i) = (float)((double)mat_arg_a(k,i)*scale);
+                    mat_arg_u(k,i) = (float)((double)mat_arg_u(k,i)*scale);
             }
         }
-        mat_arg_w(i) = (float)(scale * g);
+        mat_arg_s(i) = (float)(scale * g);
 
         /* right-hand reduction */
         g = s = scale = 0.0;
-        if (i < m && i != n - 1) {
+        if (i < m && i != n - 1)
+        {
             for (k = l; k < n; k++)
-                scale += fabs((double)mat_arg_a(i,k));
-            if (scale) {
-                for (k = l; k < n; k++) {
-                    mat_arg_a(i,k) = (float)((double)mat_arg_a(i,k)/scale);
-                    s += ((double)mat_arg_a(i,k) * (double)mat_arg_a(i,k));
+                scale += fabs((double)mat_arg_u(i,k));
+            if (scale)
+            {
+                for (k = l; k < n; k++)
+                {
+                    mat_arg_u(i,k) = (float)((double)mat_arg_u(i,k)/scale);
+                    s += ((double)mat_arg_u(i,k) * (double)mat_arg_u(i,k));
                 }
-                f = (double)mat_arg_a(i,l);
+                f = (double)mat_arg_u(i,l);
                 g = -SIGN(sqrt(s), f);
                 h = f * g - s;
-                mat_arg_a(i,l) = (float)(f - g);
+                mat_arg_u(i,l) = (float)(f - g);
                 for (k = l; k < n; k++)
-                    rv1(k) = (double)mat_arg_a(i,k) / h;
-                if (i != m - 1) {
-                    for (j = l; j < m; j++) {
+                    rv1(k) = (double)mat_arg_u(i,k) / h;
+                if (i != m - 1)
+                {
+                    for (j = l; j < m; j++)
+                    {
                         for (s = 0.0, k = l; k < n; k++)
-                            s += ((double)mat_arg_a(j,k) * (double)mat_arg_a(i,k));
+                            s += ((double)mat_arg_u(j,k) * (double)mat_arg_u(i,k));
                         for (k = l; k < n; k++)
-                            mat_arg_a(j,k) += (float)(s * rv1(k));
+                            mat_arg_u(j,k) += (float)(s * rv1(k));
                     }
                 }
                 for (k = l; k < n; k++)
-                    mat_arg_a(i,k) = (float)((double)mat_arg_a(i,k)*scale);
+                    mat_arg_u(i,k) = (float)((double)mat_arg_u(i,k)*scale);
             }
         }
-        anorm = MAX(anorm, (fabs((double)mat_arg_w(i)) + fabs(rv1(i))));
+        anorm = MAX(anorm, (fabs((double)mat_arg_s(i)) + fabs(rv1(i))));
     }
 
     /* accumulate the right-hand transformation */
-    for (i = n - 1; i >= 0; i--) {
-        if (i < n - 1) {
-            if (g) {
+    for (i = n - 1; i >= 0; i--)
+    {
+        if (i < n - 1)
+        {
+            if (g)
+            {
                 for (j = l; j < n; j++)
-                    mat_arg_v(j,i) = (float)(((double)mat_arg_a(i,j) / (double)mat_arg_a(i,l)) / g);
+                    mat_arg_v(j,i) = (float)(((double)mat_arg_u(i,j) / (double)mat_arg_u(i,l)) / g);
                 /* double division to avoid underflow */
-                for (j = l; j < n; j++) {
+                for (j = l; j < n; j++)
+                {
                     for (s = 0.0, k = l; k < n; k++)
-                        s += ((double)mat_arg_a(i,k) * (double)mat_arg_v(k,j));
+                        s += ((double)mat_arg_u(i,k) * (double)mat_arg_v(k,j));
                     for (k = l; k < n; k++)
                         mat_arg_v(k,j) += (float)(s * (double)mat_arg_v(k,i));
                 }
@@ -154,85 +174,102 @@ int svd(matrix <float> &mat_arg_a, matrix <float> &mat_arg_w, matrix <float> &ma
     }
 
     /* accumulate the left-hand transformation */
-    for (i = n - 1; i >= 0; i--) {
+    for (i = n - 1; i >= 0; i--)
+    {
         l = i + 1;
-        g = (double)mat_arg_w(i);
+        g = (double)mat_arg_s(i);
         if (i < n - 1)
             for (j = l; j < n; j++)
-                mat_arg_a(i,j) = 0.0;
-        if (g) {
+                mat_arg_u(i,j) = 0.0;
+        if (g)
+        {
             g = 1.0 / g;
-            if (i != n - 1) {
-                for (j = l; j < n; j++) {
+            if (i != n - 1)
+            {
+                for (j = l; j < n; j++)
+                {
                     for (s = 0.0, k = l; k < m; k++)
-                        s += ((double)mat_arg_a(k,i) * (double)mat_arg_a(k,j));
-                    f = (s / (double)mat_arg_a(i,i)) * g;
+                        s += ((double)mat_arg_u(k,i) * (double)mat_arg_u(k,j));
+                    f = (s / (double)mat_arg_u(i,i)) * g;
                     for (k = i; k < m; k++)
-                        mat_arg_a(k,j) += (float)(f * (double)mat_arg_a(k,i));
+                        mat_arg_u(k,j) += (float)(f * (double)mat_arg_u(k,i));
                 }
             }
             for (j = i; j < m; j++)
-                mat_arg_a(j,i) = (float)((double)mat_arg_a(j,i)*g);
-        } else {
-            for (j = i; j < m; j++)
-                mat_arg_a(j,i) = 0.0;
+                mat_arg_u(j,i) = (float)((double)mat_arg_u(j,i)*g);
         }
-        ++mat_arg_a(i,i);
+        else
+        {
+            for (j = i; j < m; j++)
+                mat_arg_u(j,i) = 0.0;
+        }
+        ++mat_arg_u(i,i);
     }
 
     /* diagonalize the bidiagonal form */
-    for (k = n - 1; k >= 0; k--) {                             /* loop over singular values */
-        for (its = 0; its < 30; its++) {                       /* loop over allowed iterations */
+    for (k = n - 1; k >= 0; k--)
+    { // loop over singular values
+        for (its = 0; its < 30; its++)
+        { // loop over allowed iterations
             flag = 1;
-            for (l = k; l >= 0; l--) {                         /* test for splitting */
+            for (l = k; l >= 0; l--)
+            { // test for splitting
                 nm = l - 1;
-                if (fabs(rv1(l)) + anorm == anorm) {
+                if (fabs(rv1(l)) + anorm == anorm)
+                {
                     flag = 0;
                     break;
                 }
-                if (fabs((double)mat_arg_w(nm)) + anorm == anorm)
-                    break;
+                if (fabs((double)mat_arg_s(nm)) + anorm == anorm) break;
             }
-            if (flag) {
+            if (flag)
+            {
                 c = 0.0;
                 s = 1.0;
-                for (i = l; i <= k; i++) {
+                for (i = l; i <= k; i++)
+                {
                     f = s * rv1(i);
-                    if (fabs(f) + anorm != anorm) {
-                        g = (double)mat_arg_w(i);
+                    if (fabs(f) + anorm != anorm)
+                    {
+                        g = (double)mat_arg_s(i);
                         h = _susa_svd_pythag(f, g);
-                        mat_arg_w(i) = (float)h;
+                        mat_arg_s(i) = (float)h;
                         h = 1.0 / h;
                         c = g * h;
                         s = (- f * h);
-                        for (j = 0; j < m; j++) {
-                            y = (double)mat_arg_a(j,nm);
-                            z = (double)mat_arg_a(j,i);
-                            mat_arg_a(j,nm) = (float)(y * c + z * s);
-                            mat_arg_a(j,i) = (float)(z * c - y * s);
+                        for (j = 0; j < m; j++)
+                        {
+                            y = (double)mat_arg_u(j,nm);
+                            z = (double)mat_arg_u(j,i);
+                            mat_arg_u(j,nm) = (float)(y * c + z * s);
+                            mat_arg_u(j,i) = (float)(z * c - y * s);
                         }
                     }
                 }
             }
-            z = (double)mat_arg_w(k);
-            if (l == k) {                  /* convergence */
-                if (z < 0.0) {             /* make singular value nonnegative */
-                    mat_arg_w(k) = (float)(-z);
+
+            z = (double)mat_arg_s(k);
+            if (l == k)
+            { // convergence
+                if (z < 0.0)
+                { // make singular value nonnegative
+                    mat_arg_s(k) = (float)(-z);
                     for (j = 0; j < n; j++)
                         mat_arg_v(j,k) = - mat_arg_v(j,k);
                 }
                 break;
             }
-            if (its >= 30) {
-                //free((void*) rv1);
-                fprintf(stderr, "No convergence after 30,000! iterations \n");
-                return(0);
+
+            if (its >= 30)
+            {
+                SUSA_LOG_ERR("No convergence.");
+                return 0;
             }
 
             /* shift from bottom 2 x 2 minor */
-            x = (double)mat_arg_w(l);
+            x = (double)mat_arg_s(l);
             nm = k - 1;
-            y = (double)mat_arg_w(nm);
+            y = (double)mat_arg_s(nm);
             g = rv1(nm);
             h = rv1(k);
             f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
@@ -241,10 +278,11 @@ int svd(matrix <float> &mat_arg_a, matrix <float> &mat_arg_w, matrix <float> &ma
 
             /* next QR transformation */
             c = s = 1.0;
-            for (j = l; j <= nm; j++) {
+            for (j = l; j <= nm; j++)
+            {
                 i = j + 1;
                 g = rv1(i);
-                y = (double)mat_arg_w(i);
+                y = (double)mat_arg_s(i);
                 h = s * g;
                 g = c * g;
                 z = _susa_svd_pythag(f, h);
@@ -255,33 +293,37 @@ int svd(matrix <float> &mat_arg_a, matrix <float> &mat_arg_w, matrix <float> &ma
                 g = g * c - x * s;
                 h = y * s;
                 y = y * c;
-                for (jj = 0; jj < n; jj++) {
+                for (jj = 0; jj < n; jj++)
+                {
                     x = (double)mat_arg_v(jj,j);
                     z = (double)mat_arg_v(jj,i);
                     mat_arg_v(jj,j) = (float)(x * c + z * s);
                     mat_arg_v(jj,i) = (float)(z * c - x * s);
                 }
                 z = _susa_svd_pythag(f, h);
-                mat_arg_w(j) = (float)z;
-                if (z) {
+                mat_arg_s(j) = (float)z;
+                if (z)
+                {
                     z = 1.0 / z;
                     c = f * z;
                     s = h * z;
                 }
                 f = (c * g) + (s * y);
                 x = (c * y) - (s * g);
-                for (jj = 0; jj < m; jj++) {
-                    y = (double)mat_arg_a(jj,j);
-                    z = (double)mat_arg_a(jj,i);
-                    mat_arg_a(jj,j) = (float)(y * c + z * s);
-                    mat_arg_a(jj,i) = (float)(z * c - y * s);
+                for (jj = 0; jj < m; jj++)
+                {
+                    y = (double)mat_arg_u(jj,j);
+                    z = (double)mat_arg_u(jj,i);
+                    mat_arg_u(jj,j) = (float)(y * c + z * s);
+                    mat_arg_u(jj,i) = (float)(z * c - y * s);
                 }
             }
             rv1(l) = 0.0;
             rv1(k) = f;
-            mat_arg_w(k) = (float)x;
+            mat_arg_s(k) = (float)x;
         }
     }
+
     return 0;
 }
 
