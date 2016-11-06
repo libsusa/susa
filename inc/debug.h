@@ -35,7 +35,8 @@
 namespace susa
 {
 
-  inline void assert_log(const char* file, const char* func, int line, const char* cond, const char* msg) {
+  inline void assert_log(const char* file, const char* func, int line, const char* cond, const char* msg)
+  {
     std::cerr << "Assertion failed: " << "(" << cond <<")";
     std::cerr << ", in function " << func;
     std::cerr << ", file " << file;

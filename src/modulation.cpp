@@ -17,8 +17,11 @@
 
 /**
  * @file modulation.cpp
- * @brief This file contains methods that implement digital base-band communication schemes.
- * <i>Modulation</i> is the term that is being used in the communications theory.
+ * @brief These methods implement digital base-band communication schemes.
+ * <i>Modulation</i> in the communications theory is the technique of mapping
+ * digital and discrete information to a measurable quantity of an analog
+ * signal such as amplitude, frequency and phase.
+ *
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
@@ -28,16 +31,19 @@
 
 namespace susa {
 
-unsigned int qam::log2(unsigned int uint_x) {
+unsigned int qam::log2(unsigned int uint_x)
+{
     unsigned int r = 0;
 
-    while( (uint_x >> r) != 0) {
+    while( (uint_x >> r) != 0)
+    {
         r++;
     }
-    return (r-1);
+    return (r - 1);
 }
 
-qam::qam(unsigned int uint_m) {
+qam::qam(unsigned int uint_m)
+{
 
     uint_bps = log2(uint_m);
     double dbl_p = sqrt(uint_m);
@@ -46,13 +52,16 @@ qam::qam(unsigned int uint_m) {
     this->uint_m = uint_m;
 
     // Constellation generation
-    mat_s =  matrix < std::complex <double> > (uint_l, uint_l, std::complex <double>(0,0));
+    mat_s    = matrix < std::complex <double> > (uint_l, uint_l, std::complex <double>(0,0));
     mat_axis = matrix < std::complex <double> > ((unsigned int)dbl_p, 1, std::complex <double>(0,0));
 
-    for (unsigned int i=0; i<dbl_p; i++) mat_axis(i) = std::complex <double> (i - (dbl_p - 1)/2,i - (dbl_p - 1)/2);
+    for (unsigned int i=0; i<dbl_p; i++)
+        mat_axis(i) = std::complex <double> (i - (dbl_p - 1)/2,i - (dbl_p - 1)/2);
 
-    for (unsigned int i=0; i<uint_l; i++) {
-        for (unsigned int j=0; j<uint_l; j++) {
+    for (unsigned int i=0; i<uint_l; i++)
+    {
+        for (unsigned int j=0; j<uint_l; j++)
+        {
             mat_s(i,j) = std::complex <double> (mat_axis(i).real(),mat_axis(j).imag());
         }
     }
@@ -61,16 +70,19 @@ qam::qam(unsigned int uint_m) {
     matrix <double> mat_mag = mag(mat_s);
     matrix <double> mat_sum = sum(mat_mag);
     dbl_es = sum(mat_sum)(0)/uint_m;
-    dbl_eb = dbl_es/uint_bps;
+    dbl_eb = dbl_es / uint_bps;
 }
 
-std::complex <double> qam::demodulate_symbol(std::complex <double> complex_arg) {
+std::complex <double> qam::demodulate_symbol(std::complex <double> complex_arg)
+{
     matrix <double> mat_dist(uint_m,1);
-    for (unsigned int uint_i = 0; uint_i < uint_m; uint_i++) mat_dist(uint_i) = std::abs(complex_arg - mat_s(uint_i));
+    for (unsigned int uint_i = 0; uint_i < uint_m; uint_i++)
+        mat_dist(uint_i) = std::abs(complex_arg - mat_s(uint_i));
     return mat_s(min(mat_dist)(0));
 }
 
-double qam::get_noise_deviation(double dbl_arg) {
+double qam::get_noise_deviation(double dbl_arg)
+{
     return std::sqrt( ( 0.5 * dbl_es/uint_bps ) * std::pow(10, - ( dbl_arg/10 )) );
 }
 

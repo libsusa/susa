@@ -27,22 +27,22 @@
 #define SUSA_SETS_H
 
 #include <debug.h>
+#include <memory.h>
 
 namespace susa
 {
 
 /**
-* @brief The <i>index_set</i> class.
+* @brief The <i>iset</i> class.
 *
 * @ingroup TYPES
 *
 */
-class index_set
+class iset :
+public memory <char>
 {
   public :
-    index_set(unsigned int uint_num_nodes);
-
-    ~index_set();
+    iset(unsigned int uint_num_nodes);
 
     void add(unsigned int index);
 
@@ -63,7 +63,6 @@ class index_set
   private:
     unsigned int nbytes;
     unsigned int uint_set_size;
-    char* entity;
 };
 
 }       // NAMESPACE SUSA

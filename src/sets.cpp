@@ -28,31 +28,17 @@
 namespace susa
 {
 
-  index_set::index_set(unsigned int uint_num_nodes)
+  iset::iset(unsigned int uint_num_nodes)
   {
     uint_set_size = uint_num_nodes;
 
-    nbytes = uint_num_nodes / 8;
-    nbytes += (uint_num_nodes % 8) ? 1 : 0;
+    nbytes  = uint_set_size / 8;
+    nbytes += (uint_set_size % 8) ? 1 : 0;
 
-    try
-    {
-      entity = new char[nbytes];
-    }
-    catch ( std::bad_alloc ex)
-    {
-      SUSA_ASSERT_MESSAGE(false, "memory allocation exception.");
-      std::exit(EXIT_FAILURE); // assert may be disabled but we exit anyway !
-    }
+    this->allocate(nbytes);
   }
 
-  index_set::~index_set()
-  {
-    delete[] entity;
-    entity = nullptr;
-  }
-
-  void index_set::add(unsigned int index)
+  void iset::add(unsigned int index)
   {
 
     if (index >= uint_set_size) return;
@@ -62,21 +48,21 @@ namespace susa
 
 
     if (byte > nbytes) return;
-    entity[byte] |= (0x01 << bit);
+    this->_matrix[byte] |= (0x01 << bit);
   }
 
-  void index_set::remove(unsigned int index)
+  void iset::remove(unsigned int index)
   {
     if (exists(index))
     {
       unsigned int byte = index / 8;
       unsigned int bit  = index % 8;
       if (byte > nbytes) return;
-      entity[byte] ^= (0x01 << bit); 
+      this->_matrix[byte] ^= (0x01 << bit);
     }
   }
 
-  unsigned int index_set::pop()
+  unsigned int iset::pop()
   {
     for (unsigned int uint_index = 0; uint_index < uint_set_size; uint_index++)
     {
@@ -90,40 +76,40 @@ namespace susa
     return uint_set_size;
   }
 
-  void index_set::push(unsigned int index)
+  void iset::push(unsigned int index)
   {
     add(index);
   }
 
-  bool index_set::exists(unsigned int index)
+  bool iset::exists(unsigned int index)
   {
     if (index >= uint_set_size) return false;
     unsigned int byte = index / 8;
     unsigned int bit  = index % 8;
 
     if (byte > nbytes) return false;
-    return ((entity[byte] >> bit) & 0x01);
+    return ((this->_matrix[byte] >> bit) & 0x01);
   }
 
-  void index_set::add_all()
+  void iset::add_all()
   {
     for (unsigned int index = 0; index < nbytes; index++)
     {
       unsigned int byte = index / 8;
       unsigned int bit  = index % 8;
-      entity[byte] |= (0x01 << bit);
+      this->_matrix[byte] |= (0x01 << bit);
     }
   }
 
-  void index_set::remove_all()
+  void iset::remove_all()
   {
-    for (unsigned int indx = 0; indx < nbytes; indx++) entity[indx] = 0x00;
+    for (unsigned int indx = 0; indx < nbytes; indx++) this->_matrix[indx] = 0x00;
   }
 
-  bool index_set::is_not_empty()
+  bool iset::is_not_empty()
   {
     char empty = 0x00;
-    for (unsigned int indx = 0; indx < nbytes; indx++) empty |= entity[indx];
+    for (unsigned int indx = 0; indx < nbytes; indx++) empty |= this->_matrix[indx];
     return empty;
   }
 

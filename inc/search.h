@@ -76,7 +76,7 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
  * @return The index of the elements that are equal to T_arg
  * @ingroup Search
  */
-template <class T> index_set find(const matrix <T> &mat_arg, T &T_arg);
+template <class T> iset find(const matrix <T> &mat_arg, T &T_arg);
 
 template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, unsigned int uint_source);
 
@@ -113,7 +113,10 @@ template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg,
     return mat_index;
 }
 
-template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &mat_arg, const matrix <unsigned int> &mat_limited_index, unsigned int uint_num) {
+template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &mat_arg,
+                                         const matrix <unsigned int> &mat_limited_index,
+                                         unsigned int uint_num)
+{
 
     unsigned int uint_size = mat_arg.size();
     matrix <T> mat_ret = mat_arg;
@@ -179,16 +182,16 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
 }
 
 
-template <class T> index_set find(const matrix <T> &mat_arg, T &T_arg)
+template <class T> iset find(const matrix <T> &mat_arg, T &T_arg)
 {
-  susa::index_set iset(mat_arg.size() + 1); // lets have at least one index
+  susa::iset __iset(mat_arg.size() + 1); // lets have at least one index
 
   for (unsigned int uint_index = 0; uint_index < mat_arg.size(); uint_index++)
   {
-    if (mat_arg(uint_index) == T_arg) iset.add(uint_index);
+    if (mat_arg(uint_index) == T_arg) __iset.add(uint_index);
   }
 
-  return iset;
+  return __iset;
 }
 
 
@@ -205,27 +208,27 @@ template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, u
 
   dist(uint_src) = 0;
 
-  index_set iset(uint_num_nodes);
-  iset.add_all();
+  iset __iset(uint_num_nodes);
+  __iset.add_all();
 
 
-  unsigned int uint_min = 0;
+  unsigned int uint_min       = 0;
   unsigned int uint_min_index = 0;
-  unsigned int uint_alt = 0;
-  while (iset.is_not_empty())
+  unsigned int uint_alt       = 0;
+  while (__iset.is_not_empty())
   {
 
     uint_min = std::numeric_limits <unsigned int>::max();
     for (unsigned int uint_index = 0; uint_index < uint_num_nodes; uint_index++)
     {
-      if (iset.exists(uint_index) && dist(uint_index) < uint_min)
+      if (__iset.exists(uint_index) && dist(uint_index) < uint_min)
       {
         uint_min_index = uint_index;
         uint_min = dist(uint_index);
       }
     }
 
-    iset.remove(uint_min_index);
+    __iset.remove(uint_min_index);
 
 
     for (unsigned int uint_i = 0; uint_i < uint_num_nodes; uint_i++)
