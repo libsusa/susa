@@ -17,9 +17,9 @@
 
 /**
  * @file mt.h
- * @brief Random Number Generator
- * This class uses the same code as creators of MT (The Mersenne Twister)
- * made available on the web.
+ * @brief Mersenne Twister Random Number Generator
+ *
+ * This class uses the same code as the creators of MT (The Mersenne Twister) have been published.
  *
  * @author Behrooz, Kamary Aliabadi
  * @version 1.0.0
@@ -40,7 +40,7 @@
 namespace susa {
 
 /**
- * @brief  The Mersenne Twister pseudorandom number generator wrapper class.
+ * @brief  The Mersenne Twister pseudorandom number generator class.
  *
  *
  * @ingroup RNG

@@ -78,6 +78,14 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
  */
 template <class T> iset find(const matrix <T> &mat_arg, T &T_arg);
 
+/**
+ * @brief Dijkstra finds the shortest path
+ * @param  mat_graph   The input path weights' matrix i.e. graph edges
+ * @param  uint_source The starting vertex in the graph
+ *
+ * @return The path cost for all vertices of the graph
+ * @ingroup Search
+ */
 template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, unsigned int uint_source);
 
 // Implementation

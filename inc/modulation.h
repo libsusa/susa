@@ -17,7 +17,12 @@
 
 /**
  * @file modulation.h
- * @brief The matrix operation wrapper class for non-complex data sets
+ * @brief The base-band modulation and demodulation
+ *
+ * <i>Modulation</i> in the communications theory is the technique of mapping
+ * digital and discrete information to a measurable quantity of an analog
+ * signal such as amplitude, frequency and phase.
+ *
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */

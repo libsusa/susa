@@ -18,9 +18,7 @@
 /**
  * @file modulation.cpp
  * @brief These methods implement digital base-band communication schemes.
- * <i>Modulation</i> in the communications theory is the technique of mapping
- * digital and discrete information to a measurable quantity of an analog
- * signal such as amplitude, frequency and phase.
+ *
  *
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0

@@ -30,11 +30,11 @@
 namespace susa {
 
 /**
-* @brief Random Number Generator wrapper class.
+* @brief Random Number Generator class.
 *
-* @author Behrooz, Kamary Aliabadi
 *
-* This implementation of "Mersenne Twister" generates uniformly 32 bit integers in the range [0, 2^32 - 1] using MT19937 algorithm.<br>
+* This implementation of "Mersenne Twister" generates uniformly
+* 32 bit integers in the range [0, 2^32 - 1] using MT19937 algorithm.<br>
 * Mersenne Twister - MT19937<br>
 * (w, n, m, r) = (32, 624, 397, 31)<br>
 * a = 0x9908B0DF<br>

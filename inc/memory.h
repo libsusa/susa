@@ -30,7 +30,14 @@
 
 namespace susa
 {
-
+  /**
+   * @brief The <i>memory</i> class.
+   *
+   * This class may not be used as is. It is a memory manager class for the types.
+   *
+   * @ingroup TYPES
+   *
+   */
     template <class T> class memory
     {
         protected:

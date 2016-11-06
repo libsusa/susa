@@ -18,6 +18,7 @@
 /**
  * @file debug.h
  * @brief A separate assertion method to catch the fatal errors.
+ *
  * This may be useful when one needs to desactivate debugging
  * of Susa independent of STL assertion by defining SUSA_NDEBUG.
  * If NDEBUG is defined, it consequently affects this assertion.
