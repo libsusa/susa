@@ -61,8 +61,8 @@ namespace susa
 #define SUSA_LOG_INFO(MSG) ((void)0)
 #define SUSA_LOG_ERR(MSG)  ((void)0)
 #else
-#define SUSA_LOG_INFO(MSG) (std::cout << std::endl << "[INFO]"  << "[" << __func__ << "()]" << "[" << __LINE__ << "]  : " << MSG)
-#define SUSA_LOG_ERR(MSG)  (std::cerr << std::endl << "[ERROR]" << "[" << __func__ << "()]" << "[" << __LINE__ << "]  : " << MSG)
+#define SUSA_LOG_INFO(MSG) (std::cout << "[INFO]"  << "[" << __func__ << "()]" << "[" << __LINE__ << "]  : " << MSG << std::endl)
+#define SUSA_LOG_ERR(MSG)  (std::cerr << "[ERROR]" << "[" << __func__ << "()]" << "[" << __LINE__ << "]  : " << MSG << std::endl)
 #endif
 
 #endif // SUSA_DEBUG_H

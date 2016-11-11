@@ -44,7 +44,8 @@ void toc_print()
     std::cout << "Elapsed time is " << elapsed.count()/1000.0f << " seconds." << std::endl;
 }
 
-double toc() {
+double toc()
+{
     __susa_end = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(__susa_end - __susa_start);
     return((double)elapsed.count()/1000.0f);
