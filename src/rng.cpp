@@ -12,110 +12,74 @@
  * Lesser GNU General Public License for more details.
 
  * You should have received a copy of the Lesser GNU General Public License
- * along with Susa.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Susa. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  * @file rng.cpp
- * @brief Random Number Generator
+ * @brief Random Number Generator class (definition).
+ *
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
 
 
-#include "susa.h"
+#include <susa.h>
 
 namespace susa {
 
 // Constructors and Destructor
-rng::rng() {
-    intIndex = -1;
+rng::rng()
+{
+    uint_index = 0;
 }
 
-rng::rng(unsigned int intSeed) {
-    intIndex = -1;
-    init(intSeed);
+rng::rng(unsigned int uint_seed)
+{
+    uint_index = 0;
+    init(uint_seed);
 }
 
-// Public methods
-unsigned int rng::GetUInt() {
 
-    intIndex++;
-
-    if (intIndex >623) {
-        generateNumbers();
-        intIndex=0;
-    }
-
-    return extractNumber(intIndex);
-
+unsigned int rng::rand_mask(unsigned int uint_mask)
+{
+    return (extract_number() & uint_mask);
 }
 
-unsigned int rng::rand_mask(unsigned int uint_mask) {
-    intIndex++;
+matrix <unsigned int> rng::rand_mask(unsigned int uint_mask, unsigned int uint_num)
+{
+    matrix <unsigned int> mat_ret(uint_num, 1);
 
-    if (intIndex >623) {
-        generateNumbers();
-        intIndex=0;
-    }
-
-    return (extractNumber(intIndex) & uint_mask);
-}
-
-matrix <unsigned int> rng::rand_mask(unsigned int uint_mask, unsigned int uint_N) {
-    matrix <unsigned int> mat_ret(uint_N,1);
-
-    for (unsigned int uint_i = 0; uint_i < uint_N; uint_i++) {
-        intIndex++;
-
-        if (intIndex >623) {
-            generateNumbers();
-            intIndex=0;
-        }
-
-        mat_ret(uint_i) = extractNumber(intIndex) & uint_mask;
+    for (unsigned int uint_i = 0; uint_i < uint_num; uint_i++)
+    {
+        mat_ret(uint_i) = extract_number() & uint_mask;
     }
 
     return mat_ret;
 }
 
-double rng::GetDouble() {
+double rng::GetDouble()
+{
 
-    unsigned int UIntMax = (unsigned int)(0xFFFFFFFF);
-
-    intIndex++;
-
-    if (intIndex >623) {
-        generateNumbers();
-        intIndex=0;
-    }
-
-    return ((double)extractNumber(intIndex)/UIntMax);
+    return ((double)extract_number() / D);
 
 }
 
-double rng::rand() {
+double rng::rand()
+{
 
-    unsigned int UIntMax = (unsigned int)(0xFFFFFFFF);
-
-    intIndex++;
-
-    if (intIndex >623) {
-        generateNumbers();
-        intIndex=0;
-    }
-
-    return ((double)extractNumber(intIndex)/UIntMax);
-
+    return ((double)extract_number() / D);
 }
 
-double rng::randn() {
+double rng::randn()
+{
     // Returns a single Gaussian random number
     // Box-Muller transform
     double x1, x2, w, y1;
 
-    do {
+    do
+    {
         x1 = 2.0 * rand() - 1.0;
         x2 = 2.0 * rand() - 1.0;
         w = x1 * x1 + x2 * x2;
@@ -127,31 +91,44 @@ double rng::randn() {
     return (y1);
 }
 
-matrix <double> rng::rand(unsigned int uint_N) { // Returns a single uniform random number
-    matrix <double> mat_rnd(uint_N,1);
+matrix <double> rng::rand(unsigned int uint_num)
+{
+    matrix <double> mat_ret(uint_num, 1);
     unsigned int UIntMax = (unsigned int)(0xFFFFFFFF);
 
-    for (unsigned int i=0; i<uint_N; i++) {
-        intIndex++;
-
-        if (intIndex >623) {
-            generateNumbers();
-            intIndex=0;
-        }
-        mat_rnd(i) = ((double)extractNumber(intIndex)/UIntMax);
+    for (unsigned int i = 0; i < uint_num; i++)
+    {
+        mat_ret(i) = (double)extract_number() / UIntMax;
     }
 
-    return mat_rnd;
+    return mat_ret;
 }
 
-matrix <double> rng::randn(unsigned int uint_N) {
+matrix <double> rng::rand(unsigned int uint_rows, unsigned int uint_cols)
+{
+    matrix <double> mat_ret(uint_rows, uint_cols);
+    unsigned int uint_size = mat_ret.size();
+
+    unsigned int UIntMax = (unsigned int)(0xFFFFFFFF);
+
+    for (unsigned int i = 0; i < uint_size; i++)
+    {
+        mat_ret(i) = (double)extract_number() / UIntMax;
+    }
+
+    return mat_ret;
+}
+
+matrix <double> rng::randn(unsigned int uint_num)
+{
     // Box-Muller Transform
     double x1, x2, w, y1, y2;
-    matrix <double> mat_rndn(uint_N,1);
-    /*unsigned int UIntMax = (unsigned int)(0xFFFFFFFF);*/
+    matrix <double> mat_ret(uint_num, 1);
 
-    for (unsigned int i=0; i<uint_N; i+=2) {
-        do {
+    for (unsigned int indx = 0; indx < uint_num; indx += 2)
+    {
+        do
+        {
             x1 = 2.0 * rand() - 1.0;
             x2 = 2.0 * rand() - 1.0;
             w = x1 * x1 + x2 * x2;
@@ -161,67 +138,82 @@ matrix <double> rng::randn(unsigned int uint_N) {
         y1 = x1 * w;
         y2 = x2 * w;
 
-        mat_rndn(i) = y1;
-        if ((i+1) < uint_N) mat_rndn(i+1) = y2;
+        mat_ret(indx) = y1;
+        if ((indx + 1) < uint_num) mat_ret(indx + 1) = y2;
     }
 
-    return mat_rndn;
+    return mat_ret;
 }
 
-void rng::init(unsigned int intSeed) {
+void rng::init(unsigned int uint_seed)
+{
     // Initialise the generator from a seed
-    MT[0] = intSeed;
-    for (int i=1; i<624; i++) {
-        MT[i] = 1812433253 * (MT[i-1] ^(MT[i-1])>>30) + i;
+    MT[0] = uint_seed;
+    for (unsigned int indx = 1; indx < N; indx++)
+    {
+        MT[indx] = F * (MT[indx - 1] ^ (MT[indx - 1]) >> 30) + indx;
     }
 }
 
-unsigned int rng::GetNonUniform( double* pr, unsigned int n ) {
+unsigned int rng::GetNonUniform(double* pr, unsigned int n)
+{
 
     double  t = 0;
-    double x = GetDouble();
-    for ( unsigned int i = 0; i < n; i++ ) {
+    double  x = GetDouble();
+    for (unsigned int indx = 0; indx < n; indx++)
+    {
+        t += pr[indx];
+        if ( t > x ) return indx;
+    }
+
+    return 0;
+}
+
+unsigned int rng::nonUniform(std::vector <float> pr)
+{
+
+    int n      = pr.size();
+    double  t  = 0;
+    double x   = GetDouble();
+
+    for (int i = 0; i < n; i++)
+    {
         t += pr[i];
         if ( t > x ) return i;
     }
 
-    return 0; // Avoids GCC warning
-}
-
-unsigned int rng::nonUniform(std::vector <float> pr) {
-
-    int n = pr.size();
-    double  t = 0;
-    double x = GetDouble();
-    for ( int i = 0; i < n; i++ ) {
-        t += pr[i];
-        if ( t > x ) return i;
-    }
-
-    return 0; // Avoids GCC warning
+    return 0;
 }
 
 // Private methods
-void rng::generateNumbers() {
-    // Generate an array of 624 untempered numbers
-    for (int i=0; i<624; i++) {
-        y = (MT[i]&0x80000000) + ((MT[(i+1)%624])&0x7FFFFFFF);
-        if (y%2==0)  MT[i] = MT[(i + 397) % 624] ^ (y>>1);
-        else  MT[i] = MT[(i + 397) % 624] ^ (y>>1) ^ 0x9908b0df; // (a) Parameter
+void rng::generate_numbers()
+{
+    uint32_t x;
+    for (uint32_t indx = 0; indx < N; indx++)
+    {
+        x = (MT[indx] & MASK_UPPER) + ((MT[(indx + 1) % N]) & MASK_LOWER);
 
+        if ((x & 0x01) == 0)  MT[indx] = MT[(indx + M) % N] ^ (x >> 1);
+        else  MT[indx] = MT[(indx + M) % N] ^ (x >> 1) ^ A;
     }
 }
 
 
-unsigned int rng::extractNumber(int i) {
-    // Extract a tempered pseudorandom number based on the i-th value
-    // generateNumbers() will have to be called again once the array of 624 numbers is exhausted
-    y = MT[i];
-    y = y ^ (y>>11);
-    y = y ^ ((y<<7) & 0x9d2c5680);
-    y = y ^ ((y<<15) ^ 0xefc60000);
-    y = y ^ (y>>18);
-    return y;
+unsigned int rng::extract_number()
+{
+    
+    if (uint_index >= N)
+    {
+        generate_numbers();
+        uint_index = 0;
+    }
+
+    uint32_t x = MT[uint_index++];
+    x = x ^ (x  >> U);
+    x = x ^ ((x << S)  & B);
+    x = x ^ ((x << T)  ^ C);
+    x = x ^ (x  >> L);
+    return x;
 }
 
 }

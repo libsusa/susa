@@ -17,15 +17,17 @@
 
 /**
  * @file rng.h
- * @brief Random Number Generator
+ * @brief Random Number Generator (declaration).
  *
  *
  * @author Behrooz, Kamary Aliabadi
  * @version 1.0.0
  */
 
-#ifndef RNG_H
-#define RNG_H
+#ifndef SUSA_RNG_H
+#define SUSA_RNG_H
+
+#include <cstdint>
 
 namespace susa {
 
@@ -54,28 +56,20 @@ class rng {
     /**
      * @brief Constructor
      *
-     * @param intSeed RNG initial seed
+     * @param uint_seed RNG initial seed
      */
-    rng(unsigned int intSeed);
+    rng(unsigned int uint_seed);
 
     /**
      * @brief Initializes the RNG
      *
-     * @param intSeed RNG initial seed
+     * @param uint_seed RNG initial seed
      */
-    void init(unsigned int intSeed);
-
-    /**
-     * @brief Returns uniformly distributed random double
-     *
-     * @see rand()
-     */
-    double GetDouble();
+    void init(unsigned int uint_seed);
 
     /**
      * @brief Returns gaussian distributed random double
-     *
-     * With mean value equal to zero and unit variance.
+     * with mean value equal to zero and unit variance.
      *
      */
     double randn();
@@ -83,7 +77,6 @@ class rng {
     /**
      * @brief Returns uniformly distributed random double
      *
-     * @see GetDouble()
      */
     double rand();
 
@@ -106,41 +99,74 @@ class rng {
      * numbers between 0 to 15.
      *
      * @param uint_mask used to mask output numbers
-     * @param uint_N number of output samples
+     * @param uint_num number of output samples
      */
-    matrix <unsigned int> rand_mask(unsigned int uint_mask, unsigned int uint_N);
+    matrix <unsigned int> rand_mask(unsigned int uint_mask, unsigned int uint_num);
 
     /**
      * @brief Returns gaussian distributed random double
      *
-     * @param uint_N Number of random numbers
-     * @return Susa matrix
+     * @param uint_num Number of random numbers
+     * @return A column vector of type, susa::matrix<double>
      */
-    matrix <double> randn(unsigned int uint_N);
+    matrix <double> randn(unsigned int uint_num);
 
     /**
      * @brief Returns uniformly distributed random double
      *
-     * @param uint_N Number of random numbers
-     * @return Susa matrix
+     * @param uint_num Number of random numbers
+     * @return A column vector of type, susa::matrix<double>
      */
-    matrix <double> rand(unsigned int uint_N);
+    matrix <double> rand(unsigned int uint_num);
 
-    unsigned int GetUInt();
+    /**
+     * @brief Returns uniformly distributed random double
+     *
+     * @param uint_rows Number of rows
+     * @param uint_cols Number of columns
+     * @return A random susa::matrix<double> instance
+     */
+    matrix <double> rand(unsigned int uint_rows, unsigned int uint_cols);
 
-    unsigned int GetNonUniform(double* pr, unsigned int n);
+    enum
+    {
+        W = 32,
+        N = 624,
+        M = 397,
+        R = 31,
+        A = 0x9908B0DF,
 
-    unsigned int nonUniform(std::vector <float>);
+        F = 1812433253,
+
+        U = 11,
+        D = 0xFFFFFFFF,
+
+        S = 7,
+        B = 0x9D2C5680,
+
+        T = 15,
+        C = 0xEFC60000,
+
+        L = 18,
+
+        MASK_LOWER = (1ull << R) - 1,
+        MASK_UPPER = (1ull << R)
+    };
 
   private:
     // Create a length 624 array to store the state of the generator
-    unsigned int MT[624];
-    unsigned int y;
-    int intIndex;
+    uint32_t MT[N];
+    uint16_t uint_index;
 
-    void generateNumbers();
-    unsigned int extractNumber(int);
+    void generate_numbers();
+    unsigned int extract_number();
+
+
+    unsigned int GetUInt();
+    unsigned int GetNonUniform(double* pr, unsigned int n);
+    unsigned int nonUniform(std::vector <float>);
+    double       GetDouble();
 };
-}
 
-#endif // RNG_H
+}      // NAMESPACE SUSA
+#endif // SUSA_RNG_H

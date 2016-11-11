@@ -17,8 +17,8 @@
 
 /**
  * @file search.h
- * @brief Search routines
- * This file containes special search routines.
+ * @brief Search routines (declaration).
+ *
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  *
@@ -52,7 +52,9 @@ template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg,
  *
  * @ingroup Search
  */
-template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &mat_arg, const matrix <unsigned int> &mat_limited_index, unsigned int uint_num);
+template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &mat_arg,
+                                        const matrix <unsigned int> &mat_limited_index,
+                                        unsigned int uint_num);
 
 
 /**
@@ -88,26 +90,52 @@ template <class T> iset find(const matrix <T> &mat_arg, T &T_arg);
  */
 template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, unsigned int uint_source);
 
+/**
+ * @brief Bubble sort
+ *
+ * @return The the elements in decending order.
+ */
+template <class T> matrix <T> sort(const matrix <T> &mat_arg);
+
+
+/**
+ * @brief Bubble sort
+ *
+ * @return The <i>indecies</i> of the elements in decending order.
+ */
+template <class T> matrix <unsigned int> sort_indices(const matrix <T> &mat_arg);
+
+
 // Implementation
-template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg, unsigned int uint_num) {
+template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg, unsigned int uint_num)
+{
+
+    //TODO support matrices
+    SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "this method supports one dimensional matrices (vectors) only.");
 
     unsigned int uint_size = mat_arg.size();
-    matrix <T> mat_ret = mat_arg;
-    matrix <unsigned int> mat_index(uint_num,1);
+    matrix <T> mat_ret     = mat_arg;
+    matrix <unsigned int> mat_index(uint_num, 1);
 
-    SUSA_ASSERT_MESSAGE(uint_size > uint_num, "The number of elements to be selected is larger than the matrix size.");
-    if (uint_size < uint_num) {
+    SUSA_ASSERT_MESSAGE(uint_size > uint_num,
+      "The number of elements to be selected is larger than the matrix size.");
+
+    if (uint_size < uint_num)
+    {
         return mat_index;
     }
 
     unsigned int uint_min_index;
     T T_min;
 
-    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
+    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++)
+    {
         uint_min_index = uint_i;
         T_min = mat_ret(uint_i);
-        for (unsigned int uint_j = 0; uint_j < uint_size; uint_j++) {
-            if (mat_ret(uint_j) < T_min) {
+        for (unsigned int uint_j = 0; uint_j < uint_size; uint_j++)
+        {
+            if (mat_ret(uint_j) < T_min)
+            {
                 uint_min_index = uint_j;
                 T_min = mat_ret(uint_j);
             }
@@ -126,23 +154,31 @@ template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &
                                          unsigned int uint_num)
 {
 
-    unsigned int uint_size = mat_arg.size();
-    matrix <T> mat_ret = mat_arg;
-    matrix <unsigned int> mat_index(uint_num,1);
+    //TODO support matrices
+    SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "this method supports one dimensional matrices (vectors) only.");
 
-    SUSA_ASSERT_MESSAGE(uint_size > uint_num, "The number of elements to be selected is larger than the matrix size.");
-    if (uint_size < uint_num) {
+    unsigned int uint_size = mat_arg.size();
+    matrix <T> mat_ret     = mat_arg;
+    matrix <unsigned int> mat_index(uint_num, 1);
+
+    SUSA_ASSERT_MESSAGE(uint_size > uint_num,
+      "The number of elements to be selected is larger than the matrix size.");
+    if (uint_size < uint_num)
+    {
         return mat_index;
     }
 
     unsigned int uint_min_index;
     T T_min;
 
-    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
+    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++)
+    {
         uint_min_index = uint_i;
         T_min = mat_ret(uint_i);
-        for (unsigned int uint_j = 0; uint_j < mat_limited_index.size(); uint_j++) {
-            if (mat_ret(mat_limited_index(uint_j)) < T_min) {
+        for (unsigned int uint_j = 0; uint_j < mat_limited_index.size(); uint_j++)
+        {
+            if (mat_ret(mat_limited_index(uint_j)) < T_min)
+            {
                 uint_min_index = mat_limited_index(uint_j);
                 T_min = mat_ret(mat_limited_index(uint_j));
             }
@@ -156,26 +192,35 @@ template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &
     return mat_index;
 }
 
-template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, unsigned int uint_num) {
+template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, unsigned int uint_num)
+{
+
+    //TODO support matrices
+    SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "this method supports one dimensional matrices (vectors) only.");
 
     unsigned int uint_size = mat_arg.size();
-    matrix <T> mat_ret = mat_arg;
-    matrix <unsigned int> mat_index(uint_num,1);
+    matrix <T> mat_ret     = mat_arg;
+    matrix <unsigned int> mat_index(uint_num, 1);
 
 
-    SUSA_ASSERT_MESSAGE(uint_size > uint_num, "The number of elements to be selected is larger than the matrix size.");
-    if (uint_size < uint_num) {
+    SUSA_ASSERT_MESSAGE(uint_size > uint_num,
+      "The number of elements to be selected is larger than the matrix size.");
+    if (uint_size < uint_num)
+    {
         return mat_index;
     }
 
     unsigned int uint_max_index;
     T T_max;
 
-    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++) {
+    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++)
+    {
         uint_max_index = uint_i;
         T_max = mat_ret(uint_i);
-        for (unsigned int uint_j = 0; uint_j < uint_size; uint_j++) {
-            if (mat_ret(uint_j) > T_max) {
+        for (unsigned int uint_j = 0; uint_j < uint_size; uint_j++)
+        {
+            if (mat_ret(uint_j) > T_max)
+            {
                 uint_max_index = uint_j;
                 T_max = mat_ret(uint_j);
             }
@@ -192,21 +237,25 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
 
 template <class T> iset find(const matrix <T> &mat_arg, T &T_arg)
 {
-  susa::iset __iset(mat_arg.size() + 1); // lets have at least one index
 
-  for (unsigned int uint_index = 0; uint_index < mat_arg.size(); uint_index++)
-  {
-    if (mat_arg(uint_index) == T_arg) __iset.add(uint_index);
-  }
+    //TODO support matrices
+    SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "this method supports one dimensional matrices (vectors) only.");
 
-  return __iset;
+    susa::iset __iset(mat_arg.size() + 1); // lets have at least one index
+
+    for (unsigned int uint_index = 0; uint_index < mat_arg.size(); uint_index++)
+    {
+        if (mat_arg(uint_index) == T_arg) __iset.add(uint_index);
+    }
+
+    return __iset;
 }
 
 
 template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, unsigned int uint_src)
 {
 
-  SUSA_ASSERT_MESSAGE(mat_graph.is_square(), "the weight matrix must be square");
+  SUSA_ASSERT_MESSAGE(mat_graph.is_square(), "the weight matrix must be square.");
 
   if (!mat_graph.is_square()) return (matrix <unsigned int> ());
 
@@ -254,6 +303,78 @@ template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, u
   }
 
   return prev;
+}
+
+
+template <class T> matrix <unsigned int> sort_indices(const matrix <T> &mat_arg)
+{
+
+    //TODO support matrices
+    SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "this method supports one dimensional matrices (vectors) only.");
+
+    unsigned int uint_size = mat_arg.size();
+
+    matrix <T>   mat_elements = mat_arg;
+    matrix <unsigned int> mat_indices(uint_size, 1);
+
+    T            T_max        = mat_arg(max(mat_arg)(0));
+    unsigned int uint_indx    = 0;
+    unsigned int uint_indx_e  = 0;
+
+
+
+    while(T_max != mat_elements(min(mat_elements)(0)) && uint_indx < uint_size)
+    {
+        mat_indices(uint_indx) = min(mat_elements)(0);
+        mat_elements(mat_indices(uint_indx)) = T_max;
+        uint_indx++;
+    }
+
+    for (unsigned int uint_indx_i = uint_indx; uint_indx_i < uint_size; uint_indx_i++)
+    {
+        while (uint_indx_e < uint_size)
+        {
+            if (mat_arg(uint_indx_e) == T_max)
+            {
+                mat_indices(uint_indx_i) = uint_indx_e;
+                uint_indx_e++;
+                break;
+            }
+            uint_indx_e++;
+        }
+    }
+
+    return mat_indices;
+}
+
+template <class T> matrix <T> sort(const matrix <T> &mat_arg)
+{
+
+    //TODO support matrices
+    SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "this method supports one dimensional matrices (vectors) only.");
+
+    unsigned int uint_size   = mat_arg.size();
+    matrix <T>   mat_return  = mat_arg;
+    T T_swap;
+    bool bool_changed = false;
+
+    for (unsigned int uint_indx = 0; uint_indx < uint_size; uint_indx++)
+    {
+        for (unsigned int uint_indx_ = uint_indx + 1; uint_indx_ < uint_size; uint_indx_++)
+        {
+            if (mat_return(uint_indx_) < mat_return(uint_indx))
+            {
+                T_swap = mat_return(uint_indx);
+                mat_return(uint_indx) = mat_return(uint_indx_);
+                mat_return(uint_indx_) = T_swap;
+                bool_changed = true;
+            }
+        }
+        if (!bool_changed) break;
+        bool_changed = false;
+    }
+
+    return mat_return;
 }
 
 }      // NAMESPACE SUSA
