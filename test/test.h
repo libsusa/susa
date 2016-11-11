@@ -41,7 +41,7 @@ inline void susa_test(bool res, const char* arga, const char* argb, const char* 
   if (res)
   {
     uint_passed++;
-    std::cout << " TEST # (" << uint_total << ") :\033[1;32m PASSED\033[0m" << std::endl;
+    std::cout << " TEST # (" << uint_total << ") :\033[1;32m PASSED\033[0m" << "  " << msg << std::endl;
   }
   else
   {

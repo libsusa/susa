@@ -26,7 +26,18 @@
 
 int main(int argc, char const *argv[])
 {
-    SUSA_TEST_EQ_DOUBLE(susa::normcdf(0.5), 0.6915, "Normal Cumulative Distribution Function");
+    SUSA_TEST_EQ(susa::round(42.163574), 42.0, "Round a double with no decimals.");
+    SUSA_TEST_EQ(susa::round(42.163574, 2), 42.16, "Round a double with two decimals.");
+    SUSA_TEST_EQ_DOUBLE(susa::normcdf(0.5), 0.6915, "Normal Cumulative Distribution Function.");
+    SUSA_TEST_EQ(susa::round(susa::normcdf(0.5), 4), 0.6915, "Normal Cumulative Distribution Function.");
+
+    susa::rng mt_rng(35748);
+    susa::matrix <float> mat_a = mt_rng.rand(20,10);
+    std::stringstream ss;
+    ss << round(mat_a, 2);
+    std::string str(std::istreambuf_iterator<char>(ss), {});
+    susa::matrix <double> mat_b(str);
+    SUSA_TEST_EQ(mat_b, round(mat_a, 2), "std::string to susa::matrix conversion.");
 
     std::cout << std::endl << " -----------------";
     std::cout << std::endl << " NUMBER OF FAILED TESTS(" << uint_failed <<")";
