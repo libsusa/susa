@@ -17,7 +17,7 @@
 
 /**
  * @file matrix.cpp
- * @brief matrix class.
+ * @brief <i>matrix</i> class (definition).
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
@@ -31,24 +31,37 @@ void pre_parser(std::string &str_string)
 {
     // Coversion from 'string' to numerical data types are done
     // by using the capabilities of STL stream objects.
-    // They faciliate parsing the string into a Susa matrix.
+    // They faciliate parsing the string into a susa::matrix.
     // This pre-parsing method is to prepare the input string for
     // STL stream objects in parser() method.
     // At the end of this routine the string should only contain
-    // neccessary spaces and semicolons.
+    // neccessary delimiter characters.
     int int_length = str_string.length();
 
     // it is needed to append some extra spaces since in the loops below the
     // code will access elements outside the original string size them.
     str_string = str_string + std::string("  ");
 
+    // (0) CR i.e. \n represents the end of the matrix row and
+    // LF i.e. \r shall be treated as a space for compatibility purposes.
+    for (int int_i = 0; int_i < int_length; int_i++)
+    {
+        if (str_string[int_i] == '\n')
+        {
+            str_string[int_i] = ';';
+        }
+        else if (str_string[int_i] == '\r')
+        {
+            str_string[int_i] = 0x20;
+        }
+    }
 
-    // (0) Replace tabs and "," with spaces
+    // (1) Replace tabs and "," with spaces
     for (int int_i = 0; int_i < int_length; int_i++)
         if (str_string[int_i] == 0x09 || str_string[int_i] == ',')
             str_string[int_i] = 0x20;
 
-    // (1) Remove spaces (0x20) after ';'
+    // (2) Remove spaces (0x20) after ';'
     int int_counter = 0;
     for (int int_i = 0; int_i < int_length; int_i++)
     {
@@ -65,7 +78,7 @@ void pre_parser(std::string &str_string)
     str_string = str_string + std::string("  ");
 
 
-    // (2) This is to remove extra spaces.
+    // (3) This is to remove extra spaces.
     int_counter = 0;
     for (int int_i = 0; int_i < int_length; int_i++)
     {
@@ -75,10 +88,10 @@ void pre_parser(std::string &str_string)
             int_counter++;
         }
         else if (str_string[int_i] == 0x20 && str_string[int_i + 1] != ';' &&
-                  (str_string[int_i + 1] > 0x2F ||
-                  str_string[int_i + 1] == '.'  ||    // decimal
-                  str_string[int_i + 1] == 0x2B ||    // '+'
-                  str_string[int_i + 1] == 0x2D))     // '-'
+                  (str_string[int_i + 1] >  0x2F  ||
+                   str_string[int_i + 1] == '.'   ||    // decimal
+                   str_string[int_i + 1] == 0x2B  ||    // '+'
+                   str_string[int_i + 1] == 0x2D))      // '-'
         {
             if (int_counter != 0) // To avoid the 0x20 in the begining of the string
             {
@@ -88,7 +101,7 @@ void pre_parser(std::string &str_string)
         }
     }
 
-    // (3) shrink the string to its real size (delete extra 0x20 that was created in the loop above)
+    // (4) shrink the string to its real size (delete extra 0x20 that was created in the loop above)
     if (str_string[int_counter - 1] == 0x20) str_string.erase(int_counter - 1, int_length - 1);
     else str_string.erase(int_counter,int_length - 1);
 }
