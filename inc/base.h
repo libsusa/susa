@@ -17,8 +17,9 @@
 
 /**
  * @file base.h
- * @brief Basic mathematical operations on STL and Susa types
- * @author Behrooz, Aliabadi
+ * @brief Basic operations on STL and Susa types (declaration and definition).
+ *
+ * @author Behrooz Aliabadi
  * @version 1.0.0
  *
  * @defgroup Math Basic Mathematics
@@ -28,6 +29,7 @@
 #define SUSA_BASE_H
 
 namespace susa {
+
 /**
  * @brief Minimum value indices
  *
@@ -37,8 +39,6 @@ namespace susa {
  */
 template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg);
 
-
-
 /**
  * @brief Maximum
  *
@@ -47,8 +47,6 @@ template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg);
  * @ingroup Math
  */
 template <class T> matrix <unsigned int> max(const matrix <T> &mat_arg);
-
-
 
 /**
  * @brief Differential
@@ -135,11 +133,18 @@ template <class T> matrix <std::complex <T> > conj(const matrix < std::complex <
  * @brief Sign
  *
  * @param mat_arg input argument
- * @return Returns sign of input
+ * @return Returns sign of the input
  * @ingroup Math
  */
 template <class T> matrix <T> sign(const matrix <T> &mat_arg);
 
+/**
+ * @brief Sign
+ *
+ * @param T_arg input argument
+ * @return Returns sign of the input
+ * @ingroup Math
+ */
 template <class T> T sign(T T_arg);
 
 /**
@@ -193,7 +198,6 @@ double normcdf(const double x);
  */
 double qfunc(const double x);
 
-
 /**
  * @brief Modular operation
  *
@@ -203,45 +207,83 @@ double qfunc(const double x);
  */
 long int mod(long int lint_a,long int lint_mod);
 
+/**
+ * @brief Round
+ *
+ * @param  dbl_arg The input floating point number
+ * @param  int_decimal Number of decimals
+ * @return rounds the floating number dbl_arg up to int_decimal numbers
+ *
+ * @ingroup Math
+ */
+double round(const double dbl_arg, int int_decimal = -1);
 
 
+/**
+ * @brief Round
+ *
+ * @param  mat_arg The input susa::matrix<double>
+ * @param  int_decimal Number of decimals
+ * @return rounds the matrix mat_arg elements up to int_decimal numbers
+ *
+ * @ingroup Math
+ */
+matrix <double> round(const matrix <double> &mat_arg, int int_decimal = -1);
 
-template <class T> std::vector <T> diff(std::vector <T> &vec_arg) {
+// Implementations
+
+template <class T> std::vector <T> diff(std::vector <T> &vec_arg)
+{
     std::vector <T> vec_diff( vec_arg.size() - 1, 0 );
 
-    for (int i=0; i<vec_arg.size()-1; i++) {
+    for (int i=0; i<vec_arg.size()-1; i++)
+    {
         vec_diff[i] = vec_arg[i+1] - vec_arg[i];
     }
 
     return (vec_diff);
 }
 
-template <class T> matrix <T> sum(matrix <T> &mat_arg) {
+template <class T> matrix <T> sum(matrix <T> &mat_arg)
+{
     matrix <T> mat_ret;
 
-    if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1) {
+    if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
+    {
         mat_ret = matrix <T> (1,1);
-        for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++) mat_ret(0) += mat_arg(uint_i);
-    } else {
-        mat_ret = matrix <T> (1,mat_arg.no_cols());
-        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++) {
-            for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++) mat_ret(uint_col) += mat_arg(uint_row,uint_col);
+        for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+            mat_ret(0) += mat_arg(uint_i);
+    }
+    else
+    {
+        mat_ret = matrix <T> (1, mat_arg.no_cols());
+        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+        {
+            for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++)
+                mat_ret(uint_col) += mat_arg(uint_row,uint_col);
         }
     }
 
     return mat_ret;
 }
 
-template <class T> matrix <double> mean(matrix <T> &mat_arg) {
+template <class T> matrix <double> mean(matrix <T> &mat_arg)
+{
     matrix <double> mat_ret;
 
-    if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1) {
+    if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
+    {
         mat_ret = matrix <double> (1,1);
-        for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++) mat_ret(0) += mat_arg(uint_i);
-    } else {
-        mat_ret = matrix <double> (1,mat_arg.no_cols());
-        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++) {
-            for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++) mat_ret(uint_col) += mat_arg(uint_row);
+        for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+            mat_ret(0) += mat_arg(uint_i);
+    }
+    else
+    {
+        mat_ret = matrix <double> (1, mat_arg.no_cols());
+        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+        {
+            for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++)
+                mat_ret(uint_col) += mat_arg(uint_row);
             mat_ret(uint_col) /= mat_arg.no_rows();
         }
     }
@@ -249,31 +291,41 @@ template <class T> matrix <double> mean(matrix <T> &mat_arg) {
     return mat_ret;
 }
 
-template <class T> std::vector <T> abs(std::vector <T> &vec_arg) {
+template <class T> std::vector <T> abs(std::vector <T> &vec_arg)
+{
     std::vector <T> vec_abs(vec_arg.size(),0);
     for (int i=0; i<vec_arg.size(); i++) vec_abs[i] = abs(vec_arg[i]);
     return vec_abs;
 }
 
-template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg) {
+template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg)
+{
     matrix <unsigned int> mat_ret;
     T T_min;
 
-    if (mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1) {
-        mat_ret = matrix <unsigned int> (1,1);
+    if (mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1)
+    {
+        mat_ret = matrix <unsigned int> (1, 1, 0);
         T_min = mat_arg(0);
-        for (unsigned int uint_i = 1; uint_i < mat_arg.size(); uint_i++) {
-            if (mat_arg(uint_i) < T_min) {
+        for (unsigned int uint_i = 1; uint_i < mat_arg.size(); uint_i++)
+        {
+            if (mat_arg(uint_i) < T_min)
+            {
                 T_min = mat_arg(uint_i);
                 mat_ret(0) = uint_i;
             }
         }
-    } else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1) {
-        mat_ret = matrix <unsigned int> (1,mat_arg.no_cols());
-        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++) {
-            T_min = mat_arg(0,uint_col);
-            for (unsigned int uint_row = 1; uint_row < mat_arg.no_rows(); uint_row++) {
-                if (mat_arg(uint_row, uint_col) < T_min) {
+    }
+    else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
+    {
+        mat_ret = matrix <unsigned int> (1, mat_arg.no_cols(), 0);
+        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+        {
+            T_min = mat_arg(0, uint_col);
+            for (unsigned int uint_row = 1; uint_row < mat_arg.no_rows(); uint_row++)
+            {
+                if (mat_arg(uint_row, uint_col) < T_min)
+                {
                     T_min = mat_arg(uint_row,uint_col);
                     mat_ret(uint_col) = uint_row;
                 }
@@ -284,25 +336,34 @@ template <class T> matrix <unsigned int> min(const matrix <T> &mat_arg) {
     return mat_ret;
 }
 
-template <class T> matrix <unsigned int> max(const matrix <T> &mat_arg) {
+template <class T> matrix <unsigned int> max(const matrix <T> &mat_arg)
+{
     matrix <unsigned int> mat_ret;
     T T_max;
 
-    if (mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1) {
-        mat_ret = matrix <unsigned int> (1,1);
+    if (mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1)
+    {
+        mat_ret = matrix <unsigned int> (1, 1, 0);
         T_max = mat_arg(0);
-        for (unsigned int uint_i = 1; uint_i < mat_arg.size(); uint_i++) {
-            if (mat_arg(uint_i) > T_max) {
+        for (unsigned int uint_i = 1; uint_i < mat_arg.size(); uint_i++)
+        {
+            if (mat_arg(uint_i) > T_max)
+            {
                 T_max = mat_arg(uint_i);
                 mat_ret(0) = uint_i;
             }
         }
-    } else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1) {
-        mat_ret = matrix <unsigned int> (1,mat_arg.no_cols());
-        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++) {
-            T_max = mat_arg(0,uint_col);
-            for (unsigned int uint_row = 1; uint_row < mat_arg.no_rows(); uint_row++) {
-                if (mat_arg(uint_row, uint_col) > T_max) {
+    }
+    else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
+    {
+        mat_ret = matrix <unsigned int> (1, mat_arg.no_cols(), 0);
+        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+        {
+            T_max = mat_arg(0, uint_col);
+            for (unsigned int uint_row = 1; uint_row < mat_arg.no_rows(); uint_row++)
+            {
+                if (mat_arg(uint_row, uint_col) > T_max)
+                {
                     T_max = mat_arg(uint_row,uint_col);
                     mat_ret(uint_col) = uint_row;
                 }
@@ -313,31 +374,41 @@ template <class T> matrix <unsigned int> max(const matrix <T> &mat_arg) {
     return mat_ret;
 }
 
-template <class T> matrix <std::complex <T> > conj(const matrix < std::complex <T> > &mat_arg) {
+template <class T> matrix <std::complex <T> > conj(const matrix < std::complex <T> > &mat_arg)
+{
     matrix < std::complex <T> > mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
 
-    for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++) mat_ret(uint_i) = std::conj(mat_arg(uint_i));
+    for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+        mat_ret(uint_i) = std::conj(mat_arg(uint_i));
     return mat_ret;
 }
 
-template <class T> matrix <double> mag(const matrix < std::complex <T> > &mat_arg) {
+template <class T> matrix <double> mag(const matrix < std::complex <T> > &mat_arg)
+{
     matrix <double> mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
 
-    for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++) mat_ret(uint_i) = (mat_arg(uint_i) * std::conj(mat_arg(uint_i))).real();
+    for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+        mat_ret(uint_i) = (mat_arg(uint_i) * std::conj(mat_arg(uint_i))).real();
     return mat_ret;
 }
 
-template <class T> matrix <double> norm(const matrix <T> &mat_arg) {
+template <class T> matrix <double> norm(const matrix <T> &mat_arg)
+{
     matrix <double> mat_ret;
 
-    if (mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1) {
+    if (mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1)
+    {
         mat_ret = matrix <double> (1,1);
         for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++) mat_ret(0) += mat_arg(uint_i) * mat_arg(uint_i);
         mat_ret(0) = std::sqrt(mat_ret(0));
-    } else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1) {
+    }
+    else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
+    {
         mat_ret = matrix <double> (1,mat_arg.no_cols());
-        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++) {
-            for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++) {
+        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+        {
+            for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++)
+            {
                 mat_ret(uint_col) += mat_arg(uint_row,uint_col) * mat_arg(uint_row,uint_col);
             }
             mat_ret(uint_col) = std::sqrt(mat_ret(uint_col));
@@ -346,10 +417,12 @@ template <class T> matrix <double> norm(const matrix <T> &mat_arg) {
     return mat_ret;
 }
 
-template <class T> matrix <T> real(const matrix < std::complex <T> > &mat_arg) {
+template <class T> matrix <T> real(const matrix < std::complex <T> > &mat_arg)
+{
     matrix <T> mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
 
-    for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++) mat_ret(uint_i) = mat_arg(uint_i).real();
+    for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+        mat_ret(uint_i) = mat_arg(uint_i).real();
 
     return mat_ret;
 }
