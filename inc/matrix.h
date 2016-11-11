@@ -141,6 +141,22 @@ template <class T> class matrix :
     //! Returns true if the matrix is square
     bool is_square() const;
 
+    /** 
+     * @brief Returns true if it represents a vector
+     *
+     * A susa::matrix <T> instance can be considered a <i>vector</i>
+     * if and only if it has a single row or a single column.
+     */
+    bool is_vector() const;
+
+    /** 
+     * @brief Returns true if it represents a scalar
+     *
+     * A susa::matrix <T> instance can be considered a <i>scalar</i>
+     * if and only if it has a single row and a single column.
+     */
+    bool is_scalar() const;
+
     //! Returns the size of matrix
     void set_all(T T_arg);
 
@@ -407,6 +423,16 @@ template <class T> unsigned int  matrix <T>::no_rows() const
 template <class T> bool matrix <T>::is_square() const
 {
     return (uint_rows == uint_cols);
+}
+
+template <class T> bool matrix <T>::is_vector() const
+{
+    return ((uint_rows == 1 && uint_cols > 1 ) || ( uint_rows > 1 && uint_cols == 1));
+}
+
+template <class T> bool matrix <T>::is_scalar() const
+{
+    return (uint_rows == 1 && uint_cols == 1);
 }
 
 template <class T> void  matrix <T>::set_all(T T_arg)
@@ -1095,7 +1121,8 @@ template <class T> void matrix <T>::parser(std::string str_string)
     SUSA_ASSERT_MESSAGE(uint_cols_ % uint_rows_ == 0,
       "the number of columns are not equal in each row.");
 
-    if (uint_cols_ % uint_rows_ != 0) {
+    if (uint_cols_ % uint_rows_ != 0)
+    {
         return;
     }
 
@@ -1103,7 +1130,7 @@ template <class T> void matrix <T>::parser(std::string str_string)
     if (uint_size != 0)
     {
 
-        if ((uint_rows * uint_cols) != uint_size)
+        if ((this->uint_objects) != uint_size)
         {
             this->allocate(uint_size);
         }
