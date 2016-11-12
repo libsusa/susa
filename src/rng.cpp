@@ -62,14 +62,14 @@ matrix <unsigned int> rng::rand_mask(unsigned int uint_mask, unsigned int uint_n
 double rng::GetDouble()
 {
 
-    return ((double)extract_number() / D);
+    return ((double)extract_number() / std::numeric_limits<uint32_t>::max());
 
 }
 
 double rng::rand()
 {
 
-    return ((double)extract_number() / D);
+    return ((double)extract_number() / std::numeric_limits<uint32_t>::max());
 }
 
 double rng::randn()
@@ -94,11 +94,10 @@ double rng::randn()
 matrix <double> rng::rand(unsigned int uint_num)
 {
     matrix <double> mat_ret(uint_num, 1);
-    unsigned int UIntMax = (unsigned int)(0xFFFFFFFF);
 
     for (unsigned int i = 0; i < uint_num; i++)
     {
-        mat_ret(i) = (double)extract_number() / UIntMax;
+        mat_ret(i) = (double)extract_number() / std::numeric_limits<uint32_t>::max();
     }
 
     return mat_ret;
@@ -109,11 +108,9 @@ matrix <double> rng::rand(unsigned int uint_rows, unsigned int uint_cols)
     matrix <double> mat_ret(uint_rows, uint_cols);
     unsigned int uint_size = mat_ret.size();
 
-    unsigned int UIntMax = (unsigned int)(0xFFFFFFFF);
-
     for (unsigned int i = 0; i < uint_size; i++)
     {
-        mat_ret(i) = (double)extract_number() / UIntMax;
+        mat_ret(i) = (double)extract_number() / std::numeric_limits<uint32_t>::max();
     }
 
     return mat_ret;
@@ -131,10 +128,10 @@ matrix <double> rng::randn(unsigned int uint_num)
         {
             x1 = 2.0 * rand() - 1.0;
             x2 = 2.0 * rand() - 1.0;
-            w = x1 * x1 + x2 * x2;
+            w  = x1 * x1 + x2 * x2;
         } while ( w >= 1.0 );
 
-        w = std::sqrt( (-2.0 * std::log( w ) ) / w );
+        w  = std::sqrt( (-2.0 * std::log( w ) ) / w );
         y1 = x1 * w;
         y2 = x2 * w;
 
@@ -201,7 +198,7 @@ void rng::generate_numbers()
 
 unsigned int rng::extract_number()
 {
-    
+
     if (uint_index >= N)
     {
         generate_numbers();

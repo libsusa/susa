@@ -17,7 +17,7 @@
 
 /**
  * @file rrcosine.h
- * @brief Root-Raised Cosine
+ * @brief Root-Raised Cosine (declaration).
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  *
@@ -31,7 +31,7 @@ namespace susa
 {
 
 /**
- * @brief Root-Raised Cosine wrapper class.
+ * @brief Root-Raised Cosine class.
  *
  * @ingroup Communications
  **/
@@ -54,5 +54,6 @@ class RRCosine {
 
 
 template <class T> int antipodal(T T_arg);
+
 }       // NAMESPACE SUSA
 #endif  // SUSA_RRCOSINE_H

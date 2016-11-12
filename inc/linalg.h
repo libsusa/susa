@@ -44,28 +44,27 @@ template <class T> matrix <T> matmul( const matrix <T> &mat_argl,const matrix <T
     // To make it faster this method has been declared as 'friend' of
     // 'matrix' template class so 'matmul' apears two times in 'matrix.h'
     // and two times in 'linalg.h'
-    unsigned int uint_rows = mat_argl.no_rows();
-    unsigned int uint_cols = mat_argr.no_cols();
+    size_t sizet_rows = mat_argl.no_rows();
+    size_t sizet_cols = mat_argr.no_cols();
 
     matrix <T> mat_ret;
-    
+
     SUSA_ASSERT(mat_argl._matrix != NULL && mat_argr._matrix != NULL);
 
     if (mat_argl._matrix == NULL || mat_argr._matrix == NULL) return mat_ret;
 
     if (mat_argl.no_cols() == mat_argr.no_rows())
     {
-        mat_ret = matrix <T> (uint_rows, uint_cols);
-        for (unsigned int uint_row = 0; uint_row < uint_rows; uint_row++)
+        mat_ret = matrix <T> (sizet_rows, sizet_cols);
+        for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
         {
-            for (unsigned int uint_col = 0; uint_col < uint_cols; uint_col++)
+            for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
             {
-                for (unsigned int uint_index = 0; uint_index < mat_argl.no_cols(); uint_index++)
+                for (size_t sizet_index = 0; sizet_index < mat_argl.no_cols(); sizet_index++)
                 {
-                    //mat_ret(uint_row, uint_col) += mat_argl(uint_row,uint_index) * mat_argr(uint_index,uint_col);
-                    mat_ret._matrix[uint_row + uint_col * mat_ret.uint_rows] +=
-                            mat_argl._matrix[uint_row + uint_index * mat_argl.uint_rows]
-                            * mat_argr._matrix[uint_index + uint_col * mat_argr.uint_rows];
+                    mat_ret._matrix[sizet_row + sizet_col * mat_ret.sizet_rows] +=
+                            mat_argl._matrix[sizet_row + sizet_index * mat_argl.sizet_rows]
+                            * mat_argr._matrix[sizet_index + sizet_col * mat_argr.sizet_rows];
                 }
             }
         }
@@ -87,8 +86,8 @@ template <class T> matrix <T> matmul( const matrix <T> &mat_argl,const matrix <T
  */
 template <class T> matrix <T> transpose(const matrix <T> &mat_arg)
 {
-    unsigned int uint_rows = mat_arg.no_rows();
-    unsigned int uint_cols = mat_arg.no_cols();
+    size_t sizet_rows = mat_arg.no_rows();
+    size_t sizet_cols = mat_arg.no_cols();
     matrix <T> mat_ret;
 
     SUSA_ASSERT(mat_arg._matrix != NULL);
@@ -98,14 +97,14 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg)
         return mat_ret;
     }
 
-    mat_ret = matrix <T> (uint_cols, uint_rows);
+    mat_ret = matrix <T> (sizet_cols, sizet_rows);
 
-    for (unsigned int uint_col = 0; uint_col < uint_cols; uint_col++)
+    for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
     {
-        for (unsigned int uint_row = 0; uint_row < uint_rows; uint_row++)
+        for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
         {
-            //mat_ret(uint_col,uint_row) = mat_arg(uint_row,uint_col);
-            mat_ret._matrix[uint_col + uint_row * mat_ret.uint_rows] = mat_arg._matrix[uint_row + uint_col * mat_arg.uint_rows];
+            mat_ret._matrix[sizet_col + sizet_row * mat_ret.sizet_rows] =
+            mat_arg._matrix[sizet_row + sizet_col * mat_arg.sizet_rows];
         }
     }
 
@@ -124,17 +123,17 @@ template <class T> double det(const matrix <T> &mat_arg)
 {
     double dbl_ret = 0.0;
 
-    unsigned int uint_rows = mat_arg.no_rows();
-    unsigned int uint_cols = mat_arg.no_cols();
+    size_t sizet_rows = mat_arg.no_rows();
+    size_t sizet_cols = mat_arg.no_cols();
 
-    if (uint_rows == uint_cols) {
-        if (uint_rows == 1) { // 1 x 1
+    if (sizet_rows == sizet_cols) {
+        if (sizet_rows == 1) { // 1 x 1
             dbl_ret = mat_arg(0);
-        } else if (uint_rows == 2) { // 2 x 2
+        } else if (sizet_rows == 2) { // 2 x 2
             dbl_ret = mat_arg(0, 0) * mat_arg(1, 1) - mat_arg(1, 0) * mat_arg(0, 1);
         } else { // 3 x 3 and more
-            for (unsigned int  uint_col = 0; uint_col < uint_cols; uint_col++) {
-                matrix <T> mat_minor = mat_arg.shrink(0, uint_col);
+            for (size_t  sizet_col = 0; sizet_col < sizet_cols; sizet_col++) {
+                matrix <T> mat_minor = mat_arg.shrink(0, sizet_col);
                 if (mat_minor.size() == mat_arg.size()) {
                     // If for any reason something goes wrong in the minor() it returns the matrix without any action.
                     // Therefore size of the input argument and the returned argument would the same. This case cause infinite
@@ -143,7 +142,7 @@ template <class T> double det(const matrix <T> &mat_arg)
                     SUSA_LOG_ERR("Falling into an infinite loop avoided.");
                     return dbl_ret;
                 }
-                dbl_ret +=  (-2 * (int)(uint_col%2) + 1) * mat_arg(0, uint_col) * det(mat_minor);
+                dbl_ret +=  (-2 * (int)(sizet_col%2) + 1) * mat_arg(0, sizet_col) * det(mat_minor);
             }
         }
     }
@@ -172,19 +171,19 @@ template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T
 
         mat_ret = matrix <T> (mat_argl.no_rows() + mat_argr.no_rows(), mat_argl.no_cols());
 
-        for (unsigned int uint_row = 0; uint_row < mat_argl.no_rows(); uint_row++)
+        for (size_t sizet_row = 0; sizet_row < mat_argl.no_rows(); sizet_row++)
         {
-            for (unsigned int uint_col = 0; uint_col < mat_argl.no_cols(); uint_col++)
+            for (size_t sizet_col = 0; sizet_col < mat_argl.no_cols(); sizet_col++)
             {
-                mat_ret(uint_row,uint_col) = mat_argl(uint_row,uint_col);
+                mat_ret(sizet_row,sizet_col) = mat_argl(sizet_row,sizet_col);
             }
         }
 
-        for (unsigned int uint_row = 0; uint_row < mat_argr.no_rows(); uint_row++)
+        for (size_t sizet_row = 0; sizet_row < mat_argr.no_rows(); sizet_row++)
         {
-            for (unsigned int uint_col = 0; uint_col < mat_argr.no_cols(); uint_col++)
+            for (size_t sizet_col = 0; sizet_col < mat_argr.no_cols(); sizet_col++)
             {
-                mat_ret(mat_argl.no_rows() + uint_row,uint_col) = mat_argr(uint_row,uint_col);
+                mat_ret(mat_argl.no_rows() + sizet_row,sizet_col) = mat_argr(sizet_row,sizet_col);
             }
         }
     }
@@ -192,19 +191,19 @@ template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T
     { // Case II
         mat_ret = matrix <T> (mat_argl.no_rows(), mat_argl.no_cols() + mat_argr.no_cols());
 
-        for (unsigned int uint_row = 0; uint_row < mat_argl.no_rows(); uint_row++)
+        for (size_t sizet_row = 0; sizet_row < mat_argl.no_rows(); sizet_row++)
         {
-            for (unsigned int uint_col = 0; uint_col < mat_argl.no_cols(); uint_col++)
+            for (size_t sizet_col = 0; sizet_col < mat_argl.no_cols(); sizet_col++)
             {
-                mat_ret(uint_row,uint_col) = mat_argl(uint_row,uint_col);
+                mat_ret(sizet_row,sizet_col) = mat_argl(sizet_row,sizet_col);
             }
         }
 
-        for (unsigned int uint_row = 0; uint_row < mat_argr.no_rows(); uint_row++)
+        for (size_t sizet_row = 0; sizet_row < mat_argr.no_rows(); sizet_row++)
         {
-            for (unsigned int uint_col = 0; uint_col < mat_argr.no_cols(); uint_col++)
+            for (size_t sizet_col = 0; sizet_col < mat_argr.no_cols(); sizet_col++)
             {
-                mat_ret(uint_row,mat_argr.no_cols() + uint_col) = mat_argr(uint_row,uint_col);
+                mat_ret(sizet_row,mat_argr.no_cols() + sizet_col) = mat_argr(sizet_row,sizet_col);
             }
         }
     }
@@ -231,18 +230,18 @@ template <class T> matrix <T> fliplr(const matrix <T> &mat_arg)
     {
         if (mat_arg.no_cols() == 1) SUSA_LOG_INFO("fliplr() has been replaced by flipud().");
 
-        for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+        for (size_t sizet_i = 0; sizet_i < mat_arg.size(); sizet_i++)
         {
-          mat_ret(uint_i) = mat_arg(mat_arg.size() - uint_i - 1);
+          mat_ret(sizet_i) = mat_arg(mat_arg.size() - sizet_i - 1);
         }
     }
     else if (mat_arg.no_cols() > 1 || mat_arg.no_rows() > 1)
     {
-        for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++)
+        for (size_t sizet_row = 0; sizet_row < mat_arg.no_rows(); sizet_row++)
         {
-            for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+            for (size_t sizet_col = 0; sizet_col < mat_arg.no_cols(); sizet_col++)
             {
-              mat_ret(uint_row,uint_col) = mat_arg(uint_row,mat_arg.no_cols() - uint_col - 1);
+              mat_ret(sizet_row,sizet_col) = mat_arg(sizet_row,mat_arg.no_cols() - sizet_col - 1);
             }
         }
     }
@@ -266,18 +265,18 @@ template <class T> matrix <T> flipud(const matrix <T> &mat_arg)
 
         if (mat_arg.no_rows() == 1) SUSA_LOG_INFO("flipud() has been replaced by fliplr().");
 
-        for (unsigned int uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+        for (size_t sizet_i = 0; sizet_i < mat_arg.size(); sizet_i++)
         {
-          mat_ret(uint_i) = mat_arg(mat_arg.size() - uint_i - 1);
+          mat_ret(sizet_i) = mat_arg(mat_arg.size() - sizet_i - 1);
         }
     }
     else if (mat_arg.no_cols() > 1 || mat_arg.no_rows() > 1)
     {
-        for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+        for (size_t sizet_col = 0; sizet_col < mat_arg.no_cols(); sizet_col++)
         {
-            for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++)
+            for (size_t sizet_row = 0; sizet_row < mat_arg.no_rows(); sizet_row++)
             {
-              mat_ret(uint_row,uint_col) = mat_arg(mat_arg.no_rows()  - uint_row - 1,uint_col);
+              mat_ret(sizet_row,sizet_col) = mat_arg(mat_arg.no_rows()  - sizet_row - 1,sizet_col);
             }
         }
     }

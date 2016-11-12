@@ -17,12 +17,12 @@
 
 /**
  * @file rrcosine.cpp
- * @brief Basic communiaction blocks
+ * @brief Root-Raised Cosine (definition).
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
-#include "../inc/susa.h"
+#include <susa.h>
 
 namespace susa {
 

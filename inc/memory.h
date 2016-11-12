@@ -42,8 +42,8 @@ namespace susa
     {
         protected:
             T* _matrix;
-            unsigned int uint_bytes;
-            unsigned int uint_objects;
+            size_t sizet_bytes;
+            size_t sizet_objects;
 
         public:
             //! Constructor
@@ -55,22 +55,22 @@ namespace susa
             /**
              * Allocates a memory space without initialization.
              *
-             * @param uint_size the number of T elements.
+             * @param sizet_size the number of T elements.
              */
-            void allocate(unsigned int uint_size);
+            void allocate(size_t sizet_size);
 
-            //! Release the allocated memory
+            //! Release the allocated memory.
             void deallocate();
 
             //! Returns the number of allocated objects.
-            unsigned int size() const;
+            size_t size() const;
     };
 
     template <class T> memory<T>::memory()
     {
-        _matrix       = nullptr;
-        uint_bytes    = 0;
-        uint_objects  = 0;
+        _matrix        = nullptr;
+        sizet_bytes    = 0;
+        sizet_objects  = 0;
     }
 
     template <class T> memory<T>::~memory()
@@ -78,25 +78,25 @@ namespace susa
         deallocate();
     }
 
-    template <class T> void memory<T>::allocate(unsigned int uint_size)
+    template <class T> void memory<T>::allocate(size_t sizet_size)
     {
-        uint_objects = uint_size;
-        uint_bytes   = uint_size * sizeof(T);
+        sizet_objects = sizet_size;
+        sizet_bytes   = sizet_size * sizeof(T);
 
         if (_matrix == nullptr)
         {
-            void* block = std::malloc(uint_size * sizeof(T));
+            void* block = std::malloc(sizet_size * sizeof(T));
             SUSA_ASSERT_MESSAGE(block != nullptr, "memory allocation failed.");
             if (block == nullptr) std::exit(EXIT_FAILURE);
             _matrix = static_cast<T*>(block);
         }
-        else if (uint_size == 0)
+        else if (sizet_size == 0)
         {
             deallocate();
         }
         else
         {
-            void* block = std::realloc(_matrix, uint_size * sizeof(T));
+            void* block = std::realloc(_matrix, sizet_size * sizeof(T));
 
             if (block == nullptr)
             {
@@ -115,14 +115,14 @@ namespace susa
         {
             std::free(_matrix);
             _matrix      = nullptr;
-            uint_objects = 0;
-            uint_bytes   = 0;
+            sizet_objects = 0;
+            sizet_bytes   = 0;
         }
     }
 
-    template <class T> unsigned int  memory <T>::size() const
+    template <class T> size_t memory <T>::size() const
     {
-        return uint_objects;
+        return sizet_objects;
     }
 }
 #endif

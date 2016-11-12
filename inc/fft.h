@@ -28,7 +28,7 @@
 namespace susa {
 
 /**
- * @brief The Fast Fourier Transform (FFT) wrapper class.
+ * @brief The Fast Fourier Transform (FFT) class.
  *
  * @ingroup Signal
  */
