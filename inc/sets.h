@@ -26,8 +26,8 @@
 #ifndef SUSA_SETS_H
 #define SUSA_SETS_H
 
-#include <debug.h>
-#include <memory.h>
+#include <susa/debug.h>
+#include <susa/memory.h>
 
 namespace susa
 {

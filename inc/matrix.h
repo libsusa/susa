@@ -32,8 +32,8 @@
 #ifndef SUSA_MATRIX_H
 #define SUSA_MATRIX_H
 
-#include <debug.h>
-#include <memory.h>
+#include <susa/debug.h>
+#include <susa/memory.h>
 
 namespace susa
 {
@@ -393,7 +393,7 @@ template <class T> T matrix <T>::get( size_t sizet_row, size_t sizet_col ) const
 
   SUSA_ASSERT(this->_matrix != NULL);
 
-  SUSA_ASSERT_MESSAGE(sizet_row < sizet_rows && sizet_col < sizet_cols, "one or more indices are out of range.");
+  SUSA_ASSERT_MESSAGE(sizet_row < sizet_rows && sizet_col < sizet_cols, "one or more indices is/are out of range.");
 
   return this->_matrix[sizet_row + sizet_col * sizet_rows];
 

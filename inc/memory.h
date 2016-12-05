@@ -26,7 +26,7 @@
 #define SUSA_MEMORY_H
 
 #include <cstdlib>
-#include <debug.h>
+#include <susa/debug.h>
 
 namespace susa
 {
