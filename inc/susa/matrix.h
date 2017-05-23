@@ -1126,25 +1126,26 @@ template <class T> void matrix <T>::parser(std::string str_string)
     sizet_rows_++;
     sizet_size = sizet_cols_ * sizet_rows_;
 
-    SUSA_ASSERT_MESSAGE(sizet_cols_ % sizet_rows_ == 0,
-      "the number of columns are not equal in each row.");
-
+    SUSA_ASSERT_MESSAGE(sizet_cols_ % sizet_rows_ == 0, "the number of columns are not equal in each row.");
+    
     if (sizet_cols_ % sizet_rows_ != 0)
     {
         return;
     }
-
+    
 
     if (sizet_size != 0)
     {
+
+        sizet_rows = sizet_rows_;
+        sizet_cols = sizet_cols_ / sizet_rows_;
+
+        sizet_size = sizet_cols * sizet_rows;
 
         if ((this->sizet_objects) != sizet_size)
         {
             this->allocate(sizet_size);
         }
-
-        sizet_rows = sizet_rows_;
-        sizet_cols = sizet_cols_ / sizet_rows_;
 
 
         std::stringstream ss_all(str_string);

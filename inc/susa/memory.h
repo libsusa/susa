@@ -80,6 +80,9 @@ namespace susa
 
     template <class T> void memory<T>::allocate(size_t sizet_size)
     {
+
+        if (sizet_objects == sizet_size) return;
+
         sizet_objects = sizet_size;
         sizet_bytes   = sizet_size * sizeof(T);
 

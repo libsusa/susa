@@ -35,15 +35,10 @@ int main(int argc, char const *argv[])
     susa::matrix <float> mat_a = mt_rng.rand(20,10);
     std::stringstream ss;
     ss << round(mat_a, 2);
-    std::string str(std::istreambuf_iterator<char>(ss), {});
-    susa::matrix <double> mat_b(str);
+    susa::matrix <double> mat_b(ss.str());
     SUSA_TEST_EQ(mat_b, round(mat_a, 2), "std::string to susa::matrix conversion.");
 
-    std::cout << std::endl << " -----------------";
-    std::cout << std::endl << " NUMBER OF FAILED TESTS(" << uint_failed <<")";
-    std::cout << std::endl << " NUMBER OF PASSED TESTS(" << uint_passed <<")";
-    std::cout << std::endl << " TOTAL NUMBER OF TESTS (" << uint_total <<")";
-    std::cout << std::endl;
+    SUSA_TEST_PRINT_STATS();
 
     return (uint_failed);
 }

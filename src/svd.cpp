@@ -23,7 +23,6 @@
  */
 
 #include <susa.h>
-#include <svd.h>
 
 namespace susa {
 

@@ -38,6 +38,12 @@ int main(int argc, char const *argv[])
   mat_a(1,1) = 6.6;
   SUSA_TEST_EQ(mat_a(1,1),    6.6, "matrix parser");
 
+  susa::matrix <int> mat_b("[1; 2; 3]");
+  SUSA_TEST_EQ(mat_b.no_rows(), 3, "matrix parser rows");
+  SUSA_TEST_EQ(mat_b.no_cols(), 1, "matrix parser cols");
+  SUSA_TEST_EQ(mat_b.size(), 3, "matrix parser size");
+
+
   susa::matrix <double> mat_c(
     susa::matrix <double> ("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]") +
     susa::matrix <double> ("[0 0 0;5 -1 1.2;9.1 3 -6]") );
@@ -46,11 +52,7 @@ int main(int argc, char const *argv[])
   SUSA_TEST_EQ(mat_c(4),      3.5, "move semantic.");
   SUSA_TEST_EQ(mat_c(2,2),    -11, "move semantic.");
 
-  std::cout << std::endl << " -----------------";
-  std::cout << std::endl << " NUMBER OF FAILED TESTS(" << uint_failed <<")";
-  std::cout << std::endl << " NUMBER OF PASSED TESTS(" << uint_passed <<")";
-  std::cout << std::endl << " TOTAL NUMBER OF TESTS (" << uint_total <<")";
-  std::cout << std::endl;
+  SUSA_TEST_PRINT_STATS();
 
   return (uint_failed);
 }

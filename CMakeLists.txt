@@ -2,10 +2,8 @@ cmake_minimum_required(VERSION 3.2)
 project(susa)
 enable_testing()
 
-set(BUILD_SHARED_LIBS ON)
 
 if(APPLE)
-  message (STATUS "Mac OSX detected.")
   set(CMAKE_MACOSX_RPATH ON)
 endif(APPLE)
 
@@ -28,7 +26,7 @@ set (SRC_FILES src/rng.cpp
                src/svd.cpp
                src/utility.cpp)
 
-add_library (susa ${SRC_FILES})
+add_library (susa SHARED ${SRC_FILES})
 
 add_subdirectory (examples)
 
@@ -36,8 +34,8 @@ add_subdirectory (test)
 
 install (TARGETS susa
          LIBRARY DESTINATION lib
-         ARCHIVE DESTINATION lib/static)
+         ARCHIVE DESTINATION lib)
 
 install (DIRECTORY inc/
-         DESTINATION include/susa
+         DESTINATION include
          FILES_MATCHING PATTERN "*.h")

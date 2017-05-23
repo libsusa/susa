@@ -47,6 +47,12 @@ int main(void)
   std::cout << std::endl;
 
 
+  susa::matrix <int> mat_c("[1; 2; 3]");
+
+  std::cout << "num rows  = " << mat_c.no_rows() << std::endl;
+  std::cout << "num cols  = " << mat_c.no_cols() << std::endl;
+  std::cout << "num elems = " << mat_c.size() << std::endl;
+  std::cout << std::endl;
 
   SUSA_LOG_INFO("Logs can be disabled by defining SUSA_NDEBUG.");
 

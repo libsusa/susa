@@ -57,11 +57,7 @@ int main(int argc, char const *argv[])
     experiment = (susa::matrix<int>)(mat_s * 10000.0f);
     SUSA_TEST_EQ (experiment, expected, "Singular Value Decomposition (SVD) for a sample matrix.");
 
-    std::cout << std::endl << " -----------------";
-    std::cout << std::endl << " NUMBER OF FAILED TESTS(" << uint_failed <<")";
-    std::cout << std::endl << " NUMBER OF PASSED TESTS(" << uint_passed <<")";
-    std::cout << std::endl << " TOTAL NUMBER OF TESTS (" << uint_total <<")";
-    std::cout << std::endl;
+    SUSA_TEST_PRINT_STATS();
 
     return (uint_failed);
 }
