@@ -1,12 +1,15 @@
 # Susa Open Source Project
 
-Susa is a mathematics and signal processing C++ framework based on KISS principle. The mobility is the key feature of Susa. It is a stand-alone and modern signal processing framework that can easily be ported to mobile platforms. It is designed not to have any dependencies to any none standard third party library. A C++11 compiler is necessary and sufficient in order to compile it. Therefore, Susa can be exploited in mobile platforms such as Android NDK (Native Development Toolkit) without restriction. This brings the power and speed of the C++ native code to the user friendly Java based mobile applications. Susa is also a simulation framework for the researchers and engineers who design computational systems. It has linear algebra, signal processing and communications common methods.
+Susa is a mathematics and signal processing C++ framework based on [KISS](https://en.wikipedia.org/wiki/KISS_principle) principle. It is stand-alone with a modern architecture. It is designed not to have any dependencies to none standard third party libraries. Indeed, a C++11 compiler along with STL is necessary and sufficient in order to compile it. Therefore, portability is the key feature of Susa. For example it can be exploited in mobile platforms such as Android NDK (Native Development Toolkit) without any restriction. This brings the power and speed of the C++ native code to the user friendly Java based mobile applications. Susa is also a simulation framework for the researchers and engineers who design computational systems. It has linear algebra, signal processing and common communications blocks.
+
+A matrix template class is at the heart of Susa with a constellation of classes and functions that take input matrices and return results as output matrices.
 
 ### Highlights
+ - Matrix and multi-dimensional array types (template classes)
  - Linear algebraic operations and analysis (e.g. Determinant and SVD).
- - Signal processing operations (e.g. FFT, Filter, Convolution and Random Number Generators).
+ - Signal processing operations (e.g. FFT, Filter (FIR/IIR), Convolution and Random Number Generators).
  - Convolutional Forward Error Correction (FEC) computational blocks (Encoder, Viterbi and BCJR decoders).
- - Channel equalizers (Viterbi and BCJR decoders).
+ - Channel equalisers (Viterbi and BCJR decoders).
 
 ## Build and Test Susa
 To build Susa you need to have a C++ compiler, Make and [CMake](https://cmake.org) installed.
