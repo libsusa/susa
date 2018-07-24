@@ -27,6 +27,7 @@
 
 int main(int argc, char const *argv[])
 {
+    {
     susa::matrix <float> mat_a("2 0 2; 0 1 0; 0 0 0");
     susa::matrix <float> mat_u;
     susa::matrix <float> mat_s;
@@ -56,6 +57,13 @@ int main(int argc, char const *argv[])
     expected = (susa::matrix<int>) (susa::matrix<float> ("[34;17.88854408;4.472135067;0]") * 10000.0f);
     experiment = (susa::matrix<int>)(mat_s * 10000.0f);
     SUSA_TEST_EQ (experiment, expected, "Singular Value Decomposition (SVD) for a sample matrix.");
+    }
+
+    susa::matrix <int> mat_left ("5 6;3 2; 7 4;-4 8");
+    susa::matrix <int> mat_right ("5 6 9 -3;-1 -2 0 1");
+    susa::matrix <int> experiment = matmul(mat_left,mat_right);
+    susa::matrix <int> expected   = susa::matrix <int> ("19 18 45 -9;13 14 27 -7;31 34 63 -17;-28 -40 -36 20");
+    SUSA_TEST_EQ(experiment, expected, "matmul() matrix multiplication.");
 
     SUSA_TEST_PRINT_STATS();
 

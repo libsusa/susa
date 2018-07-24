@@ -55,7 +55,7 @@ template <class T> matrix <T> matmul( const matrix <T> &mat_argl,const matrix <T
 
     if (mat_argl.no_cols() == mat_argr.no_rows())
     {
-        mat_ret = matrix <T> (sizet_rows, sizet_cols);
+        mat_ret = matrix <T> (sizet_rows, sizet_cols, 0);
         for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
         {
             for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)

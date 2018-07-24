@@ -131,7 +131,7 @@ template <class T> void channel <T>::init(const matrix <T> &mat_taps, const matr
         }
     }
 
-    mat_outputs = mult(mat_taps, mat_trellis);
+    mat_outputs = matmul(mat_taps, mat_trellis);
 } // INIT
 
 
