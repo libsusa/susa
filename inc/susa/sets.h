@@ -34,15 +34,18 @@ namespace susa
 
 /**
 * @brief The <i>iset</i> class.
-*
+* <i>iset</i> is an integer set type aimed to store
+* a set of integers in a quick (using single memory allocation)
+* and memory efficient manner.
 * @ingroup TYPES
 *
 */
 class iset :
 public memory <char>
 {
+
   public :
-    iset(unsigned int uint_num_nodes);
+    iset(size_t maxsize);
 
     void add(unsigned int index);
 
@@ -61,8 +64,8 @@ public memory <char>
     bool is_not_empty();
 
   private:
-    unsigned int nbytes;
-    unsigned int uint_set_size;
+    size_t nbytes;
+    size_t uint_set_size;
 };
 
 }       // NAMESPACE SUSA

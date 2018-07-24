@@ -18,7 +18,7 @@
 /**
  * @file sets.cpp
  * @brief Set types and operations.
- * @author Behrooz, Aliabadi
+ * @author Behrooz, Kamary Aliabadi
  * @version 1.0.0
  */
 
@@ -28,14 +28,16 @@
 namespace susa
 {
 
-  iset::iset(unsigned int uint_num_nodes)
+  iset::iset(size_t maxsize)
   {
-    uint_set_size = uint_num_nodes;
+    uint_set_size = maxsize;
 
     nbytes  = uint_set_size / 8;
     nbytes += (uint_set_size % 8) ? 1 : 0;
 
     this->allocate(nbytes);
+
+    remove_all();
   }
 
   void iset::add(unsigned int index)
@@ -103,14 +105,14 @@ namespace susa
 
   void iset::remove_all()
   {
-    for (unsigned int indx = 0; indx < nbytes; indx++) this->_matrix[indx] = 0x00;
+    for (size_t indx = 0; indx < nbytes; indx++) this->_matrix[indx] = 0x00;
   }
 
   bool iset::is_not_empty()
   {
-    char empty = 0x00;
-    for (unsigned int indx = 0; indx < nbytes; indx++) empty |= this->_matrix[indx];
-    return empty;
+    unsigned char empty = 0x00;
+    for (size_t indx = 0; indx < nbytes; indx++) empty |= this->_matrix[indx];
+    return (empty != 0);
   }
 
 } // NAMESPACE SUSA
