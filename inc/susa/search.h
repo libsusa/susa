@@ -78,7 +78,7 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
  * @return The index of the elements that are equal to T_arg
  * @ingroup Search
  */
-template <class T> iset find(const matrix <T> &mat_arg, T &T_arg);
+template <class T> susa::bitset find(const matrix <T> &mat_arg, T &T_arg);
 
 /**
  * @brief Dijkstra finds the shortest path
@@ -117,8 +117,7 @@ template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg,
     matrix <T> mat_ret     = mat_arg;
     matrix <unsigned int> mat_index(uint_num, 1);
 
-    SUSA_ASSERT_MESSAGE(uint_size > uint_num,
-      "The number of elements to be selected is larger than the matrix size.");
+    SUSA_ASSERT_MESSAGE(uint_size > uint_num, "The number of elements to be selected is larger than the matrix size.");
 
     if (uint_size < uint_num)
     {
@@ -128,7 +127,7 @@ template <class T> matrix <unsigned int> select_least(const matrix <T> &mat_arg,
     unsigned int uint_min_index;
     T T_min;
 
-    for( unsigned int uint_i = 0; uint_i < uint_num; uint_i++)
+    for (unsigned int uint_i = 0; uint_i < uint_num; uint_i++)
     {
         uint_min_index = uint_i;
         T_min = mat_ret(uint_i);
@@ -161,8 +160,7 @@ template <class T> matrix <unsigned int> select_limited_least(const matrix <T> &
     matrix <T> mat_ret     = mat_arg;
     matrix <unsigned int> mat_index(uint_num, 1);
 
-    SUSA_ASSERT_MESSAGE(uint_size > uint_num,
-      "The number of elements to be selected is larger than the matrix size.");
+    SUSA_ASSERT_MESSAGE(uint_size > uint_num, "The number of elements to be selected is larger than the matrix size.");
     if (uint_size < uint_num)
     {
         return mat_index;
@@ -235,20 +233,20 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
 }
 
 
-template <class T> iset find(const matrix <T> &mat_arg, T &T_arg)
+template <class T> susa::bitset find(const matrix <T> &mat_arg, T &T_arg)
 {
 
     //TODO support matrices
     SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "this method supports one dimensional matrices (vectors) only.");
 
-    susa::iset __iset(mat_arg.size() + 1); // lets have at least one index
+    susa::bitset indxset(mat_arg.size() + 1); // lets have at least one index
 
     for (unsigned int uint_index = 0; uint_index < mat_arg.size(); uint_index++)
     {
-        if (mat_arg(uint_index) == T_arg) __iset.add(uint_index);
+        if (mat_arg(uint_index) == T_arg) indxset.set(uint_index);
     }
 
-    return __iset;
+    return indxset;
 }
 
 
@@ -265,27 +263,27 @@ template <class T> matrix <unsigned int> dijkstra(const matrix <T> &mat_graph, u
 
   dist(uint_src) = 0;
 
-  iset __iset(uint_num_nodes);
-  __iset.add_all();
+  susa::bitset nset(uint_num_nodes);
+  nset.set();
 
 
   unsigned int uint_min       = 0;
   unsigned int uint_min_index = 0;
   unsigned int uint_alt       = 0;
-  while (__iset.is_not_empty())
+  while (nset.any())
   {
 
     uint_min = std::numeric_limits <unsigned int>::max();
     for (unsigned int uint_index = 0; uint_index < uint_num_nodes; uint_index++)
     {
-      if (__iset.exists(uint_index) && dist(uint_index) < uint_min)
+      if (nset.exists(uint_index) && dist(uint_index) < uint_min)
       {
         uint_min_index = uint_index;
         uint_min = dist(uint_index);
       }
     }
 
-    __iset.remove(uint_min_index);
+    nset.reset(uint_min_index);
 
 
     for (unsigned int uint_i = 0; uint_i < uint_num_nodes; uint_i++)

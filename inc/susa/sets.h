@@ -33,39 +33,43 @@ namespace susa
 {
 
 /**
-* @brief The <i>iset</i> class.
-* <i>iset</i> is an integer set type aimed to store
-* a set of integers in a quick (using single memory allocation)
-* and memory efficient manner.
+* @brief The <i>bitset</i> class.
+* <i>bitset</i> is a set type aimed to store
+* a set of bits in a quick (using single memory allocation)
+* and memory efficient manner. You may alternatively use <i>std::bitset</i>
+* where the set size is in hand at compile time (no runtime initialization).
 * @ingroup TYPES
 *
 */
-class iset :
-public memory <char>
+class bitset :
+public memory <unsigned char>
 {
 
   public :
-    iset(size_t maxsize);
 
-    void add(unsigned int index);
+    bitset(size_t maxsize);
 
-    void remove(unsigned int index);
+    void set(size_t index);
 
-    unsigned int pop();
+    void reset(size_t index);
 
-    void push(unsigned int index);
+    size_t pop();
 
-    bool exists(unsigned int index);
+    void push(size_t index);
 
-    void add_all();
+    bool exists(size_t index);
 
-    void remove_all();
+    void set();
 
-    bool is_not_empty();
+    void reset();
+
+    bool any();
 
   private:
+
     size_t nbytes;
     size_t uint_set_size;
+
 };
 
 }       // NAMESPACE SUSA

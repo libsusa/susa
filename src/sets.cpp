@@ -28,7 +28,7 @@
 namespace susa
 {
 
-  iset::iset(size_t maxsize)
+  bitset::bitset(size_t maxsize)
   {
     uint_set_size = maxsize;
 
@@ -37,10 +37,10 @@ namespace susa
 
     this->allocate(nbytes);
 
-    remove_all();
+    reset();
   }
 
-  void iset::add(unsigned int index)
+  void bitset::set(size_t index)
   {
 
     if (index >= uint_set_size) return;
@@ -53,7 +53,7 @@ namespace susa
     this->_matrix[byte] |= (0x01 << bit);
   }
 
-  void iset::remove(unsigned int index)
+  void bitset::reset(size_t index)
   {
     if (exists(index))
     {
@@ -64,13 +64,13 @@ namespace susa
     }
   }
 
-  unsigned int iset::pop()
+  size_t bitset::pop()
   {
     for (unsigned int uint_index = 0; uint_index < uint_set_size; uint_index++)
     {
       if (exists(uint_index))
       {
-        remove(uint_index);
+        reset(uint_index);
         return uint_index;
       }
     }
@@ -78,12 +78,12 @@ namespace susa
     return uint_set_size;
   }
 
-  void iset::push(unsigned int index)
+  void bitset::push(size_t index)
   {
-    add(index);
+    set(index);
   }
 
-  bool iset::exists(unsigned int index)
+  bool bitset::exists(size_t index)
   {
     if (index >= uint_set_size) return false;
     unsigned int byte = index / 8;
@@ -93,7 +93,7 @@ namespace susa
     return ((this->_matrix[byte] >> bit) & 0x01);
   }
 
-  void iset::add_all()
+  void bitset::set()
   {
     for (unsigned int index = 0; index < nbytes; index++)
     {
@@ -103,12 +103,12 @@ namespace susa
     }
   }
 
-  void iset::remove_all()
+  void bitset::reset()
   {
     for (size_t indx = 0; indx < nbytes; indx++) this->_matrix[indx] = 0x00;
   }
 
-  bool iset::is_not_empty()
+  bool bitset::any()
   {
     unsigned char empty = 0x00;
     for (size_t indx = 0; indx < nbytes; indx++) empty |= this->_matrix[indx];
