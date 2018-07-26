@@ -41,47 +41,48 @@ unsigned int qam::log2(unsigned int uint_x)
 }
 
 qam::qam(unsigned int uint_m)
+: uint_m(uint_m)
 {
 
-    uint_bps = log2(uint_m);
-    double dbl_p = sqrt(uint_m);
-    unsigned int  uint_l = (unsigned int)(uint_m/dbl_p);
-
-    this->uint_m = uint_m;
+    uint_bps                = log2(uint_m);
+    double          dbl_p   = sqrt(uint_m);
+    unsigned int    uint_l  = (unsigned int)(uint_m/dbl_p);
 
     // Constellation generation
     mat_s    = matrix < std::complex <double> > (uint_l, uint_l, std::complex <double>(0,0));
     mat_axis = matrix < std::complex <double> > ((unsigned int)dbl_p, 1, std::complex <double>(0,0));
 
-    for (unsigned int i=0; i<dbl_p; i++)
+    for (unsigned int i=0; i < dbl_p; i++)
         mat_axis(i) = std::complex <double> (i - (dbl_p - 1)/2,i - (dbl_p - 1)/2);
 
-    for (unsigned int i=0; i<uint_l; i++)
+    for (unsigned int i=0; i < uint_l; i++)
     {
-        for (unsigned int j=0; j<uint_l; j++)
+        for (unsigned int j=0; j < uint_l; j++)
         {
-            mat_s(i,j) = std::complex <double> (mat_axis(i).real(),mat_axis(j).imag());
+            mat_s(i,j) = std::complex <double> (mat_axis(i).real(), mat_axis(j).imag());
         }
     }
 
     // Energy computations
-    matrix <double> mat_mag = mag(mat_s);
-    matrix <double> mat_sum = sum(mat_mag);
-    dbl_es = sum(mat_sum)(0)/uint_m;
-    dbl_eb = dbl_es / uint_bps;
+    matrix <double> mat_mag     = mag(mat_s);
+    matrix <double> mat_sum     = sum(mat_mag);
+    dbl_es                      = sum(mat_sum)(0)/uint_m;
+    dbl_eb                      = dbl_es / uint_bps;
 }
 
 std::complex <double> qam::demodulate_symbol(std::complex <double> complex_arg)
 {
     matrix <double> mat_dist(uint_m,1);
     for (unsigned int uint_i = 0; uint_i < uint_m; uint_i++)
+    {
         mat_dist(uint_i) = std::abs(complex_arg - mat_s(uint_i));
+    }
     return mat_s(min(mat_dist)(0));
 }
 
 double qam::get_noise_deviation(double dbl_arg)
 {
-    return std::sqrt( ( 0.5 * dbl_es/uint_bps ) * std::pow(10, - ( dbl_arg/10 )) );
+    return std::sqrt( 0.5f * dbl_eb * std::pow(10, - ( dbl_arg/10 )) );
 }
 
 qam::~qam() {}
