@@ -67,12 +67,18 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg);
 
 /**
  * @brief The <i>matrix</i> class.
+ * A matrix is a two dimensional array aimed to
+ * be used with algebraic operators and functions.
+ * A single row or a single column matrix is considered a <i>vector</i>.
+ * The methods, operators and functions that take vectors as their
+ * input parameters perform column-wise computation when they are passed
+ * matrices (and not vectors based on the above definition). This is respect
+ * the algebraic convention where a matrix column is a vector.
  *
  * @ingroup TYPES
  *
  */
-template <class T> class matrix :
-  public susa::memory <T>
+template <class T> class matrix : public susa::memory <T>
 {
   private:
     size_t  sizet_rows;
@@ -88,7 +94,7 @@ template <class T> class matrix :
     void parser(std::string str_string);
 
   public:
-    //! The default constructor
+    //! Constructor
     matrix();
 
     /**
@@ -96,40 +102,40 @@ template <class T> class matrix :
      *
      * @param sizet_rows Number of rows
      * @param sizet_cols Number of columns
-     * @param Tinitial Initial value of all rows and columns.
+     * @param Tinitial Initial value of all elements.
      */
-    matrix( size_t sizet_rows, size_t sizet_cols, T Tinitial );
+    matrix(size_t sizet_rows, size_t sizet_cols, T Tinitial);
 
     /**
      * Constructor
-     *
+     * the elements are not initialized to speed up the instantiation.
+     * 
      * @param sizet_rows Number of rows
      * @param sizet_cols Number of columns.
      */
-    matrix( size_t sizet_rows, size_t sizet_cols );
+    matrix(size_t sizet_rows, size_t sizet_cols);
 
     //! Copy constructor
     matrix(const matrix <T> &mat_arg);
 
-#ifdef HAS_MOVE_SEMANTICS
     //! Copy Constructor for rvalues
-    matrix(matrix <T> &&mat_arg);
-#endif
+    matrix(matrix <T> &&mat_arg) noexcept;
+
     //! Destructor
-    ~matrix();
+    ~matrix() noexcept;
 
     /**
-     * Constructor
+     * @brief Constructor
      *
      * @param str_string string representation of the matrix
      */
     matrix(std::string str_string);
 
     //! Returns the value of a specific (row, column)
-    T get( size_t sizet_row, size_t sizet_col ) const;
+    T get(size_t sizet_row, size_t sizet_col) const;
 
     //! Returns the value of a specific (elem)
-    T get( size_t sizet_elem ) const;
+    T get(size_t sizet_elem) const;
 
 
     //! Returns the number of columns
@@ -189,9 +195,6 @@ template <class T> class matrix :
 
     //! Element wise Assignment operator
     matrix <T>& operator=( const matrix <T> &mat_arg );
-
-    //! Element wise Assignment operator
-    matrix <T> operator=( const matrix <T> &mat_arg ) const;
 
     //! Element wise Assignment operator
     matrix <T>& operator=( std::string str_string );
@@ -269,7 +272,7 @@ template <class T> class matrix :
     // Friend methods are used to speed up matrix operations.
     // Because they can access '_matrix' directly.
     // They are defined in 'linalg.h'
-    friend matrix <T> matmul <> ( const matrix <T> &mat_argl, const matrix <T> &mat_argr);
+    friend matrix <T> matmul <> (const matrix <T> &mat_argl, const matrix <T> &mat_argr);
     friend matrix <T> transpose <> (const matrix <T> &mat_arg);
 
     friend bool operator!=( const susa::matrix <T> &mat_argl, const susa::matrix <T> &mat_argr)
@@ -296,14 +299,16 @@ template <class T> class matrix :
 // Constructor and Destructor
 
 template <class T> matrix <T>::matrix()
-: T_fake(new T)
+: susa::memory<T>()
+, T_fake(new T)
 {
   sizet_rows = 0;
   sizet_cols = 0;
 }
 
 template <class T> matrix <T>::matrix(size_t sizet_rows, size_t sizet_cols, T Tinitial)
-: T_fake(new T)
+: susa::memory<T>()
+, T_fake(new T)
 {
 
   SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
@@ -321,7 +326,8 @@ template <class T> matrix <T>::matrix(size_t sizet_rows, size_t sizet_cols, T Ti
 }
 
 template <class T> matrix <T>::matrix( size_t sizet_rows, size_t sizet_cols )
-: T_fake(new T)
+: susa::memory<T>()
+, T_fake(new T)
 {
     SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
 
@@ -332,44 +338,33 @@ template <class T> matrix <T>::matrix( size_t sizet_rows, size_t sizet_cols )
 }
 
 template <class T> matrix <T>::matrix(const matrix <T> &mat_arg)
-: T_fake(new T)
+: susa::memory <T> (mat_arg)
+, T_fake(new T)
 {
-    size_t sizet_size = mat_arg.sizet_objects;
 
-    if (sizet_size != 0)
-    {
-        this->allocate(sizet_size);
+  if (this->_matrix != nullptr)
+  {
+      this->sizet_rows = mat_arg.sizet_rows;
+      this->sizet_cols = mat_arg.sizet_cols;
+  }
+  else
+  {
+      this->sizet_rows = 0;
+      this->sizet_cols = 0;
+  }
 
-        sizet_rows = mat_arg.sizet_rows;
-        sizet_cols = mat_arg.sizet_cols;
-
-        for (size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++)
-        {
-            this->_matrix[sizet_index] = mat_arg._matrix[sizet_index];
-        }
-    }
-    else
-    {
-        sizet_rows = 0;
-        sizet_cols = 0;
-        this->deallocate();
-    }
 }
 
-#ifdef HAS_MOVE_SEMANTICS
 
-template <class T> matrix <T>::matrix(matrix&& mat_arg) {
-
+template <class T> matrix <T>::matrix(matrix<T>&& mat_arg) noexcept
+: susa::memory <T> (std::move(mat_arg))
+{
   sizet_rows          = mat_arg.sizet_rows;
   sizet_cols          = mat_arg.sizet_cols;
-  this->sizet_objects = mat_arg.sizet_objects;
-  this->sizet_bytes   = mat_arg.sizet_bytes;
-
-  this->_matrix      = mat_arg._matrix;
-  mat_arg._matrix    = nullptr;
+  T_fake              = mat_arg.T_fake;
+  mat_arg.T_fake      = nullptr;
 }
 
-#endif
 
 template <class T> matrix <T>::matrix(std::string str_string)
 : T_fake(new T)
@@ -381,7 +376,7 @@ template <class T> matrix <T>::matrix(std::string str_string)
   parser(str_string);
 }
 
-template <class T> matrix <T>::~matrix()
+template <class T> matrix <T>::~matrix() noexcept
 {
     delete T_fake;
 }
@@ -549,7 +544,7 @@ template <class T> matrix <T> matrix <T>::left(size_t sizet_left) const
 
     SUSA_ASSERT(this->sizet_objects >= sizet_left);
 
-    if (this->sizet_objects >= sizet_left )
+    if (this->sizet_objects >= sizet_left)
     {
         if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1,sizet_left);
         else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_left,1);
@@ -617,8 +612,7 @@ template <class T> T &matrix<T>::operator ()( size_t sizet_row, size_t sizet_col
 
   SUSA_ASSERT(this->_matrix != NULL);
 
-  SUSA_ASSERT_MESSAGE(sizet_row < sizet_rows && sizet_col < sizet_cols,
-                      "one or more indices is/are out of range.");
+  SUSA_ASSERT_MESSAGE(sizet_row < sizet_rows && sizet_col < sizet_cols, "one or more indices is/are out of range.");
 
   if (sizet_row < sizet_rows && sizet_col < sizet_cols && this->_matrix != NULL)
   {
@@ -995,79 +989,24 @@ template <class T> matrix<T> matrix <T>::operator+=(const matrix <T> &mat_arg)
 //  =
 template <class T> matrix<T>& matrix <T>::operator=( const matrix <T> &mat_arg )
 {
+    susa::memory<T>::operator=(mat_arg);
 
-    size_t sizet_size = mat_arg.sizet_cols * mat_arg.sizet_rows;
-
-    if (this != &mat_arg)
+    if (this->_matrix != nullptr)
     {
-        if (sizet_size != 0)
-        {
-
-            if (this->sizet_objects != sizet_size)
-            {
-                this->allocate(sizet_size);
-            }
-
-            sizet_rows = mat_arg.sizet_rows;
-            sizet_cols = mat_arg.sizet_cols;
-
-            for (size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++)
-            {
-                this->_matrix[sizet_index] = mat_arg._matrix[sizet_index];
-            }
-        }
-        else
-        {
-            sizet_rows = 0;
-            sizet_cols = 0;
-            this->deallocate();
-        }
+        sizet_rows = mat_arg.sizet_rows;
+        sizet_cols = mat_arg.sizet_cols;
     }
-
-
-    return *this;
-}
-
-template <class T> matrix<T> matrix <T>::operator=( const matrix <T> &mat_arg ) const
-{
-
-    size_t sizet_size = mat_arg.sizet_cols * mat_arg.sizet_rows;
-
-    if (this != &mat_arg)
+    else
     {
-        if (sizet_size != 0)
-        {
-
-            if ((sizet_rows * sizet_cols) != sizet_size)
-            {
-                this->allocate(sizet_size);
-            }
-
-            sizet_rows = mat_arg.sizet_rows;
-            sizet_cols = mat_arg.sizet_cols;
-
-            for (size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++)
-            {
-                this->_matrix[sizet_index] = mat_arg._matrix[sizet_index];
-            }
-        }
-        else
-        {
-            sizet_rows = 0;
-            sizet_cols = 0;
-
-            this->deallocate();
-
-        }
+        sizet_rows = 0;
+        sizet_cols = 0;
     }
-
 
     return *this;
 }
 
 template <class T> matrix<T>& matrix <T>::operator=( std::string str_string )
 {
-
     parser(str_string);
     return *this;
 }

@@ -18,11 +18,12 @@
 /**
  * @file test.cpp
  * @brief Unit Test Suit
- * @author Behrooz Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
 #include "test.h"
+#include <utility>
 
 int main(int argc, char const *argv[])
 {
@@ -36,21 +37,39 @@ int main(int argc, char const *argv[])
   SUSA_TEST_EQ(mat_a(2,2),     -5, "matrix parser.");
 
   mat_a(1,1) = 6.6;
-  SUSA_TEST_EQ(mat_a(1,1),    6.6, "matrix parser");
+  SUSA_TEST_EQ(mat_a(1,1),    6.6, "matrix element assignment.");
 
   susa::matrix <int> mat_b("[1; 2; 3]");
-  SUSA_TEST_EQ(mat_b.no_rows(), 3, "matrix parser rows");
-  SUSA_TEST_EQ(mat_b.no_cols(), 1, "matrix parser cols");
-  SUSA_TEST_EQ(mat_b.size(), 3, "matrix parser size");
+  SUSA_TEST_EQ(mat_b.no_rows(), 3, "matrix parser rows.");
+  SUSA_TEST_EQ(mat_b.no_cols(), 1, "matrix parser cols.");
+  SUSA_TEST_EQ(mat_b.size(), 3, "matrix parser size.");
+
+  susa::matrix <int> mat_e = mat_b;
+  susa::matrix <int> mat_d (std::move(mat_b));
+  SUSA_TEST_EQ(mat_d, mat_e, "move semantic.");
+
+  susa::matrix<int> mat_f("2;2;2");
+  SUSA_TEST_EQ(mat_f * mat_e, mat_e * 2, "scalar and matrix multiplication.");
+
+  susa::matrix <int> mat_g = mat_a;
+  SUSA_TEST_EQ(mat_g.no_rows(), mat_a.no_rows(), "matrix copy assignment rows.");
+  SUSA_TEST_EQ(mat_g.no_cols(), mat_a.no_cols(), "matrix copy assignment cols.");
+  SUSA_TEST_EQ(mat_g.size(), mat_a.size(), "matrix copy assignment cols.");
+
+  susa::matrix <int> mat_h (mat_a);
+  SUSA_TEST_EQ(mat_h.no_rows(), mat_a.no_rows(), "matrix copy constructor rows.");
+  SUSA_TEST_EQ(mat_h.no_cols(), mat_a.no_cols(), "matrix copy constructor cols.");
+  SUSA_TEST_EQ(mat_h.size(), mat_a.size(), "matrix copy constructor cols.");
 
 
-  susa::matrix <double> mat_c(
-    susa::matrix <double> ("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]") +
-    susa::matrix <double> ("[0 0 0;5 -1 1.2;9.1 3 -6]") );
-  SUSA_TEST_EQ(mat_c(1,1),    3.5, "move semantic.");
-  SUSA_TEST_EQ(mat_c(1),       13, "move semantic.");
-  SUSA_TEST_EQ(mat_c(4),      3.5, "move semantic.");
-  SUSA_TEST_EQ(mat_c(2,2),    -11, "move semantic.");
+  susa::array <int> arr_a({21,6,5,15,43});
+  arr_a(2,4,3,0,1) = 55;
+  arr_a(12,4,3,5,1) = 32;
+  susa::array <int> arr_b = arr_a;
+
+  SUSA_TEST_EQ(55, arr_b(2,4,3,0,1), "array copy assignment.");
+  SUSA_TEST_EQ(32, arr_b(12,4,3,5,1), "array copy assignment.");
+
 
   SUSA_TEST_PRINT_STATS();
 

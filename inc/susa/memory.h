@@ -33,7 +33,7 @@ namespace susa
   /**
    * @brief The <i>memory</i> class.
    *
-   * This class may not be used as is. It is a memory manager class for the types.
+   * <i>memory</i> is a base memory manager class for Susq types.
    *
    * @ingroup TYPES
    *
@@ -41,16 +41,9 @@ namespace susa
     template <class T> class memory
     {
         protected:
-            T* _matrix;
+            T*     _matrix;
             size_t sizet_bytes;
             size_t sizet_objects;
-
-        public:
-            //! Constructor
-            memory();
-
-            //! Destructor
-            ~memory();
 
             /**
              * Allocates a memory space without initialization.
@@ -61,6 +54,23 @@ namespace susa
 
             //! Release the allocated memory.
             void deallocate();
+
+        public:
+            //! Constructor
+            memory();
+
+            //! Destructor
+            virtual ~memory() noexcept;
+
+            //! Copy assignment constructor
+            memory& operator=(const memory <T>& mat_arg);
+
+            //! Copy constructor
+            memory(const memory <T>& mat_arg);
+
+            //! Copy Constructor for rvalues
+            memory(memory <T> &&mat_arg) noexcept;
+
 
             //! Returns the number of allocated objects.
             size_t size() const;
@@ -73,9 +83,63 @@ namespace susa
         sizet_objects  = 0;
     }
 
-    template <class T> memory<T>::~memory()
+    template <class T> memory<T>::~memory() noexcept
     {
         deallocate();
+    }
+
+    template <class T> memory<T>::memory(const memory <T>& mat_arg)
+    {
+        _matrix           = nullptr;
+        sizet_objects     = 0;
+        sizet_bytes       = 0;
+
+        size_t sizet_size = mat_arg.sizet_objects;
+
+        if (sizet_size != 0)
+        {
+            this->allocate(sizet_size);
+
+            for (size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++)
+            {
+                this->_matrix[sizet_index] = mat_arg._matrix[sizet_index];
+            }
+        }
+        else
+        {
+            this->deallocate();
+        }
+
+    }
+
+
+    template <class T> memory<T>& memory<T>::operator=(const memory <T>& mat_arg)
+    {
+
+        size_t sizet_size = mat_arg.sizet_objects;
+
+        if (this != &mat_arg)
+        {
+            if (sizet_size != 0)
+            {
+
+                if (this->sizet_objects != sizet_size)
+                {
+                    this->allocate(sizet_size);
+                }
+
+                for (size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++)
+                {
+                    this->_matrix[sizet_index] = mat_arg._matrix[sizet_index];
+                }
+            }
+            else
+            {
+                this->deallocate();
+            }
+        }
+
+        return *this;
     }
 
     template <class T> void memory<T>::allocate(size_t sizet_size)
@@ -88,7 +152,7 @@ namespace susa
 
         if (_matrix == nullptr)
         {
-            void* block = std::malloc(sizet_size * sizeof(T));
+            void* block = std::malloc(sizet_bytes);
             SUSA_ASSERT_MESSAGE(block != nullptr, "memory allocation failed.");
             if (block == nullptr) std::exit(EXIT_FAILURE);
             _matrix = static_cast<T*>(block);
@@ -99,7 +163,7 @@ namespace susa
         }
         else
         {
-            void* block = std::realloc(_matrix, sizet_size * sizeof(T));
+            void* block = std::realloc((void*)_matrix, sizet_bytes);
 
             if (block == nullptr)
             {
@@ -117,7 +181,7 @@ namespace susa
         if (_matrix != nullptr)
         {
             std::free(_matrix);
-            _matrix      = nullptr;
+            _matrix       = nullptr;
             sizet_objects = 0;
             sizet_bytes   = 0;
         }
@@ -127,5 +191,20 @@ namespace susa
     {
         return sizet_objects;
     }
+
+
+template <class T> memory <T>::memory(memory&& mat_arg) noexcept
+{
+
+  this->sizet_objects = mat_arg.sizet_objects;
+  this->sizet_bytes   = mat_arg.sizet_bytes;
+
+  this->_matrix         = mat_arg._matrix;
+  mat_arg._matrix       = nullptr;
+  mat_arg.sizet_objects = 0;
+  mat_arg.sizet_bytes   = 0;
+
+}
+
 }
 #endif
