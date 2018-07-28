@@ -30,102 +30,160 @@
 namespace susa {
 
 /**
- * @brief The Intersymbole Interference (ISI) wrapper class.
+ * @brief The Inter-Symbole Interference (ISI) class.
+ * This class contains a set of methods for signal generation
+ * and equalization of ISI channels.
  *
  * @ingroup Communications
  */
-template <class T> class channel {
+template <class T> class channel
+{
   private:
 
     void init(const matrix <T> &mat_taps, const matrix <T> &mat_pam);
 
-    unsigned int uint_num_taps;
-    unsigned int uint_num_pam;
-    unsigned int uint_num_states;
-    unsigned int uint_num_states_mem;
+    unsigned int    uint_num_taps;
+    unsigned int    uint_num_pam;
+    unsigned int    uint_num_states;
+    unsigned int    uint_num_states_mem;
 
-    matrix <T> mat_pam;
-    matrix <T> mat_taps;
+    matrix <T>      mat_pam;
+    matrix <T>      mat_taps;
 
-    matrix <T> mat_main_taps;
-    matrix <T> mat_offset_taps;
+    matrix <T>      mat_main_taps;
+    matrix <T>      mat_offset_taps;
 
-    matrix <T> mat_outputs;
+    matrix <T>      mat_outputs;
 
     matrix <unsigned int> mat_source_states;
     matrix <unsigned int> mat_decoded_states;
 
-
-  public:
-    // Constructors and Destructor
-    channel(const matrix <T> &mat_taps,const matrix <T> &mat_pam);
-    ~channel();
-
+    //! next state
     unsigned int next_state(unsigned int uint_state, unsigned int uint_pam_index);
+
+    //! previous state
     matrix <unsigned int> prev_states(unsigned int uint_state);
+
     T next_output(unsigned int uint_state, unsigned int uint_pam_index);
 
     matrix <T> get_full_state(unsigned int uint_state);
+
     matrix <T> get_mem_state(unsigned int uint_state);
 
-    // Channel encoder
+  public:
+
+    /**
+     * @brief Constructor
+     * Each symbol in the constellation shall be transduced to
+     * a signal amplitude. The series of transduced symbols is
+     * the signal that passes the channel (which is represented by the channel impulse response).
+     *
+     * @param mat_taps the Channel Impulse Response (CIR)
+     * @param mat_pam the vector representing the corresponding signal for each constellation symbol
+     */
+    channel(const matrix <T> &mat_taps,const matrix <T> &mat_pam);
+
+    //! Destructor
+    ~channel();
+
+    /**
+     * @brief Inter-Symbol Interference (ISI) channel encoder
+     * The method delicately convolves the modulated input signal
+     * with the Channel Impulse Response (CIR).
+     *
+     * @param mat_arg the channel input signal
+     * @param uint_init_state the initial state
+     */
     matrix <T> encode_isi(const matrix <T> &mat_arg, unsigned int uint_init_state);
 
-    // BCJR Decoders
+    /**
+     * @brief Bahl, Cocke, Jelinek and Raviv (BCJR) algorithm
+     * BCJR is a MAP based algorithm for channel equalization
+     *
+     * @param mat_arg the encoded signal vector
+     * @param dbl_ebn0 the signal to noise ratio Eb/N0
+     */
     matrix <T> decode_bcjr(const matrix <T> &mat_arg, T dbl_ebn0);
 
-    // Viterbi Algorithm
+    /**
+     * @brief Viterbi algorithm
+     * Viterbi is a Maximum Likelihood (ML) based algorithm for channel equalization.
+     *
+     * @param mat_arg the encoded signal vector
+     * @param uint_init_state the initial state of the trellis
+     */
     matrix <T> decode_mlse(const matrix <T> &mat_arg, unsigned int uint_init_state);
+
+    /**
+     * @brief Viterbi algorithm
+     * Viterbi is a Maximum Likelihood (ML) based algorithm for channel equalization
+     * with an unknown initial state. Viterbi is also known as Maximum likelihood sequence estimation (MLSE).
+     *
+     * @param mat_arg the encoded signal vector
+     */
     matrix <T> decode_mlse(const matrix <T> &mat_arg);
 
 
-    // ZF-DFE with BPSK quantizer
+    /**
+     * @brief ZF-DFE with BPSK quantizer
+     * Zero-Forcing (ZF) Decision–Feedback Equalization (DFE)
+     * for BPSK modulated signals.
+     *
+     * @param mat_arg the input signal
+     */
     matrix <T> decode_bpsk_dfe(const matrix <T> &mat_arg);
 
 };
 
 
 
-// Constructors and Destructor
+// Constructor
 
-template <class T> channel <T>::channel(const matrix <T> &mat_taps, const matrix <T> &mat_pam) {
+template <class T> channel <T>::channel(const matrix <T> &mat_taps, const matrix <T> &mat_pam)
+{
     init(mat_taps, mat_pam);
 }
+
+// Destructor
 
 template <class T> channel <T>::~channel() {}
 
 // Private methods
 
-template <class T> void channel <T>::init(const matrix <T> &mat_taps, const matrix <T> &mat_pam) {
+template <class T> void channel <T>::init(const matrix <T> &mat_taps, const matrix <T> &mat_pam)
+{
     // Truncated channel equalizer methods need to initialize the states machine with the new reduced CIR
-    matrix <T> mat_trellis;
     matrix <T> mat_trellis_mem;
 
-    uint_num_taps = mat_taps.size();
-    uint_num_pam = mat_pam.size();
-    uint_num_states = susa::pow(uint_num_pam, uint_num_taps);
+    uint_num_taps       = mat_taps.size();
+    uint_num_pam        = mat_pam.size();
+    uint_num_states     = susa::pow(uint_num_pam, uint_num_taps);
     uint_num_states_mem = susa::pow(uint_num_pam, uint_num_taps - 1);
 
-    this->mat_pam = mat_pam;
-    this->mat_taps = mat_taps;
+    this->mat_pam       = mat_pam;
+    this->mat_taps      = mat_taps;
 
-    mat_trellis = matrix <T> (uint_num_taps, uint_num_states);
+    matrix <T> mat_trellis = matrix <T> (uint_num_taps, uint_num_states, 0.0f);
 
     unsigned int uint_tmp_state;
 
-    for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
+    for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++)
+    {
         uint_tmp_state = uint_state;
-        for (unsigned int uint_tap = 0; uint_tap < uint_num_taps; uint_tap++) {
+        for (unsigned int uint_tap = 0; uint_tap < uint_num_taps; uint_tap++)
+        {
             mat_trellis(uint_tap, uint_state) = mat_pam(uint_tmp_state % uint_num_pam);
             uint_tmp_state /= uint_num_pam;
         }
     }
 
-    mat_trellis_mem = matrix <T> (uint_num_taps - 1, uint_num_states_mem);
+    mat_trellis_mem = matrix <T> (uint_num_taps - 1, uint_num_states_mem, 0.0f);
 
-    for (unsigned int uint_state = 0; uint_state < uint_num_states_mem; uint_state++) {
+    for (unsigned int uint_state = 0; uint_state < uint_num_states_mem; uint_state++)
+    {
         uint_tmp_state = uint_state;
-        for (unsigned int uint_tap = 1; uint_tap < uint_num_taps; uint_tap++) {
+        for (unsigned int uint_tap = 1; uint_tap < uint_num_taps; uint_tap++)
+        {
             mat_trellis_mem(uint_tap - 1, uint_state) = mat_pam(uint_tmp_state % uint_num_pam);
             uint_tmp_state /= uint_num_pam;
         }
@@ -135,46 +193,55 @@ template <class T> void channel <T>::init(const matrix <T> &mat_taps, const matr
 } // INIT
 
 
-// Public methods
 
-template <class T>  matrix <T> channel <T>::get_full_state(unsigned int uint_state) {
-    matrix <T> mat_ret(uint_num_taps, 1);
+template <class T>  matrix <T> channel <T>::get_full_state(unsigned int uint_state)
+{
+    matrix <T> mat_ret(uint_num_taps, 1, 0);
     unsigned int uint_tmp_state = uint_state;
-    for (unsigned int uint_tap = 0; uint_tap < uint_num_taps; uint_tap++) {
+    for (unsigned int uint_tap = 0; uint_tap < uint_num_taps; uint_tap++)
+    {
         mat_ret(uint_tap) = mat_pam(uint_tmp_state % uint_num_pam);
         uint_tmp_state /= uint_num_pam;
     }
     return mat_ret;
 }
 
-template <class T>  matrix <T> channel <T>::get_mem_state(unsigned int uint_state) {
-    matrix <T> mat_ret(uint_num_taps - 1, 1);
+template <class T>  matrix <T> channel <T>::get_mem_state(unsigned int uint_state)
+{
+    matrix <T> mat_ret(uint_num_taps - 1, 1, 0);
     unsigned int uint_tmp_state = uint_state;
-    for (unsigned int uint_tap = 1; uint_tap < uint_num_taps; uint_tap++) {
+    for (unsigned int uint_tap = 1; uint_tap < uint_num_taps; uint_tap++)
+    {
         mat_ret(uint_tap - 1) = mat_pam(uint_tmp_state % uint_num_pam);
         uint_tmp_state /= uint_num_pam;
     }
     return mat_ret;
 }
 
-template <class T> unsigned int channel <T>::next_state(unsigned int uint_state_mem_arg, unsigned int uint_pam_index) {
+template <class T> unsigned int channel <T>::next_state(unsigned int uint_state_mem_arg, unsigned int uint_pam_index)
+{
     //unsigned int uint_state = uint_state_mem_arg - (uint_state_mem_arg % uint_num_pam) + uint_pam_index;
 
     unsigned int uint_base = 1;
-    for (unsigned int uint_i = 0; uint_i < (uint_num_taps - 1); uint_i++) uint_base *= uint_num_pam;
-    unsigned int uint_state = (uint_state_mem_arg * uint_num_pam + uint_pam_index) % uint_base;
+    for (unsigned int uint_i = 0; uint_i < (uint_num_taps - 1); uint_i++)
+    {
+        uint_base *= uint_num_pam;
+    }
 
+    unsigned int uint_state = (uint_state_mem_arg * uint_num_pam + uint_pam_index) % uint_base;
 
     return uint_state;
 }
 
-template <class T> T channel <T>::next_output(unsigned int uint_state_mem_arg, unsigned int uint_pam_index) {
+template <class T> T channel <T>::next_output(unsigned int uint_state_mem_arg, unsigned int uint_pam_index)
+{
     return mat_outputs(uint_state_mem_arg * uint_num_pam + uint_pam_index);
 }
 
-template <class T> matrix <unsigned int> channel <T>::prev_states(unsigned int uint_state_mem_arg) {
+template <class T> matrix <unsigned int> channel <T>::prev_states(unsigned int uint_state_mem_arg)
+{
 
-    matrix <unsigned int> mat_ret(uint_num_pam,1);
+    matrix <unsigned int> mat_ret(uint_num_pam, 1, 0);
     unsigned int uint_shift = uint_state_mem_arg / uint_num_pam;
 
     unsigned int uint_base = 1;
@@ -185,7 +252,11 @@ template <class T> matrix <unsigned int> channel <T>::prev_states(unsigned int u
 
 } // PREV_STATES
 
-template <class T> matrix <T> channel <T>::encode_isi(const matrix <T> &mat_arg, unsigned int uint_init_state) {
+
+// Public methods
+
+template <class T> matrix <T> channel <T>::encode_isi(const matrix <T> &mat_arg, unsigned int uint_init_state)
+{
     // encode the signal stream
     // This convolve the signal with a CIR and start channel from a known state
     matrix <T> mat_ret;
@@ -268,7 +339,8 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     return mat_ret;
 }// DECODE_MLSE Initial state
 
-template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg) { // DECODE_MLSE
+template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg)
+{ // DECODE_MLSE
 
     // NOTES
     // This decoder must be used with CONV as the channel encoder.
@@ -347,7 +419,8 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     matrix <T> mat_ret(uint_num_stages,1);
 
 
-    for (unsigned int uint_stage = uint_num_stages; uint_stage > 0; uint_stage--) {
+    for (unsigned int uint_stage = uint_num_stages; uint_stage > 0; uint_stage--)
+    {
         uint_curr_input = mat_survivor_path(uint_curr_state,uint_stage - 1);
         mat_ret(uint_stage - 1) = mat_pam(uint_curr_input);
         uint_curr_state = mat_previous_state(uint_curr_state,uint_stage - 1);
@@ -357,7 +430,8 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     return mat_ret;
 } // DECODE_MLSE
 
-template <class T> matrix <T> channel <T>::decode_bcjr(const matrix <T> &mat_arg, T dbl_ebn0) {
+template <class T> matrix <T> channel <T>::decode_bcjr(const matrix <T> &mat_arg, T dbl_ebn0)
+{
 // The data sequence must begin/end to zero state.
 
     T dbl_sum = 0;
@@ -371,13 +445,13 @@ template <class T> matrix <T> channel <T>::decode_bcjr(const matrix <T> &mat_arg
 
 
     // Alpha
-    matrix <T> mat_alpha(uint_num_states, 1);
-    std::vector <matrix <T> > vec_alpha(uint_num_stages + 1, matrix <T> (uint_num_states,1));
+    matrix <T> mat_alpha(uint_num_states, 1, 0);
+    std::vector <matrix <T> > vec_alpha(uint_num_stages + 1, matrix <T> (uint_num_states, 1, 0));
     vec_alpha[0](0,0) = 1;
 
     // Beta
-    matrix <T> mat_beta(uint_num_states, 1);
-    std::vector <matrix <T> > vec_beta(uint_num_stages + 1, matrix <T> (uint_num_states,1));
+    matrix <T> mat_beta(uint_num_states, 1, 0);
+    std::vector <matrix <T> > vec_beta(uint_num_stages + 1, matrix <T> (uint_num_states, 1, 0));
     vec_beta[uint_num_stages](0,0) = 1;
 
 
@@ -387,18 +461,18 @@ template <class T> matrix <T> channel <T>::decode_bcjr(const matrix <T> &mat_arg
 
     unsigned int uint_next_zero, uint_next_one;
 
-    for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++) {
+    for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++)
+    {
 
         // Gamma Calculation
 
-        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
+        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++)
+        {
 
-            uint_next_zero =  this->next_state(uint_state, 0);
-            uint_next_one =  this->next_state(uint_state, 1);
-
+            uint_next_zero  =  this->next_state(uint_state, 0);
+            uint_next_one   =  this->next_state(uint_state, 1);
 
             mat_gamma(uint_state,uint_next_zero) = exp((-dbl_ebn0) * std::pow(mat_arg(uint_stage) - this->next_output(uint_state, 0),2));
-
 
             mat_gamma(uint_state,uint_next_one) = exp((-dbl_ebn0) * std::pow(mat_arg(uint_stage) - this->next_output(uint_state, 1),2));
 
@@ -410,7 +484,8 @@ template <class T> matrix <T> channel <T>::decode_bcjr(const matrix <T> &mat_arg
         // Alpha Calculation
 
 
-        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
+        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++)
+        {
 
             mat_uint_prev_states = this->prev_states(uint_state);
 
@@ -431,14 +506,16 @@ template <class T> matrix <T> channel <T>::decode_bcjr(const matrix <T> &mat_arg
 
     // Beta Calculation
 
-    for (unsigned int uint_stage = uint_num_stages; uint_stage > 0; uint_stage--) {
+    for (unsigned int uint_stage = uint_num_stages; uint_stage > 0; uint_stage--)
+    {
 
-        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
+        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++)
+        {
 
             mat_gamma = vec_gamma[uint_stage - 1];
 
-            uint_next_zero =  this->next_state(uint_state, 0);
-            uint_next_one =  this->next_state(uint_state, 1);
+            uint_next_zero  =  this->next_state(uint_state, 0);
+            uint_next_one   =  this->next_state(uint_state, 1);
 
             mat_beta(uint_state) += vec_beta[uint_stage](uint_next_zero) * mat_gamma(uint_state, uint_next_zero);
             mat_beta(uint_state) += vec_beta[uint_stage](uint_next_one) * mat_gamma(uint_state, uint_next_one);
@@ -457,33 +534,37 @@ template <class T> matrix <T> channel <T>::decode_bcjr(const matrix <T> &mat_arg
     }
 
 
-    matrix <T> mat_p_norm(uint_num_stages,1);
-    matrix <T> mat_p_one(uint_num_stages,1);
-    matrix <T> mat_p_zero(uint_num_stages,1);
-    matrix <T> mat_lr(uint_num_stages,1); // Likelihood Ratio
+    matrix <T> mat_p_norm(uint_num_stages, 1, 0);
+    matrix <T> mat_p_one(uint_num_stages, 1, 0);
+    matrix <T> mat_p_zero(uint_num_stages, 1, 0);
 
-    for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++) {
+    // likelihood ratios
+    matrix <T> mat_lr(mat_arg.shape(), 0);
 
-        mat_alpha = vec_alpha[uint_stage];
-        mat_beta = vec_beta[uint_stage + 1];
-        mat_gamma = vec_gamma[uint_stage]; // Note ! code : Gamma_1 = Gamma(0)
+    for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++)
+    {
+
+        mat_alpha   = vec_alpha[uint_stage];
+        mat_beta    = vec_beta[uint_stage + 1];
+        mat_gamma   = vec_gamma[uint_stage]; // Note ! code : Gamma_1 = Gamma(0)
 
 
-        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
+        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++)
+        {
 
-            uint_next_zero =  this->next_state(uint_state,0);
-            uint_next_one =  this->next_state(uint_state,1);
+            uint_next_zero          =  this->next_state(uint_state,0);
+            uint_next_one           =  this->next_state(uint_state,1);
 
-            mat_p_zero(uint_stage) += mat_alpha(uint_state) * mat_gamma(uint_state,uint_next_zero) * mat_beta(uint_next_zero);
-            mat_p_one(uint_stage) += mat_alpha(uint_state) * mat_gamma(uint_state,uint_next_one) * mat_beta(uint_next_one);
+            mat_p_zero(uint_stage)  += mat_alpha(uint_state) * mat_gamma(uint_state,uint_next_zero) * mat_beta(uint_next_zero);
+            mat_p_one(uint_stage)   += mat_alpha(uint_state) * mat_gamma(uint_state,uint_next_one) * mat_beta(uint_next_one);
         }
 
-        mat_p_norm(uint_stage) = mat_p_one(uint_stage) + mat_p_zero(uint_stage);
+        mat_p_norm(uint_stage)      = mat_p_one(uint_stage) + mat_p_zero(uint_stage);
 
-        mat_p_one(uint_stage) = mat_p_one(uint_stage) / mat_p_norm(uint_stage);
-        mat_p_zero(uint_stage) = mat_p_zero(uint_stage) / mat_p_norm(uint_stage);
+        mat_p_one(uint_stage)       = mat_p_one(uint_stage) / mat_p_norm(uint_stage);
+        mat_p_zero(uint_stage)      = mat_p_zero(uint_stage) / mat_p_norm(uint_stage);
 
-        mat_lr(uint_stage) = mat_p_one(uint_stage) / mat_p_zero(uint_stage);
+        mat_lr(uint_stage)          = mat_p_one(uint_stage) / mat_p_zero(uint_stage);
     }
 
 

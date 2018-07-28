@@ -16,7 +16,7 @@
  */
 
 /**
- * @file test.cpp
+ * @file types.cpp
  * @brief Unit Test Suit
  * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
@@ -28,7 +28,6 @@
 int main(int argc, char const *argv[])
 {
 
-  std::cout << std::endl << " --- SUSA UNIT TEST SUIT ---";
 
   susa::matrix <double> mat_a("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]");
   SUSA_TEST_EQ(mat_a(1,1),    4.5, "matrix parser.");

@@ -104,11 +104,14 @@ template <class T> matrix <T> toeplitz(const matrix <T> &mat_arg);
 
 // UPSAMPLE
 
-template <class T> matrix <T> upsample(const matrix <T> &mat_arg, unsigned int uint_u) {
+template <class T> matrix <T> upsample(const matrix <T> &mat_arg, unsigned int uint_u)
+{
     matrix <T> mat_tmp(uint_u * mat_arg.no_rows(),mat_arg.no_cols());
 
-    for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++) {
-        for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++) {
+    for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+    {
+        for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++)
+        {
             mat_tmp(uint_row * uint_u,uint_col) = mat_arg(uint_row, uint_col);
         }
     }
@@ -117,11 +120,14 @@ template <class T> matrix <T> upsample(const matrix <T> &mat_arg, unsigned int u
 
 // DOWNSAMPLE
 
-template <class T> matrix <T> downsample(const matrix <T> &mat_arg, unsigned int uint_d) {
+template <class T> matrix <T> downsample(const matrix <T> &mat_arg, unsigned int uint_d)
+{
     matrix <T> mat_tmp(mat_arg.no_rows()/uint_d,mat_arg.no_cols());
 
-    for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++) {
-        for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows()/uint_d; uint_row++) {
+    for (unsigned int uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
+    {
+        for (unsigned int uint_row = 0; uint_row < mat_arg.no_rows()/uint_d; uint_row++)
+        {
             mat_tmp(uint_row,uint_col) = mat_arg(uint_row * uint_d,uint_col);
         }
     }
@@ -130,10 +136,11 @@ template <class T> matrix <T> downsample(const matrix <T> &mat_arg, unsigned int
 
 // FILTER
 
-template <class T, class TT> matrix <T> filter( const matrix <TT> &mat_arg_b, const matrix <TT> &mat_arg_a, const matrix <T> &mat_arg_x, unsigned int uint_length) {
+template <class T, class TT> matrix <T> filter( const matrix <TT> &mat_arg_b, const matrix <TT> &mat_arg_a, const matrix <T> &mat_arg_x, unsigned int uint_length)
+{
 
-    unsigned int uint_response_length = 0;
-    matrix <T> mat_y;
+    unsigned int    uint_response_length = 0;
+    matrix <T>      mat_y;
 
     int int_b_size = (int)mat_arg_b.size();
     int int_a_size = (int)mat_arg_a.size();
@@ -141,43 +148,56 @@ template <class T, class TT> matrix <T> filter( const matrix <TT> &mat_arg_b, co
     T x;
     T y;
 
-    if (mat_arg_x.no_cols() > 1 && mat_arg_x.no_rows() > 1) {
+    if (mat_arg_x.no_cols() > 1 && mat_arg_x.no_rows() > 1)
+    {
         uint_response_length = mat_arg_x.no_rows() + uint_length;
-        mat_y = matrix <T> (uint_response_length,mat_arg_x.no_cols());
-        for (unsigned int uint_col = 0; uint_col < mat_arg_x.no_cols(); uint_col++) {
-            for (int i=0 ; i< uint_response_length; i++) {
-                for (int k=0; k < int_b_size; k++) {
+        mat_y = matrix <T> (uint_response_length, mat_arg_x.no_cols(), 0);
+        for (unsigned int uint_col = 0; uint_col < mat_arg_x.no_cols(); uint_col++)
+        {
+            for (int i=0 ; i< uint_response_length; i++)
+            {
+                for (int k=0; k < int_b_size; k++)
+                {
                     x = ((i - k) < (int)mat_arg_x.no_rows() && ((i - k) > -1)) ? mat_arg_x(i - k,uint_col) : 0;
                     mat_y(i,uint_col) += x * mat_arg_b(k);
                 }
-                for (int k=1; k < int_a_size; k++) {
+                for (int k=1; k < int_a_size; k++)
+                {
                     y = ((i - k) < (int)mat_y.no_rows() && ((i - k) > -1)) ? mat_y(i - k,uint_col) : 0;
                     mat_y(i,uint_col) -= y * mat_arg_a(k);
                 }
             }
         }
-    } else if (mat_arg_x.no_cols() == 1 && mat_arg_x.no_rows() > 1) {
+    } else if (mat_arg_x.no_cols() == 1 && mat_arg_x.no_rows() > 1)
+    {
         uint_response_length = mat_arg_x.size() + uint_length;
-        mat_y = matrix <T> (uint_response_length,1); // For column vector
-        for (int i = 0; i< uint_response_length; i++) {
-            for (int k = 0; k < int_b_size; k++) {
+        mat_y = matrix <T> (uint_response_length, 1, 0); // For column vector
+        for (int i = 0; i< uint_response_length; i++)
+        {
+            for (int k = 0; k < int_b_size; k++)
+            {
                 x = ((i - k) < (int)mat_arg_x.size() && ((i - k) > -1)) ? mat_arg_x(i - k) : 0;
                 mat_y(i) += x * mat_arg_b(k);
             }
-            for (int k = 1; k < int_a_size; k++) {
+            for (int k = 1; k < int_a_size; k++)
+            {
                 y = ((i - k) < (int)mat_y.size() && ((i - k) > -1)) ? mat_y(i - k) : 0;
                 mat_y(i) -= y * mat_arg_a(k);
             }
         }
-    } else if (mat_arg_x.no_cols() > 1 && mat_arg_x.no_rows() == 1) {
+    } else if (mat_arg_x.no_cols() > 1 && mat_arg_x.no_rows() == 1)
+    {
         uint_response_length = mat_arg_x.size() + uint_length;
-        mat_y = matrix <T> (1,uint_response_length); // For row vector
-        for (int i=0 ; i< uint_response_length; i++) {
-            for (int k=0; k < int_b_size; k++) {
+        mat_y = matrix <T> (1, uint_response_length, 0); // For row vector
+        for (int i=0 ; i< uint_response_length; i++)
+        {
+            for (int k=0; k < int_b_size; k++)
+            {
                 x = ((i - k) < mat_arg_x.size() && ((i - k) > -1)) ? mat_arg_x(i - k) : 0;
                 mat_y(i) += x * mat_arg_b(k);
             }
-            for (int k=1; k < int_a_size; k++) {
+            for (int k=1; k < int_a_size; k++)
+            {
                 y = ((i - k) < mat_y.size() && ((i - k) > -1)) ? mat_y(i - k) : 0;
                 mat_y(i) -= y * mat_arg_a(k);
             }
@@ -187,81 +207,108 @@ template <class T, class TT> matrix <T> filter( const matrix <TT> &mat_arg_b, co
 }
 
 
-template <class T> matrix <T> conv(const matrix <T> &mat_arg_a, const matrix <T> &mat_arg_b) {
+template <class T> matrix <T> conv(const matrix <T> &mat_arg_a, const matrix <T> &mat_arg_b)
+{
 
-    matrix <T> mat_ret;
-    unsigned int uint_length;
+    matrix <T>      mat_ret;
+    unsigned int    uint_length;
 
-    if ((mat_arg_b.no_rows() > 1 && mat_arg_b.no_cols() == 1) || (mat_arg_b.no_cols() > 1 && mat_arg_b.no_rows() == 1)) { // mat_arg_b is a vector
+    if ((mat_arg_b.no_rows() > 1 && mat_arg_b.no_cols() == 1) || (mat_arg_b.no_cols() > 1 && mat_arg_b.no_rows() == 1))
+    { // mat_arg_b is a vector
 
         uint_length = mat_arg_b.size() - 1;
-        mat_ret = filter(mat_arg_b, matrix <T> (1,1,1),mat_arg_a, uint_length);
+        mat_ret = filter(mat_arg_b, matrix <T> (1,1,1), mat_arg_a, uint_length);
 
-    } else if ((mat_arg_a.no_rows() > 1 && mat_arg_a.no_cols() == 1) || (mat_arg_a.no_cols() > 1 && mat_arg_a.no_rows() == 1)) { // mat_arg_a is a vector
+    } else if ((mat_arg_a.no_rows() > 1 && mat_arg_a.no_cols() == 1) || (mat_arg_a.no_cols() > 1 && mat_arg_a.no_rows() == 1))
+    { // mat_arg_a is a vector
 
         uint_length = mat_arg_a.size() - 1;
-        mat_ret = filter(mat_arg_a, matrix <T> (1,1,1),mat_arg_b, uint_length);
+        mat_ret = filter(mat_arg_a, matrix <T> (1,1,1), mat_arg_b, uint_length);
 
-    } else if (mat_arg_b.no_cols() == 1 && mat_arg_b.no_rows() == 1) {
+    } else if (mat_arg_b.no_cols() == 1 && mat_arg_b.no_rows() == 1)
+    {
         mat_ret = mat_arg_b(0) * mat_arg_a;
-    } else if (mat_arg_a.no_cols() == 1 && mat_arg_a.no_rows() == 1) {
+    } else if (mat_arg_a.no_cols() == 1 && mat_arg_a.no_rows() == 1)
+    {
         mat_ret = mat_arg_a(0) * mat_arg_b;
-    } else if ((mat_arg_b.no_cols() > 1 && mat_arg_b.no_rows() > 1) && (mat_arg_a.no_cols() > 1 && mat_arg_a.no_rows() > 1) && (mat_arg_a.no_cols() == mat_arg_b.no_cols())) {
-        for (unsigned int uint_col = 0; uint_col < mat_arg_a.no_cols(); uint_col++) {
+    } else if ((mat_arg_b.no_cols() > 1 && mat_arg_b.no_rows() > 1) && (mat_arg_a.no_cols() > 1 && mat_arg_a.no_rows() > 1) && (mat_arg_a.no_cols() == mat_arg_b.no_cols()))
+    {
+        for (unsigned int uint_col = 0; uint_col < mat_arg_a.no_cols(); uint_col++)
+        {
             uint_length = mat_arg_a.no_rows() - 1;
             // I need a [set_row/set_col] to complete this part 2009-02-22
+            // TDOD: set_row and set_col missing in susa::matrix
         }
-    } else {
-        std::cout << std::endl << "[conv()] not supported codition.";
+    }
+    else
+    {
+        SUSA_ASSERT_MESSAGE(false, "unsupported codition.");
     }
 
     return mat_ret;
 }
 
-template <class T> matrix <T> convmtx(const matrix <T> &mat_arg, unsigned int uint_n) {
-    unsigned int uint_m = mat_arg.size();
-    matrix <T> mat_ret;
-    if (mat_arg.no_cols() == 1 && mat_arg.no_rows() >= 1) { // It is a column vector
-        mat_ret = matrix <T> (uint_m + uint_n - 1, uint_n);
-        for (unsigned int uint_col = 0; uint_col < uint_n; uint_col++) {
-            for (unsigned int uint_row = 0; uint_row < uint_col; uint_row++) {
+template <class T> matrix <T> convmtx(const matrix <T> &mat_arg, unsigned int uint_n)
+{
+    SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "the input argument is not a vector");
+    
+    unsigned int    uint_m = mat_arg.size();
+    matrix <T>      mat_ret;
+    
+    if (mat_arg.no_cols() == 1 && mat_arg.no_rows() >= 1)
+    { // It is a column vector
+        mat_ret = matrix <T> (uint_m + uint_n - 1, uint_n, 0);
+        for (unsigned int uint_col = 0; uint_col < uint_n; uint_col++)
+        {
+            for (unsigned int uint_row = 0; uint_row < uint_col; uint_row++)
+            {
                 mat_ret(uint_row,uint_col) = 0;
             }
 
-            for (unsigned int uint_row = uint_col; uint_row < uint_m + uint_col; uint_row++) {
+            for (unsigned int uint_row = uint_col; uint_row < uint_m + uint_col; uint_row++)
+            {
                 mat_ret(uint_row,uint_col) = mat_arg(uint_row - uint_col);
             }
 
-            for (unsigned int uint_row = uint_m + uint_col ; uint_row < uint_m + uint_n - 1; uint_row++) {
+            for (unsigned int uint_row = uint_m + uint_col ; uint_row < uint_m + uint_n - 1; uint_row++)
+            {
                 mat_ret(uint_row,uint_col) = 0;
             }
         }
-    } else if (mat_arg.no_rows() == 1 && mat_arg.no_cols() >= 1) { // It is a row vector
-        mat_ret = matrix <T> (uint_n, uint_m + uint_n - 1);
-        for (unsigned int uint_row = 0; uint_row < uint_n; uint_row++) {
-            for (unsigned int uint_col = 0; uint_col < uint_row; uint_col++) {
+    }
+    else if (mat_arg.no_rows() == 1 && mat_arg.no_cols() >= 1)
+    { // It is a row vector
+        mat_ret = matrix <T> (uint_n, uint_m + uint_n - 1, 0);
+        for (unsigned int uint_row = 0; uint_row < uint_n; uint_row++)
+        {
+            for (unsigned int uint_col = 0; uint_col < uint_row; uint_col++)
+            {
                 mat_ret(uint_row,uint_col) = 0;
             }
 
-            for (unsigned int uint_col = uint_row; uint_col < uint_m + uint_row; uint_col++) {
+            for (unsigned int uint_col = uint_row; uint_col < uint_m + uint_row; uint_col++)
+            {
                 mat_ret(uint_row,uint_col) = mat_arg(uint_col - uint_row);
             }
 
-            for (unsigned int uint_col = uint_m + uint_row ; uint_col < uint_m + uint_n - 1; uint_col++) {
+            for (unsigned int uint_col = uint_m + uint_row ; uint_col < uint_m + uint_n - 1; uint_col++)
+            {
                 mat_ret(uint_row,uint_col) = 0;
             }
         }
-    } else { // It is not a vector !
-        std::cout << std::endl << "[convmtx()] The input argument is not a vector";
     }
+
     return mat_ret;
 }
 
-template <class T> matrix <T> toeplitz(const matrix <T> &mat_arg) {
+template <class T> matrix <T> toeplitz(const matrix <T> &mat_arg)
+{
     unsigned int uint_size = mat_arg.size();
     matrix <T> mat_ret(uint_size,uint_size);
-    for ( unsigned int uint_row = 0; uint_row < uint_size; uint_row++) {
-        for ( unsigned int uint_col = 0; uint_col < uint_size; uint_col++) {
+    for ( unsigned int uint_row = 0; uint_row < uint_size; uint_row++)
+    {
+        for ( unsigned int uint_col = 0; uint_col < uint_size; uint_col++)
+        {
             mat_ret(uint_row,uint_col) = mat_arg(std::abs((long int)(uint_col - uint_row)));
         }
     }
