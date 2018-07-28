@@ -115,6 +115,21 @@ template <class T> class matrix : public susa::memory <T>
      */
     matrix(size_t sizet_rows, size_t sizet_cols);
 
+    /**
+     * Constructor
+     *
+     * @param tshape the shape of the matrix as std::tuple
+     */
+    matrix(const std::tuple <size_t,size_t> &tshape);
+
+    /**
+     * Constructor
+     *
+     * @param tshape the shape of the matrix as std::tuple
+     * @param Tinitial Initial value of all elements.
+     */
+    matrix(const std::tuple <size_t,size_t> &tshape, T Tinitial);
+
     //! Copy constructor
     matrix(const matrix <T> &mat_arg);
 
@@ -137,12 +152,14 @@ template <class T> class matrix : public susa::memory <T>
     //! Returns the value of a specific (elem)
     T get(size_t sizet_elem) const;
 
-
     //! Returns the number of columns
     size_t no_cols() const;
 
     //! Returns the number of rows
     size_t no_rows() const;
+
+    //! Returns the shape (number of rows and columns) as a tuple
+    std::tuple <size_t,size_t> shape() const;
 
     //! Returns true if the matrix is square
     bool is_square() const;
@@ -225,7 +242,6 @@ template <class T> class matrix : public susa::memory <T>
 
     //! Element wise Multiplication  operator
     friend matrix <T> operator*<>( const matrix <T> &mat_argl, const matrix <T> &mat_argr );
-
 
     //! Element wise Division operator
     friend matrix <T> operator/<>( const matrix <T> &mat_argl, T T_arg);
@@ -355,6 +371,43 @@ template <class T> matrix <T>::matrix(const matrix <T> &mat_arg)
 
 }
 
+template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t> &tshape)
+: susa::memory<T>()
+, T_fake(new T)
+{
+    size_t sizet_rows;
+    size_t sizet_cols;
+    std::tie(sizet_rows, sizet_cols) = tshape;
+
+    SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
+
+    this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
+    this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
+
+    this->allocate(this->sizet_rows * this->sizet_cols);
+
+}
+
+template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t> &tshape, T Tinitial)
+: susa::memory<T>()
+, T_fake(new T)
+{
+    size_t sizet_rows;
+    size_t sizet_cols;
+    std::tie(sizet_rows, sizet_cols) = tshape;
+
+    SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
+
+    this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
+    this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
+
+    this->allocate(this->sizet_rows * this->sizet_cols);
+
+    for (size_t sizet_index = 0; sizet_index < this->sizet_objects; sizet_index++)
+    {
+        this->_matrix[sizet_index] = Tinitial;
+    }
+}
 
 template <class T> matrix <T>::matrix(matrix<T>&& mat_arg) noexcept
 : susa::memory <T> (std::move(mat_arg))
@@ -413,6 +466,11 @@ template <class T> size_t  matrix <T>::no_cols() const
 template <class T> size_t  matrix <T>::no_rows() const
 {
     return sizet_rows;
+}
+
+template <class T>  std::tuple<size_t, size_t> matrix<T>::shape() const
+{
+    return std::make_tuple(sizet_rows, sizet_cols);
 }
 
 template <class T> bool  matrix <T>::is_square() const
@@ -493,8 +551,7 @@ template <class T> matrix <T> matrix <T>::shrink(size_t sizet_elim_row, size_t s
     }
 
 
-    SUSA_ASSERT_MESSAGE(sizet_elim_col < sizet_cols && sizet_elim_row < sizet_rows,
-      "the input arguments exceed matrix size.");
+    SUSA_ASSERT_MESSAGE(sizet_elim_col < sizet_cols && sizet_elim_row < sizet_rows, "the input arguments exceed matrix size.");
 
     if (sizet_elim_col < sizet_cols && sizet_elim_row < sizet_rows)
     {
@@ -548,7 +605,7 @@ template <class T> matrix <T> matrix <T>::left(size_t sizet_left) const
     {
         if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1,sizet_left);
         else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_left,1);
-        else if (sizet_rows != 1 && sizet_cols != 1) mat_ret = matrix <T> (sizet_left,1);
+        else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
 
         for (size_t sizet_i = 0; sizet_i < sizet_left; sizet_i++)
         {
@@ -570,7 +627,7 @@ template <class T> matrix <T> matrix <T>::right(size_t sizet_right) const
     {
         if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1,sizet_right);
         else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_right,1);
-        else if (sizet_rows != 1 && sizet_cols != 1) mat_ret = matrix <T> (sizet_right,1);
+        else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
 
         for (size_t sizet_i = this->sizet_objects; sizet_i > (this->sizet_objects - sizet_right); sizet_i--)
         {
@@ -593,7 +650,7 @@ template <class T> matrix <T> matrix <T>::mid(size_t sizet_begin, size_t sizet_e
     {
         if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1,sizet_mid + 1);
         else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_mid + 1,1);
-        else if (sizet_rows != 1 && sizet_cols != 1) mat_ret = matrix <T> (sizet_mid + 1,1);
+        else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
 
         for (size_t sizet_i = sizet_begin; sizet_i <= sizet_end; sizet_i++)
         {
@@ -634,7 +691,8 @@ template <class T> T &matrix<T>::operator ()( size_t sizet_elem )
 
     SUSA_ASSERT_MESSAGE(sizet_elem < this->sizet_objects, "the index is out of range.");
 
-    if (sizet_elem < sizet_cols * sizet_rows && this->_matrix != NULL) {
+    if (sizet_elem < sizet_cols * sizet_rows && this->_matrix != NULL)
+    {
       return this->_matrix[sizet_elem];
     }
 
