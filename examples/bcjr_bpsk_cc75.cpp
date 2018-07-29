@@ -35,7 +35,7 @@ int main(void) {
     rng _rng(23098);
 
     // Encoder and State machine
-    convolutional_codec state(2,1,2);
+    susa::ccode state(2,1,2);
     state.set_generator(7,0);
     state.set_generator(5,1);
 
@@ -53,17 +53,17 @@ int main(void) {
     matrix <double> mod_bpsk = bpsk(mat_coded);
 
 
-    matrix <unsigned int> mat_err(10,1);
-    matrix <double> awgn_mod_bpsk;
-    matrix <double> awgn;
-    matrix <double> mat_l;
-    matrix <double> mat_l_ln;
-    matrix <double> mat_l_sign;
-    double EbN0;
+    matrix <unsigned int>   mat_err(10,1);
+    matrix <double>         awgn_mod_bpsk;
+    matrix <double>         awgn;
+    matrix <double>         mat_l;
+    matrix <double>         mat_l_ln;
+    matrix <double>         mat_l_sign;
+    double                  EbN0;
 
 
-    for (int EbN0db = 0; EbN0db < 10; EbN0db++) {
-
+    for (int EbN0db = 0; EbN0db < 10; EbN0db++)
+    {
 
         // AWGN channel
         EbN0 = std::pow(10,(double)EbN0db/10);
@@ -96,7 +96,8 @@ int main(void) {
 
     double dbl_tmp;
 
-    for (int inti = 0; inti < 10; inti++) {
+    for (int inti = 0; inti < 10; inti++)
+    {
         dbl_tmp = (double)mat_err(inti)/_N;
         fs_result << inti << " " << scientific << dbl_tmp << endl;
     }

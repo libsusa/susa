@@ -29,21 +29,24 @@
 namespace susa {
 
 /**
- * @brief Convolutional encoder/decoder wrapper class.
+ * @brief Convolutional encoder/decoder.
+ *
  * This class implements encoding and decoding of the convolutional error correction codes.
- * The constructor sets up the internal wiring of the state-machine.
- * This setup is define by the constructor arguments that are a set of numbers in octal format.
+ * The constructor sets up the internal wiring of the state-machine. This is defined through
+ * the constructor arguments which are a set of numbers in octal format.
  * To know more about it refer to <i>Fundamentals of convolutional coding, Rolf Johannesson and Kamil Zigangirov, IEEE Press, 1999</i>.
- * The input/output of the methods in this class are all binary.
+ * Note that input/output of the class methods are all in binary format (boolean to represent a single bit).
+ *
  * @ingroup Communications
  */
-class convolutional_codec {
+class ccode
+    {
   public:
-    convolutional_codec(unsigned int uint_n, unsigned int uint_k, unsigned int uint_m);
+    ccode(unsigned int uint_n, unsigned int uint_k, unsigned int uint_m);
 
-    convolutional_codec();
+    ccode();
 
-    ~convolutional_codec();
+    ~ccode();
 
 
     /**
@@ -62,7 +65,13 @@ class convolutional_codec {
         uint_current_state = uint_state;   // Set Internal State
     }
 
-    unsigned int next_state(unsigned int uint_state, bool b_input);  // Next state (Current state,input)
+    /**
+     * @brief next state
+     *
+     * param uint_state the current state
+     * param b_input the input
+     */
+    unsigned int next_state(unsigned int uint_state, bool b_input);
     unsigned int next_state(bool b_input);                           // Next state using internal state
     unsigned int next_output(unsigned int uint_state, bool b_input);
     unsigned int next_output(bool b_input);
@@ -74,10 +83,13 @@ class convolutional_codec {
     unsigned int prev_output(unsigned int uint_state, bool b_input);
     unsigned int prev_output(bool b_input);
 
-    unsigned int get_current_state() {
+    unsigned int get_current_state()
+    {
         return uint_current_state;
     }
-    unsigned int get_last_state() {
+
+    unsigned int get_last_state()
+    {
         return uint_last_state;
     }
 

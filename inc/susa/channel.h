@@ -31,8 +31,10 @@ namespace susa {
 
 /**
  * @brief The Inter-Symbole Interference (ISI) class.
+ *
  * This class contains a set of methods for signal generation
- * and equalization of ISI channels.
+ * and equalization of ISI channels that currently supports only
+ * BPSK modulation.
  *
  * @ingroup Communications
  */
@@ -74,6 +76,7 @@ template <class T> class channel
 
     /**
      * @brief Constructor
+     *
      * Each symbol in the constellation shall be transduced to
      * a signal amplitude. The series of transduced symbols is
      * the signal that passes the channel (which is represented by the channel impulse response).
@@ -88,6 +91,7 @@ template <class T> class channel
 
     /**
      * @brief Inter-Symbol Interference (ISI) channel encoder
+     *
      * The method delicately convolves the modulated input signal
      * with the Channel Impulse Response (CIR).
      *
@@ -98,7 +102,7 @@ template <class T> class channel
 
     /**
      * @brief Bahl, Cocke, Jelinek and Raviv (BCJR) algorithm
-     * BCJR is a MAP based algorithm for channel equalization
+     * is a maximum a posteriori probability (MAP) based algorithm for channel equalization.
      *
      * @param mat_arg the encoded signal vector
      * @param dbl_ebn0 the signal to noise ratio Eb/N0
@@ -106,8 +110,8 @@ template <class T> class channel
     matrix <T> decode_bcjr(const matrix <T> &mat_arg, T dbl_ebn0);
 
     /**
-     * @brief Viterbi algorithm
-     * Viterbi is a Maximum Likelihood (ML) based algorithm for channel equalization.
+     * @brief Viterbi i.e. maximum likelihood sequence estimation (MLSE) algorithm
+     * is a maximum likelihood (ML) based algorithm for channel equalization.
      *
      * @param mat_arg the encoded signal vector
      * @param uint_init_state the initial state of the trellis
@@ -126,6 +130,7 @@ template <class T> class channel
 
     /**
      * @brief ZF-DFE with BPSK quantizer
+     *
      * Zero-Forcing (ZF) Decision–Feedback Equalization (DFE)
      * for BPSK modulated signals.
      *
