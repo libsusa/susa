@@ -29,7 +29,7 @@
 namespace susa {
 
 /**
- * @brief Convolutional encoder/decoder.
+ * @brief Convolutional Codes
  *
  * This class implements encoding and decoding of the convolutional error correction codes.
  * The constructor sets up the internal wiring of the state-machine. This is defined through
@@ -40,20 +40,32 @@ namespace susa {
  * @ingroup Communications
  */
 class ccode
-    {
+{
   public:
+
+    /**
+     * @brief Constructor
+     *
+     * @param uint_n number of inputs (has to be one)
+     * @param uint_k number of outputs
+     * @param uint_m number of memories
+     */
     ccode(unsigned int uint_n, unsigned int uint_k, unsigned int uint_m);
 
+    /**
+     * @brief Constructor
+     */
     ccode();
 
+    //! Destructor
     ~ccode();
 
 
     /**
      * @brief Set the generator polynomail for each output
      *
-     * @param uintGen Generator in octal format
-     * @param uintGenID  Generator polynomial output identifier
+     * @param uint_gen Generator in octal format
+     * @param uint_gen_id Generator polynomial output identifier
      **/
     void set_generator(unsigned int uint_gen, unsigned int uint_gen_id);  // Set generators
 
@@ -61,46 +73,15 @@ class ccode
      * @brief Set the internal memory directly through this method
      * @param uint_state The internal state to be set
      **/
-    void set_internal_state(unsigned int uint_state) {
+    void set_internal_state(unsigned int uint_state)
+    {
         uint_current_state = uint_state;   // Set Internal State
     }
 
     /**
-     * @brief next state
+     * @brief initialization of trellis after the generator polynomials are set
      *
-     * param uint_state the current state
-     * param b_input the input
-     */
-    unsigned int next_state(unsigned int uint_state, bool b_input);
-    unsigned int next_state(bool b_input);                           // Next state using internal state
-    unsigned int next_output(unsigned int uint_state, bool b_input);
-    unsigned int next_output(bool b_input);
-
-    unsigned int prev_state(unsigned int uint_state, bool b_input);  // Previous state (Current state,input)
-    unsigned int prev_state(bool b_input);                           // Previous state using internal state
-    std::vector <unsigned int> prev_states(unsigned int uint_state); // Previous states
-    unsigned int prev_internal_state();                              // Previous state using internal state
-    unsigned int prev_output(unsigned int uint_state, bool b_input);
-    unsigned int prev_output(bool b_input);
-
-    unsigned int get_current_state()
-    {
-        return uint_current_state;
-    }
-
-    unsigned int get_last_state()
-    {
-        return uint_last_state;
-    }
-
-    void zero_state();         // Zero internal state
-    void out_states();         // Print out states
-    void out_outputs();        // Print out outputs
-
-    /**
-     * @brief MUST BE CALLED after initialization of the generator polynomials are set
-     *
-     * This methos builds Previous and Next vectors
+     * This methos builds previous and next state vectors
      **/
     void build_trellis();
 
@@ -123,6 +104,63 @@ class ccode
     matrix <double> decode_bcjr(const matrix <double> &mat_arg, double dbl_ebn0);
 
   private:
+
+    /**
+     * @brief get next state
+     *
+     * @param uint_state the current state
+     * @param b_input the input
+     */
+    unsigned int next_state(unsigned int uint_state, bool b_input);
+
+    /**
+     * @brief get next state using internal state
+     *
+     */
+    unsigned int next_state(bool b_input);
+
+    unsigned int next_output(unsigned int uint_state, bool b_input);
+
+    unsigned int next_output(bool b_input);
+    
+    /**
+     * @brief get previous state
+     *
+     * @param uint_state current state
+     * @param b_input the input
+     */
+    unsigned int prev_state(unsigned int uint_state, bool b_input);
+
+    /**
+     * @brief get previous state using internal state
+     *
+     */
+    unsigned int prev_state(bool b_input);
+
+    std::vector <unsigned int> prev_states(unsigned int uint_state); // Previous states
+
+    unsigned int prev_internal_state();                              // Previous state using internal state
+
+    unsigned int prev_output(unsigned int uint_state, bool b_input);
+
+    unsigned int prev_output(bool b_input);
+    
+    unsigned int get_current_state()
+    {
+        return uint_current_state;
+    }
+    
+    unsigned int get_last_state()
+    {
+        return uint_last_state;
+    }
+    
+    void zero_state();         // Zero internal state
+
+    void out_states();         // Print out states
+
+    void out_outputs();        // Print out outputs
+
     unsigned int uint_k;     // Number of inputs (currently implemented for ONE INPUT ONLY)
     unsigned int uint_n;     // Number of outputs
     unsigned int uint_m;     // Number of memories
@@ -139,6 +177,7 @@ class ccode
 
     unsigned int uint_current_state;
     unsigned int uint_last_state;
+
 };
 
 }

@@ -29,7 +29,8 @@ using namespace std;
 using namespace susa;
 
 
-int main(void) {
+int main(void)
+{
 
     // Random Number Generator (RNG)
     rng _rng(23098);
@@ -48,7 +49,10 @@ int main(void) {
     mat_bits(_N - 1) = 0;
     mat_bits(_N - 2) = 0;
 
+    // the trellis must be initialized
+    // after setting the generator polynomial.
     state.build_trellis();
+
     mat_coded = state.encode(mat_bits);
     matrix <double> mod_bpsk = bpsk(mat_coded);
 

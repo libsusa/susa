@@ -26,6 +26,7 @@
 #include "susa.h"
 
 namespace susa {
+
 // Constructors and Destructors
 
 ccode::ccode()
@@ -46,10 +47,11 @@ ccode::~ccode()
 
 ccode::ccode(unsigned int uint_n, unsigned int uint_k, unsigned int uint_m)
 {
-    this->uint_k = 1;
-    this->uint_n = uint_n;
-    this->uint_m = uint_m;
-    this->uint_gen = new unsigned int[uint_n];
+    SUSA_ASSERT_MESSAGE(uint_k == 1, "the number of inputs must be one.");
+    this->uint_k    = uint_k;
+    this->uint_n    = uint_n;
+    this->uint_m    = uint_m;
+    this->uint_gen  = new unsigned int[uint_n];
 }
 
 
