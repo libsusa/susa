@@ -59,6 +59,7 @@
 #include <initializer_list>
 #include <typeinfo>
 #include <tuple>
+#include <type_traits>
 
 // Susa headers
 #include "susa/memory.h"

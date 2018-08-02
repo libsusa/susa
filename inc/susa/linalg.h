@@ -34,12 +34,12 @@ namespace susa
 /**
  * @brief Matrix Multiplication
  *
- * @param mat_argl
- * @param mat_argr
- * @return Multiplication of the two input matrices
+ * @param mat_argl the left-hand-side matrix
+ * @param mat_argr the right-hand-side matrix
+ * @return multiplication of the two input matrices
  * @ingroup LALG
  */
-template <class T> matrix <T> matmul( const matrix <T> &mat_argl,const matrix <T> &mat_argr )
+template <class T> matrix <T> matmul(const matrix <T> &mat_argl, const matrix <T> &mat_argr)
 {
     // To make it faster this method has been declared as 'friend' of
     // 'matrix' template class so 'matmul' apears two times in 'matrix.h'
@@ -49,9 +49,11 @@ template <class T> matrix <T> matmul( const matrix <T> &mat_argl,const matrix <T
 
     matrix <T> mat_ret;
 
-    SUSA_ASSERT(mat_argl._matrix != NULL && mat_argr._matrix != NULL);
-
-    if (mat_argl._matrix == NULL || mat_argr._matrix == NULL) return mat_ret;
+    if (mat_argl._matrix == NULL || mat_argr._matrix == NULL)
+    {
+        SUSA_ABORT("one or both matrices are empty.");
+        return mat_ret;
+    }
 
     if (mat_argl.no_cols() == mat_argr.no_rows())
     {
@@ -71,17 +73,17 @@ template <class T> matrix <T> matmul( const matrix <T> &mat_argl,const matrix <T
     }
     else
     {
-        SUSA_ASSERT_MESSAGE(false, "Matrices' dimensions mismatch.");
+        SUSA_ABORT("the matrices' dimensions mismatch.");
     }
 
     return mat_ret;
 }
 
 /**
- * @brief Transpose
+ * @brief Transpose operator
  *
- * @param mat_arg
- * @return Returns transpose of the input matrices
+ * @param mat_arg the input matrix
+ * @return returns transpose of the input matrices
  * @ingroup LALG
  */
 template <class T> matrix <T> transpose(const matrix <T> &mat_arg)
@@ -116,7 +118,7 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg)
  * @brief Determinant
  *
  * @param mat_arg
- * @return Returns determinant of the input matrices
+ * @return returns determinant of the input matrices
  * @ingroup LALG
  */
 template <class T> double det(const matrix <T> &mat_arg)
@@ -126,23 +128,31 @@ template <class T> double det(const matrix <T> &mat_arg)
     size_t sizet_rows = mat_arg.no_rows();
     size_t sizet_cols = mat_arg.no_cols();
 
-    if (sizet_rows == sizet_cols) {
-        if (sizet_rows == 1) { // 1 x 1
+    if (sizet_rows == sizet_cols)
+    {
+        if (sizet_rows == 1)
+        { // 1 x 1
             dbl_ret = mat_arg(0);
-        } else if (sizet_rows == 2) { // 2 x 2
+        }
+        else if (sizet_rows == 2)
+        { // 2 x 2
             dbl_ret = mat_arg(0, 0) * mat_arg(1, 1) - mat_arg(1, 0) * mat_arg(0, 1);
-        } else { // 3 x 3 and more
-            for (size_t  sizet_col = 0; sizet_col < sizet_cols; sizet_col++) {
+        }
+        else
+        { // 3 x 3 and more
+            for (size_t  sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
+            {
                 matrix <T> mat_minor = mat_arg.shrink(0, sizet_col);
-                if (mat_minor.size() == mat_arg.size()) {
+                if (mat_minor.size() == mat_arg.size())
+                {
                     // If for any reason something goes wrong in the minor() it returns the matrix without any action.
                     // Therefore size of the input argument and the returned argument would the same. This case cause infinite
                     // iterations. To stop such an unwanted loop this if() returns from the method.
                     // THIS METHOD IS NOT STABLE BUT WORKS.
-                    SUSA_LOG_ERR("Falling into an infinite loop avoided.");
+                    SUSA_LOG_ERR("falling into an infinite loop avoided.");
                     return dbl_ret;
                 }
-                dbl_ret +=  (-2 * (int)(sizet_col%2) + 1) * mat_arg(0, sizet_col) * det(mat_minor);
+                dbl_ret +=  (-2 * (int)(sizet_col % 2) + 1) * mat_arg(0, sizet_col) * det(mat_minor);
             }
         }
     }
@@ -157,7 +167,7 @@ template <class T> double det(const matrix <T> &mat_arg)
  *
  * @param mat_argl
  * @param mat_argr
- * @return Returns concatenation of the two input matrices
+ * @return returns concatenation of the two input matrices
  * @ingroup LALG
  */
 template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T> &mat_argr)
@@ -209,7 +219,7 @@ template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T
     }
     else
     { // Case III
-        SUSA_LOG_ERR("To concatenate two matrices either columns or rows, or both should have equal sizes.");
+        SUSA_LOG_ERR("to concatenate two matrices either columns or rows, or both should have equal sizes.");
     }
 
     return mat_ret;
@@ -218,8 +228,8 @@ template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T
 /**
  * @brief Flip left/right
  *
- * @param mat_arg
- * @return Returns flip (left/right) a matrix
+ * @param mat_arg the input matrix
+ * @return returns flip (left/right) a matrix
  * @ingroup LALG
  */
 template <class T> matrix <T> fliplr(const matrix <T> &mat_arg)
@@ -228,7 +238,7 @@ template <class T> matrix <T> fliplr(const matrix <T> &mat_arg)
 
     if ( mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1)
     {
-        if (mat_arg.no_cols() == 1) SUSA_LOG_INFO("fliplr() has been replaced by flipud().");
+        if (mat_arg.no_cols() == 1) SUSA_LOG_INF("fliplr() has been replaced by flipud().");
 
         for (size_t sizet_i = 0; sizet_i < mat_arg.size(); sizet_i++)
         {
@@ -263,7 +273,7 @@ template <class T> matrix <T> flipud(const matrix <T> &mat_arg)
     if ( mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1)
     {
 
-        if (mat_arg.no_rows() == 1) SUSA_LOG_INFO("flipud() has been replaced by fliplr().");
+        if (mat_arg.no_rows() == 1) SUSA_LOG_INF("flipud() has been replaced by fliplr().");
 
         for (size_t sizet_i = 0; sizet_i < mat_arg.size(); sizet_i++)
         {
@@ -276,7 +286,7 @@ template <class T> matrix <T> flipud(const matrix <T> &mat_arg)
         {
             for (size_t sizet_row = 0; sizet_row < mat_arg.no_rows(); sizet_row++)
             {
-              mat_ret(sizet_row,sizet_col) = mat_arg(mat_arg.no_rows()  - sizet_row - 1,sizet_col);
+              mat_ret(sizet_row,sizet_col) = mat_arg(mat_arg.no_rows()  - sizet_row - 1, sizet_col);
             }
         }
     }

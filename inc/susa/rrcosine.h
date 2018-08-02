@@ -29,31 +29,35 @@
 
 namespace susa
 {
+    
+template <class T> int antipodal(T T_arg);
 
 /**
- * @brief Root-Raised Cosine class.
+ * @brief Root-Raised Cosine
+ *
+ * This class generates Root-Raised Cosine filter taps.
  *
  * @ingroup Communications
- **/
-class RRCosine {
+ */
+class RRCosine
+{
   private:
 
     double xrc(double, double, double);
 
-    matrix < std::complex <double> > cmat_g_T;
-    matrix <double>  mat_g_T;
+    matrix <std::complex <double>>      cmat_g_T;
+    matrix <double>                     mat_g_T;
 
   public:
 
-    RRCosine();
-
+    /**
+     * @brief Constructor
+     *
+     */
     RRCosine(double, double, double, int);
 
     matrix <double> get();
 };
-
-
-template <class T> int antipodal(T T_arg);
 
 }       // NAMESPACE SUSA
 #endif  // SUSA_RRCOSINE_H

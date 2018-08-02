@@ -35,8 +35,8 @@ namespace susa {
 /**
  * @brief Minimum value indices
  *
- * @param mat_arg
- * @return Returns minimum value indices in the input matrix
+ * @param mat_arg the input matrix
+ * @return returns minimum value indices in the input matrix
  * @ingroup Math
  */
 template <class T> matrix <size_t> min(const matrix <T> &mat_arg);
@@ -54,7 +54,7 @@ template <class T> matrix <size_t> max(const matrix <T> &mat_arg);
  * @brief Differential
  *
  * @param vec_arg STL vector
- * @return Returns discrete differential of the input vector
+ * @return returns discrete differential of the input vector
  * @ingroup Math
  */
 template <class T> std::vector <T> diff(std::vector <T> &vec_arg);
@@ -66,7 +66,7 @@ template <class T> std::vector <T> diff(std::vector <T> &vec_arg);
  * @return Returns sum of values in the input vector
  * @ingroup Math
  */
-template <class T, typename std::enable_if<std::is_arithmetic<T>::value,T>::type*> matrix <T> sum(matrix <T> &mat_arg);
+template <class T> matrix <T> sum(matrix <T> &mat_arg);
 
 /**
  * @brief Mean
@@ -84,10 +84,10 @@ template <class T> matrix <double> mean(matrix <T> &mat_arg);
  * @return Returns magnitude of the complex input vector
  * @ingroup Math
  */
-template <class T> matrix <double> mag(const matrix < std::complex <T> > &mat_arg);
+template <class T> matrix <double> mag(const matrix <std::complex <T>> &mat_arg);
 
 /**
- * @brief Norm
+ * @brief Norm operator
  *
  * @param mat_arg
  * @return Returns magnitude of the complex input vector
@@ -111,7 +111,7 @@ template <class T> matrix <T> real(const matrix < std::complex <T> > &mat_arg);
  * @return Returns imaginary part of the complex input vector
  * @ingroup Math
  */
-template <class T> matrix <T> imag(const matrix < std::complex <T> > &mat_arg);
+template <class T> matrix <T> imag(const matrix <std::complex <T>> &mat_arg);
 
 /**
  * @brief Absolute
@@ -120,7 +120,7 @@ template <class T> matrix <T> imag(const matrix < std::complex <T> > &mat_arg);
  * @return Returns absolut value of the input vector
  * @ingroup Math
  */
-template <class T> std::vector <T> abs(std::vector <T> &vec_arg);
+template <class T> std::vector <T> abs(const std::vector <T> &vec_arg);
 
 /**
  * @brief Conjugate
@@ -129,7 +129,7 @@ template <class T> std::vector <T> abs(std::vector <T> &vec_arg);
  * @return Returns conjugate of the complex input vector
  * @ingroup Math
  */
-template <class T> matrix <std::complex <T> > conj(const matrix < std::complex <T> > &mat_arg);
+template <class T> matrix <std::complex <T>> conj(const matrix <std::complex <T>> &mat_arg);
 
 /**
  * @brief Sign
@@ -204,7 +204,6 @@ double qfunc(const double x);
  * @brief Modular operation
  *
  * @return lint_a "mod" lint_mod
- *
  * @ingroup Math
  */
 long int mod(long int lint_a,long int lint_mod);
@@ -224,8 +223,8 @@ double round(const double dbl_arg, int int_decimal = -1);
 /**
  * @brief Round
  *
- * @param  mat_arg The input susa::matrix<double>
- * @param  int_decimal Number of decimals
+ * @param  mat_arg the input susa::matrix<double>
+ * @param  int_decimal number of decimals
  * @return rounds the matrix mat_arg elements up to int_decimal numbers
  *
  * @ingroup Math
@@ -246,7 +245,7 @@ template <class T> std::vector <T> diff(std::vector <T> &vec_arg)
     return (vec_diff);
 }
 
-template <class T, typename std::enable_if<std::is_arithmetic<T>::value,T>::type* = nullptr> matrix <T> sum(matrix <T> &mat_arg)
+template <class T> matrix <T> sum(matrix <T> &mat_arg)
 {
     matrix <T> mat_ret;
 
@@ -376,7 +375,7 @@ template <class T> matrix <size_t> max(const matrix <T> &mat_arg)
     return mat_ret;
 }
 
-template <class T> matrix <std::complex <T> > conj(const matrix < std::complex <T> > &mat_arg)
+template <class T> matrix <std::complex <T> > conj(const matrix <std::complex <T>> &mat_arg)
 {
     matrix < std::complex <T> > mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
 
@@ -429,7 +428,8 @@ template <class T> matrix <T> real(const matrix < std::complex <T> > &mat_arg)
     return mat_ret;
 }
 
-template <class T> matrix <T> imag(const matrix < std::complex <T> > &mat_arg) {
+template <class T> matrix <T> imag(const matrix <std::complex <T>> &mat_arg)
+{
     matrix < std::complex <T> > mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
 
     for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++) mat_ret(uint_i) = mat_arg(uint_i).imag();
@@ -437,17 +437,20 @@ template <class T> matrix <T> imag(const matrix < std::complex <T> > &mat_arg) {
     return mat_ret;
 }
 
-template <class T> matrix <T> sign(const matrix <T> &mat_arg) {
+template <class T> matrix <T> sign(const matrix <T> &mat_arg)
+{
     matrix <T> mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
 
-    for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++) {
+    for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+    {
         if (mat_arg(uint_i) != 0) mat_ret(uint_i) = mat_arg(uint_i) > 0 ? 1 : -1;
     }
 
     return mat_ret;
 }
 
-template <class T> T sign(T T_arg) {
+template <class T> T sign(T T_arg)
+{
     T T_ret = 0;
     if (T_arg > 0) T_arg = 1;
     else if (T_arg < 0) T_arg = -1;
