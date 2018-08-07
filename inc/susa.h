@@ -62,6 +62,7 @@
 #include <type_traits>
 
 // Susa headers
+#include "susa/type_traits.h"
 #include "susa/memory.h"
 #include "susa/sets.h"
 #include "susa/matrix.h"
