@@ -1,4 +1,4 @@
-# Susa Open Source Project
+# Susa Open Source Project  [![Build Status](https://travis-ci.com/susalib/susa.svg?branch=master)](https://travis-ci.com/susalib/susa)
 
 Susa is a mathematics and signal processing C++ framework based on [KISS](https://en.wikipedia.org/wiki/KISS_principle)
  principle. It is stand-alone with a modern architecture. It is designed not to have any dependencies to none standard third
