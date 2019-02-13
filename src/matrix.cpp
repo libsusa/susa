@@ -27,7 +27,7 @@
 
 namespace susa {
 
-void pre_parser(std::string &str_string)
+void pre_parser(std::string& str_string)
 {
     // Coversion from 'string' to numerical data types are done
     // by using the capabilities of STL stream objects.
@@ -68,7 +68,7 @@ void pre_parser(std::string &str_string)
         str_string[int_counter] = str_string[int_i];
         if (str_string[int_i] == ';' && str_string[int_i + 1] == ' ')
         {
-            while(str_string[int_i + 1] == ' ') int_i++;
+            while (str_string[int_i + 1] == ' ') int_i++;
         }
         int_counter++;
     }

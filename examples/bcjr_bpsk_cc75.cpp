@@ -16,8 +16,8 @@
  */
 
 /**
- * This program simulates a communication system with BPSK modulation
- * with a R=1/2 convolutional code G(1 + D^2, 1 + D + D^2) over an AWGN noisy channel,
+ * This program simulates a communication system with BPSK modulation scheme
+ * and R=1/2 convolutional code G(1 + D^2, 1 + D + D^2) over an AWGN noisy channel.
  */
 
 #include "susa.h"
@@ -41,23 +41,22 @@ int main(void)
     state.set_generator(5,1);
 
 
-    matrix <char> mat_bits = _rng.rand_mask(1, _N);
-    matrix <char> mat_coded;
+    matrix <uint8_t> mat_bits = _rng.bernoulli(_N);
+    matrix <uint8_t> mat_coded;
 
+    // Known initial state
     mat_bits(0) = 0;
     mat_bits(1) = 0;
+
+    // Known final state
     mat_bits(_N - 1) = 0;
     mat_bits(_N - 2) = 0;
-
-    // the trellis must be initialized
-    // after setting the generator polynomial.
-    state.build_trellis();
 
     mat_coded = state.encode(mat_bits);
     matrix <double> mod_bpsk = bpsk(mat_coded);
 
 
-    matrix <unsigned int>   mat_err(10,1);
+    matrix <unsigned int>   mat_err(10, 1, 0);
     matrix <double>         awgn_mod_bpsk;
     matrix <double>         awgn;
     matrix <double>         mat_l;
@@ -70,9 +69,9 @@ int main(void)
     {
 
         // AWGN channel
-        EbN0 = std::pow(10,(double)EbN0db/10);
-        awgn = sqrt(1 / EbN0) * _rng.randn(mat_coded.size());
-        awgn_mod_bpsk = mod_bpsk + awgn;
+        EbN0            = std::pow(10,(double)EbN0db/10);
+        awgn            = sqrt(1 / EbN0) * _rng.randn(mat_coded.size());
+        awgn_mod_bpsk   = mod_bpsk + awgn;
 
 
         // BCJR decoder
@@ -81,7 +80,7 @@ int main(void)
 
         unsigned int uint_num_stages = awgn_mod_bpsk.size() / 2;
 
-        mat_l_ln = susa::log(mat_l);
+        mat_l_ln   = susa::log(mat_l);
         mat_l_sign = susa::sign(mat_l_ln);
 
         for (unsigned int inti = 0; inti < uint_num_stages; inti++) if (mat_l_sign(inti) == -1) mat_l_sign(inti) = 0;
@@ -89,7 +88,7 @@ int main(void)
         for (unsigned int inti = 0; inti < uint_num_stages; inti++) if (mat_l_sign(inti) != mat_bits(inti)) mat_err(EbN0db)++;
 
 
-        cout << "Eb/N0 = " << EbN0db << " \t \t" << "BER  =  " << ((double)mat_err(EbN0db)/_N) << endl;
+        cout << "Eb/N0 = " << EbN0db << " \t \t" << "BER  =  " << ((double)mat_err(EbN0db)/_N) << " - " << mat_err(EbN0db) << endl;
 
     }
 

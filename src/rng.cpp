@@ -182,6 +182,20 @@ unsigned int rng::nonUniform(std::vector <float> pr)
     return 0;
 }
 
+matrix <unsigned char> rng::bernoulli(size_t size_num)
+{
+    // TODO: optimize the generation time
+    matrix <unsigned char> mat_ret(size_num, 1);
+
+    for (unsigned int uint_i = 0; uint_i < size_num; uint_i++)
+    {
+        mat_ret(uint_i) = extract_number() & 0x01;
+    }
+
+    return mat_ret;
+ }
+
+
 // Private methods
 void rng::generate_numbers()
 {
@@ -198,7 +212,6 @@ void rng::generate_numbers()
 
 unsigned int rng::extract_number()
 {
-
     if (uint_index >= N)
     {
         generate_numbers();

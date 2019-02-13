@@ -20,7 +20,7 @@
  * @brief Random Number Generator (declaration).
  *
  *
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
@@ -68,20 +68,20 @@ class rng {
     void init(unsigned int uint_seed);
 
     /**
-     * @brief Returns gaussian distributed random double
+     * @brief gaussian distributed random double
      * with mean value equal to zero and unit variance.
      *
      */
     double randn();
 
     /**
-     * @brief Returns uniformly distributed random double
+     * @brief uniformly distributed random double
      *
      */
     double rand();
 
     /**
-     * @brief Returns uniformly distributed random unsigned integers
+     * @brief uniformly distributed random unsigned integers
      *
      * The output numbers will be masked to get uniformly distributed numbers
      * in a limited range. As an example masking with 0x0F would produce random
@@ -92,7 +92,7 @@ class rng {
     unsigned int rand_mask(unsigned int uint_mask);
 
     /**
-     * @brief Returns uniformly distributed random unsigned integers
+     * @brief uniformly distributed random unsigned integers
      *
      * The output numbers will be masked to get uniformly distributed numbers
      * in a limited range. As an example masking with 0x0F would produce random
@@ -104,29 +104,37 @@ class rng {
     matrix <unsigned int> rand_mask(unsigned int uint_mask, unsigned int uint_num);
 
     /**
-     * @brief Returns gaussian distributed random double
+     * @brief gaussian distributed random double
      *
      * @param uint_num Number of random numbers
-     * @return A column vector of type, susa::matrix<double>
+     * @return a column vector of type, susa::matrix<double>
      */
     matrix <double> randn(unsigned int uint_num);
 
     /**
-     * @brief Returns uniformly distributed random double
+     * @brief uniformly distributed random double
      *
      * @param uint_num Number of random numbers
-     * @return A column vector of type, susa::matrix<double>
+     * @return a column vector of type susa::matrix<double>
      */
     matrix <double> rand(unsigned int uint_num);
 
     /**
-     * @brief Returns uniformly distributed random double
+     * @brief uniformly distributed random double
      *
      * @param uint_rows Number of rows
      * @param uint_cols Number of columns
-     * @return A random susa::matrix<double> instance
+     * @return a random susa::matrix<double> instance
      */
     matrix <double> rand(unsigned int uint_rows, unsigned int uint_cols);
+
+    /**
+     * @brief Bernoulli random samples
+     * 
+     * @param size_num number of samples i.e. vector size
+     * @return a column vector of type susa::matrix<unsigned char>
+     */
+    matrix <unsigned char> bernoulli(size_t size_num);
 
     enum
     {

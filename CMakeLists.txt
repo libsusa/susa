@@ -19,7 +19,7 @@ set (SRC_FILES src/rng.cpp
                src/mt.cpp
                src/sets.cpp
                src/base.cpp
-               src/convolutional.cpp
+               src/ccode.cpp
                src/matrix.cpp
                src/modulation.cpp
                src/rrcosine.cpp

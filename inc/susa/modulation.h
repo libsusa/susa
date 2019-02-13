@@ -37,20 +37,9 @@ namespace susa {
  * Converts the input matrix with 0,1 elements to -1,1 elements.
  * @ingroup Communications
  */
-template <class T> matrix <T> bpsk(const matrix <T> &mat_arg);
+matrix <int8_t> bpsk(const matrix <uint8_t> &mat_arg);
 
-template <class T> matrix <T> bpsk(const matrix <T> &mat_arg)
-{
-    matrix <char> mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
-    size_t uint_length = mat_arg.no_cols() * mat_arg.no_rows();
 
-    for (size_t uint_index = 0; uint_index < uint_length; uint_index++)
-    {
-        mat_ret(uint_index) = (mat_arg(uint_index) == 1) ? 1 : -1;
-    }
-
-    return mat_ret;
-}
 
 
 /**

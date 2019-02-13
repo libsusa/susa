@@ -17,3 +17,7 @@ target_link_libraries (signal susa)
 add_test (NAME channel COMMAND channel)
 add_executable (channel channel.cpp)
 target_link_libraries (channel susa)
+
+add_test (NAME ccode COMMAND ccode)
+add_executable (ccode ccode.cpp)
+target_link_libraries (ccode susa)

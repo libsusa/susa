@@ -32,6 +32,8 @@
 #ifndef SUSA_MATRIX_H
 #define SUSA_MATRIX_H
 
+#include <type_traits>
+
 #include <susa/debug.h>
 #include <susa/memory.h>
 
@@ -120,7 +122,7 @@ template <class T> class matrix : public susa::memory <T>
      *
      * @param tshape the shape of the matrix as std::tuple
      */
-    matrix(const std::tuple <size_t,size_t> &tshape);
+    matrix(const std::tuple <size_t,size_t>& tshape);
 
     /**
      * Constructor
@@ -128,7 +130,7 @@ template <class T> class matrix : public susa::memory <T>
      * @param tshape the shape of the matrix as std::tuple
      * @param Tinitial Initial value of all elements.
      */
-    matrix(const std::tuple <size_t,size_t> &tshape, T Tinitial);
+    matrix(const std::tuple <size_t,size_t>& tshape, T Tinitial);
 
     //! Copy constructor
     matrix(const matrix <T> &mat_arg);
@@ -277,6 +279,8 @@ template <class T> class matrix : public susa::memory <T>
 
     operator matrix <char> ();
 
+    operator matrix <unsigned char> ();
+
     operator matrix <std::complex <double> > ();
 
     operator matrix <std::complex <float> > ();
@@ -284,6 +288,9 @@ template <class T> class matrix : public susa::memory <T>
     operator matrix <std::complex <int> > ();
 
     operator matrix <std::complex <char> > ();
+
+    operator matrix <std::complex <unsigned char> > ();
+
 
     // Friend methods are used to speed up matrix operations.
     // Because they can access '_matrix' directly.
@@ -754,6 +761,17 @@ template <class T> matrix<T>::operator matrix <char> ()
     return mat_ret;
 }
 
+template <class T> matrix<T>::operator matrix <unsigned char> ()
+{
+
+    matrix <unsigned char> mat_ret(sizet_rows, sizet_cols);
+
+    for (size_t sizet_elem = 0; sizet_elem < this->sizet_objects; sizet_elem++)
+    {
+        mat_ret(sizet_elem) = (unsigned char)this->_matrix[sizet_elem];
+    }
+    return mat_ret;
+}
 
 template <class T> matrix<T>::operator matrix <std::complex <double> > ()
 {
@@ -805,6 +823,17 @@ template <class T> matrix<T>::operator matrix <std::complex <char> > ()
     return mat_ret;
 }
 
+template <class T> matrix<T>::operator matrix <std::complex <unsigned char> > ()
+{
+
+    matrix <std::complex <unsigned char> > mat_ret(sizet_rows, sizet_cols);
+
+    for (size_t sizet_elem = 0; sizet_elem < this->sizet_objects; sizet_elem++)
+    {
+        mat_ret(sizet_elem) = std::complex <unsigned char> ((unsigned char)this->_matrix[sizet_elem].real(), (unsigned char)this->_matrix[sizet_elem].imag());
+    }
+    return mat_ret;
+}
 
 //  +
 template <class T> matrix<T> operator+(const matrix <T> &mat_argl, const matrix <T> &mat_argr)
@@ -1069,11 +1098,29 @@ template <class T> matrix<T>& matrix <T>::operator=( std::string str_string )
     return *this;
 }
 
+inline std::ostream& operator<<(std::ostream& os, char c)
+{
+    return std::is_signed<char>::value ? os << static_cast<int>(c): os << static_cast<unsigned int>(c);
+}
 
-template <class T> std::ostream &operator<<(std::ostream &outStream, const matrix <T> &mat_arg) {
+inline std::ostream& operator<<(std::ostream& os, signed char c)
+{
+    return os << static_cast<int>(c);
+}
+
+inline std::ostream& operator<<(std::ostream& os, unsigned char c)
+{
+    return os << static_cast<unsigned int>(c);
+}
+
+template <class T> std::ostream &operator<<(std::ostream& outStream, const matrix <T>& mat_arg)
+{
+
     outStream << "[";
-    for (size_t sizet_row = 0; sizet_row < mat_arg.sizet_rows; sizet_row++) {
-        for (size_t sizet_col = 0; sizet_col < mat_arg.sizet_cols; sizet_col++) {
+    for (size_t sizet_row = 0; sizet_row < mat_arg.sizet_rows; sizet_row++)
+    {
+        for (size_t sizet_col = 0; sizet_col < mat_arg.sizet_cols; sizet_col++)
+        {
             outStream << mat_arg._matrix[sizet_row + sizet_col * mat_arg.sizet_rows];
             if (sizet_col < mat_arg.sizet_cols - 1) outStream << " ";
         }
@@ -1089,10 +1136,11 @@ template <class T> void matrix <T>::parser(std::string str_string)
 
     pre_parser(str_string);
 
-    size_t sizet_size = 0;           // linear size of the matrix (#rows * #columns)
-    int int_length = str_string.length(); // length of the input string
-    size_t sizet_cols_ = 0;          // number of columns
-    size_t sizet_rows_ = 0;          // number of rows
+    size_t sizet_size  = 0;                     // linear size of the matrix (#rows * #columns)
+    size_t sizet_cols_ = 0;                     // number of columns
+    size_t sizet_rows_ = 0;                     // number of rows
+    int int_length     = str_string.length();   // length of the input string
+
 
     // This loop gets total number of rows and columns
     for (int int_i = 0; int_i < int_length; int_i++)
@@ -1149,7 +1197,14 @@ template <class T> void matrix <T>::parser(std::string str_string)
         char* char_buff = (char *)std::malloc(4096);
         SUSA_ASSERT_MESSAGE(char_buff != nullptr, "memory allocation failed.");
         if (char_buff == nullptr) std::exit(EXIT_FAILURE);
+
         T T_tmp;
+        T T_delta = 0;
+
+        if (std::is_same<T, uint8_t>::value || std::is_same<T, int8_t>::value)
+        {
+            T_delta = 0x30;
+        } 
 
         for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
         {
@@ -1159,7 +1214,7 @@ template <class T> void matrix <T>::parser(std::string str_string)
             {
                 ssrow.getline(char_buff, 4096, ' ');
                 if (!(std::istringstream(char_buff) >> T_tmp)) T_tmp = 0;
-                this->_matrix[sizet_row + sizet_col * sizet_rows] = T_tmp;
+                this->_matrix[sizet_row + sizet_col * sizet_rows] = T_tmp - T_delta;
             }
         }
 

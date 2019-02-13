@@ -40,6 +40,19 @@ unsigned int qam::log2(unsigned int uint_x)
     return (r - 1);
 }
 
+matrix <int8_t> bpsk(const matrix <uint8_t> &mat_arg)
+{
+    matrix <int8_t> mat_ret(mat_arg.shape());
+    size_t uint_length = mat_arg.size();
+
+    for (size_t uint_index = 0; uint_index < uint_length; uint_index++)
+    {
+        mat_ret(uint_index) = (mat_arg(uint_index) != 0) ? 1 : -1;
+    }
+
+    return mat_ret;
+}
+
 qam::qam(unsigned int uint_m)
 : uint_m(uint_m)
 {

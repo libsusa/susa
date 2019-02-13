@@ -75,7 +75,7 @@
 #include "susa/fft.h"
 #include "susa/rrcosine.h"
 #include "susa/channel.h"
-#include "susa/convolutional.h"
+#include "susa/ccode.h"
 #include "susa/modulation.h"
 #include "susa/utility.h"
 #include "susa/linalg.h"

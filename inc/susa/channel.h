@@ -18,7 +18,7 @@
 /**
  * @file channel.h
  * @brief Channel Equalizers for ISI channels
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  *
  * @defgroup Communications
@@ -157,9 +157,6 @@ template <class T> channel <T>::~channel() {}
 
 template <class T> void channel <T>::init(const matrix <T> &mat_taps, const matrix <T> &mat_pam)
 {
-    // Truncated channel equalizer methods need to initialize the states machine with the new reduced CIR
-    matrix <T> mat_trellis_mem;
-
     uint_num_taps       = mat_taps.size();
     uint_num_pam        = mat_pam.size();
     uint_num_states     = susa::pow(uint_num_pam, uint_num_taps);
@@ -178,18 +175,6 @@ template <class T> void channel <T>::init(const matrix <T> &mat_taps, const matr
         for (unsigned int uint_tap = 0; uint_tap < uint_num_taps; uint_tap++)
         {
             mat_trellis(uint_tap, uint_state) = mat_pam(uint_tmp_state % uint_num_pam);
-            uint_tmp_state /= uint_num_pam;
-        }
-    }
-
-    mat_trellis_mem = matrix <T> (uint_num_taps - 1, uint_num_states_mem, 0.0f);
-
-    for (unsigned int uint_state = 0; uint_state < uint_num_states_mem; uint_state++)
-    {
-        uint_tmp_state = uint_state;
-        for (unsigned int uint_tap = 1; uint_tap < uint_num_taps; uint_tap++)
-        {
-            mat_trellis_mem(uint_tap - 1, uint_state) = mat_pam(uint_tmp_state % uint_num_pam);
             uint_tmp_state /= uint_num_pam;
         }
     }
@@ -225,8 +210,6 @@ template <class T>  matrix <T> channel <T>::get_mem_state(unsigned int uint_stat
 
 template <class T> unsigned int channel <T>::next_state(unsigned int uint_state_mem_arg, unsigned int uint_pam_index)
 {
-    //unsigned int uint_state = uint_state_mem_arg - (uint_state_mem_arg % uint_num_pam) + uint_pam_index;
-
     unsigned int uint_base = 1;
     for (unsigned int uint_i = 0; uint_i < (uint_num_taps - 1); uint_i++)
     {
@@ -265,11 +248,9 @@ template <class T> matrix <T> channel <T>::encode_isi(const matrix <T> &mat_arg,
     // encode the signal stream
     // This convolve the signal with a CIR and start channel from a known state
     matrix <T> mat_ret;
-    //matrix <T> mat_init_state = flipud(mat_trellis_mem.col(uint_init_state));
     matrix <T> mat_init_state = flipud(get_mem_state(uint_init_state));
 
     mat_ret = conv(concat(concat(mat_init_state, mat_arg),mat_init_state), mat_taps).mid(mat_taps.size() - 1, mat_arg.size() + 2 * mat_taps.size() - 3);
-
 
     return mat_ret;
 } // ENCODE
@@ -297,10 +278,14 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     T dbl_next_output;
     unsigned int uint_next_state;
 
-    for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++) {
-        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
-            if (mat_visited(uint_state) == 1) {
-                for (unsigned int uint_pam_index = 0; uint_pam_index < uint_num_pam; uint_pam_index++) {
+    for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++)
+    {
+        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++)
+        {
+            if (mat_visited(uint_state) == 1)
+            {
+                for (unsigned int uint_pam_index = 0; uint_pam_index < uint_num_pam; uint_pam_index++)
+                {
 
                     dbl_next_output = this->next_output(uint_state,uint_pam_index);
                     uint_next_state = this->next_state(uint_state,uint_pam_index);
@@ -310,7 +295,8 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
                     dbl_metric = (dbl_next_output - mat_arg(uint_stage)) * (dbl_next_output - mat_arg(uint_stage));
 
 
-                    if ((dbl_metric + mat_metric_past(uint_state)) < mat_metric_next(uint_next_state)) {
+                    if ((dbl_metric + mat_metric_past(uint_state)) < mat_metric_next(uint_next_state))
+                    {
                         mat_metric_next(uint_next_state) = dbl_metric + mat_metric_past(uint_state);
                         mat_survivor_path(uint_next_state,uint_stage) = uint_pam_index;
                         mat_previous_state(uint_next_state,uint_stage) = uint_state;
@@ -332,7 +318,8 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     matrix <T> mat_ret(uint_num_stages,1);
 
 
-    for (unsigned int uint_stage = uint_num_stages; uint_stage > 0; uint_stage--) {
+    for (unsigned int uint_stage = uint_num_stages; uint_stage > 0; uint_stage--)
+    {
         uint_curr_input = mat_survivor_path(uint_curr_state,uint_stage - 1);
         mat_ret(uint_stage - 1) = mat_pam(uint_curr_input);
         uint_curr_state = mat_previous_state(uint_curr_state,uint_stage - 1);
@@ -373,7 +360,8 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
 
     matrix <T> mat_first(uint_num_states,1);
 
-    for (unsigned int uint_i = 0; uint_i < uint_num_states; uint_i++) {
+    for (unsigned int uint_i = 0; uint_i < uint_num_states; uint_i++)
+    {
         mat_first(uint_i) = norm(conv(flipud(get_mem_state(uint_i)),mat_taps).left(uint_l) - mat_arg.left(uint_l))(0);
         mat_first(uint_i) *= mat_first(uint_i);
         mat_metric_past(uint_i) = mat_first(uint_i)/uint_l;
@@ -406,7 +394,8 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     // Last
     matrix <T> mat_last(uint_num_states,1);
 
-    for (unsigned int uint_i = 0; uint_i < uint_num_states; uint_i++) {
+    for (unsigned int uint_i = 0; uint_i < uint_num_states; uint_i++)
+    {
         mat_last(uint_i) = norm(conv(flipud(get_mem_state(uint_i)),mat_taps).right(uint_l) - mat_arg.right(uint_l))(0);
         mat_last(uint_i) *= mat_last(uint_i);
         mat_metric_next(uint_i) += mat_last(uint_i)/uint_l;
@@ -468,7 +457,6 @@ template <class T> matrix <T> channel <T>::decode_bcjr(const matrix <T> &mat_arg
 
     for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++)
     {
-
         // Gamma Calculation
 
         for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++)

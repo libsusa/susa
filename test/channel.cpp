@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
     mat_bits(15) = 1;
     mat_bits(16) = 1;
 
-    // pulse amplitude vector
+    // pulse amplitude (pam) vector
     susa::matrix<double> mat_pam(2, 1);
     mat_pam(0) = -1;
     mat_pam(1) = 1;

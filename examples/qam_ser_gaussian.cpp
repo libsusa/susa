@@ -39,8 +39,8 @@ int main(void) {
 
 
     unsigned int uint_m         = 16;           // Modulation order
-    unsigned int uint_n         = 1e6;      // Number of transmitted symbols
-    double dbl_min_noise_db     = 0;           // Minimum Eb/N0 in dB
+    unsigned int uint_n         = 1e6;          // Number of transmitted symbols
+    double dbl_min_noise_db     = 0;            // Minimum Eb/N0 in dB
     double dbl_max_noise_db     = 12;           // Maximum Eb/N0 in dB
     unsigned int uint_num_steps = 12;           // Number of simulation points
 

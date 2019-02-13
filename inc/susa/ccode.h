@@ -45,12 +45,16 @@ class ccode
 
     /**
      * @brief Constructor
+     * 
+     * A convolutional code is defined as (n,k,m) where is <i>n</i>
+     * is the number of outputs, <i>k</i> is the number of inputs
+     * and <i>m</i> is the memory size.
      *
-     * @param uint_n number of inputs (has to be one)
-     * @param uint_k number of outputs
+     * @param uint_n number of outputs
+     * @param uint_k number of inputs (has to be one)
      * @param uint_m number of memories
      */
-    ccode(unsigned int uint_n, unsigned int uint_k, unsigned int uint_m);
+    ccode(uint32_t uint_n, uint32_t uint_k, uint32_t uint_m);
 
     /**
      * @brief Constructor
@@ -67,34 +71,30 @@ class ccode
      * @param uint_gen Generator in octal format
      * @param uint_gen_id Generator polynomial output identifier
      **/
-    void set_generator(unsigned int uint_gen, unsigned int uint_gen_id);  // Set generators
+    void set_generator(uint32_t uint_gen, uint32_t uint_gen_id);
 
     /**
      * @brief Set the internal memory directly through this method
      * @param uint_state The internal state to be set
      **/
-    void set_internal_state(unsigned int uint_state)
+    void set_internal_state(uint32_t uint_state)
     {
-        uint_current_state = uint_state;   // Set Internal State
+        uint_current_state = uint_state;
     }
 
     /**
-     * @brief initialization of trellis after the generator polynomials are set
-     *
-     * This methos builds previous and next state vectors
+     * @brief the rate of the convolutional code
      **/
-    void build_trellis();
-
-    /**
-     * @brief Returns the rate of the convolutional code
-     **/
-    double rate();
+    float rate()
+    {
+      return (uint_k / uint_n);
+    }
 
     /**
      * @brief 1/n Convolutional encoder
      * @param mat_arg hard bit matrix to be encoded
      **/
-    matrix <char> encode(const matrix <char> &mat_arg);
+    matrix <uint8_t> encode(const matrix <uint8_t>& mat_arg);
 
     /**
      * @brief BCJR decoder
@@ -111,72 +111,55 @@ class ccode
      * @param uint_state the current state
      * @param b_input the input
      */
-    unsigned int next_state(unsigned int uint_state, bool b_input);
+    uint32_t next_state(uint32_t uint_state, bool b_input);
 
     /**
      * @brief get next state using internal state
      *
      */
-    unsigned int next_state(bool b_input);
+    uint32_t next_state(bool b_input);
 
-    unsigned int next_output(unsigned int uint_state, bool b_input);
+    uint8_t next_output(uint32_t uint_state, bool b_input);
 
-    unsigned int next_output(bool b_input);
+    uint8_t next_output(bool b_input);
     
     /**
-     * @brief get previous state
+     * @brief get all possible previous states
      *
-     * @param uint_state current state
-     * @param b_input the input
+     * @param uint_state the current state
      */
-    unsigned int prev_state(unsigned int uint_state, bool b_input);
+    std::vector <uint32_t> prev_states(uint32_t uint_state);
 
-    /**
-     * @brief get previous state using internal state
-     *
-     */
-    unsigned int prev_state(bool b_input);
+    uint32_t prev_output(uint32_t uint_state, bool b_input);
 
-    std::vector <unsigned int> prev_states(unsigned int uint_state); // Previous states
-
-    unsigned int prev_internal_state();                              // Previous state using internal state
-
-    unsigned int prev_output(unsigned int uint_state, bool b_input);
-
-    unsigned int prev_output(bool b_input);
+    uint32_t prev_output(bool b_input);
     
-    unsigned int get_current_state()
+    uint32_t get_current_state()
     {
         return uint_current_state;
     }
     
-    unsigned int get_last_state()
+    uint32_t get_last_state()
     {
         return uint_last_state;
     }
     
-    void zero_state();         // Zero internal state
+    uint8_t count_1bits(uint32_t x);
 
-    void out_states();         // Print out states
+    uint8_t count_0bits(uint32_t x);
 
-    void out_outputs();        // Print out outputs
+    void zero_state();
 
-    unsigned int uint_k;     // Number of inputs (currently implemented for ONE INPUT ONLY)
-    unsigned int uint_n;     // Number of outputs
-    unsigned int uint_m;     // Number of memories
-    unsigned int* uint_gen;  // Dynamic array of generators
+    uint32_t  uint_k;     // Number of inputs (currently implemented for A SINGLE INPUT ONLY)
+    uint32_t  uint_n;     // Number of outputs
+    uint32_t  uint_m;     // Number of memories
+    uint32_t  uint_mmask; // Memory mask
+    uint32_t* uint_gen;   // Dynamic array of generators
 
-    std::vector <std::vector <unsigned int> > vec_uint_prev_states;
-    std::vector <std::vector <unsigned int> > vec_uint_next_states;
+    uint32_t OctToDec(uint32_t);        // Converts Octal to Decimal
 
-    std::vector <std::vector <unsigned int> > vec_uint_outputs;
-
-    unsigned int OctToDec(unsigned int);        // Converts Octal to Decimal
-    std::string UIntToBinChar(unsigned int);    // Converts unsigned integers to string
-    bool EvenParity(unsigned int);              // Checks even parity of unsigned integers
-
-    unsigned int uint_current_state;
-    unsigned int uint_last_state;
+    uint32_t uint_current_state;
+    uint32_t uint_last_state;
 
 };
 
