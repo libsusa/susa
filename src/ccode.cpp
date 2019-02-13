@@ -60,6 +60,7 @@ ccode::ccode(uint32_t uint_n, uint32_t uint_k, uint32_t uint_m)
 
 void ccode::set_generator(uint32_t uint_gen, uint32_t uint_gen_id)
 {
+    SUSA_ASSERT_MESSAGE(uint_gen_id < uint_n, "id exceeded the number of generators.");
     this->uint_gen[uint_gen_id] = OctToDec(uint_gen);
 }
 
