@@ -31,10 +31,11 @@ namespace susa {
 /**
  * @brief Convolutional Codes
  *
- * This class implements encoding and decoding of the convolutional error correction codes.
+ * This class implements encoding and decoding of the non recursive convolutional error correction codes.
  * The constructor sets up the internal wiring of the state-machine. This is defined through
  * the constructor arguments which are a set of numbers in octal format.
- * To know more about it refer to <i>Fundamentals of convolutional coding, Rolf Johannesson and Kamil Zigangirov, IEEE Press, 1999</i>.
+ * To know more about it refer to
+ * <i>Fundamentals of convolutional coding, Rolf Johannesson and Kamil Zigangirov, IEEE Press, 1999</i>.
  * Note that input/output of the class methods are all in binary format (boolean to represent a single bit).
  *
  * @ingroup Communications
@@ -66,15 +67,16 @@ class ccode
 
 
     /**
-     * @brief Set the generator polynomail for each output
+     * @brief set the generator polynomail for each output
      *
-     * @param uint_gen Generator in octal format
-     * @param uint_gen_id Generator polynomial output identifier
+     * @param uint_gen generator polynomial coefficients in octal format
+     * @param uint_gen_indx generator polynomial index
      **/
-    void set_generator(uint32_t uint_gen, uint32_t uint_gen_id);
+    void set_generator(uint32_t uint_gen, uint32_t uint_gen_indx);
 
     /**
      * @brief Set the internal memory directly through this method
+     * 
      * @param uint_state The internal state to be set
      **/
     void set_internal_state(uint32_t uint_state)
@@ -92,21 +94,24 @@ class ccode
 
     /**
      * @brief 1/n Convolutional encoder
+     * 
      * @param mat_arg hard bit matrix to be encoded
      **/
     matrix <uint8_t> encode(const matrix <uint8_t>& mat_arg);
 
     /**
      * @brief BCJR decoder
+     * 
      * @param mat_arg Input matrix to be decoded
      * @param dbl_ebn0 Eb/N0 in linear scale with AWGN assumption
-     **/
-    matrix <double> decode_bcjr(const matrix <double> &mat_arg, double dbl_ebn0);
+     * @param c_k input bernolli process probability (0.5 for equiprobable binary signal)
+     */
+    matrix <double> decode_bcjr(const matrix <double> &mat_arg, double dbl_ebn0, double c_k = 0.5);
 
   private:
 
     /**
-     * @brief get next state
+     * @brief get the next state
      *
      * @param uint_state the current state
      * @param b_input the input
@@ -114,7 +119,7 @@ class ccode
     uint32_t next_state(uint32_t uint_state, bool b_input);
 
     /**
-     * @brief get next state using internal state
+     * @brief get the next state using the internal state
      *
      */
     uint32_t next_state(bool b_input);
@@ -130,8 +135,10 @@ class ccode
      */
     std::vector <uint32_t> prev_states(uint32_t uint_state);
 
+    //! the previous output for a given state and input
     uint32_t prev_output(uint32_t uint_state, bool b_input);
-
+  
+    //! the previous output for a given input and internal state
     uint32_t prev_output(bool b_input);
     
     uint32_t get_current_state()
@@ -144,10 +151,13 @@ class ccode
         return uint_last_state;
     }
     
+    //! count the number of one bits
     uint8_t count_1bits(uint32_t x);
 
+    //! count the number zero bits
     uint8_t count_0bits(uint32_t x);
 
+    //! reset the internal state
     void zero_state();
 
     uint32_t  uint_k;     // Number of inputs (currently implemented for A SINGLE INPUT ONLY)
@@ -156,7 +166,8 @@ class ccode
     uint32_t  uint_mmask; // Memory mask
     uint32_t* uint_gen;   // Dynamic array of generators
 
-    uint32_t OctToDec(uint32_t);        // Converts Octal to Decimal
+    //! convert octal numbers to decimal
+    uint32_t oct_to_dec(uint32_t);
 
     uint32_t uint_current_state;
     uint32_t uint_last_state;

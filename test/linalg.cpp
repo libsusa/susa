@@ -18,14 +18,14 @@
 /**
  * @file linalg.cpp
  * @brief Unit Test Suit
- * @author Behrooz Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
 #include "test.h"
 #include <iomanip>
 
-int main(int argc, char const *argv[])
+int main(void)
 {
     {
     susa::matrix <float> mat_a("2 0 2; 0 1 0; 0 0 0");

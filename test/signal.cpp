@@ -24,11 +24,23 @@
 
 #include "test.h"
 
-int main(int argc, char const *argv[])
+int main(void)
 {
-    susa::matrix<int> mat_a("[1 1 1]");
-    susa::matrix<int> mat_exp("[1 2 3 2 1]");
-    susa::matrix<int> mat_res = conv(mat_a, mat_a);
-    SUSA_TEST_EQ(mat_res, mat_exp, "convolution.");
+    {
+        susa::matrix<int> mat_a("[1 1 1]");
+        susa::matrix<int> mat_exp("[1 2 3 2 1]");
+        susa::matrix<int> mat_res = conv(mat_a, mat_a);
+        SUSA_TEST_EQ(mat_res, mat_exp, "convolution.");
+    }
+    {
+        susa::matrix<int> mat_a("[3 4 5]");
+        susa::matrix<int> mat_b("[6 7 8]");
+        susa::matrix<int> mat_exp("[18 45 82 67 40]");
+        susa::matrix<int> mat_res = conv(mat_a, mat_b);
+        SUSA_TEST_EQ(mat_res, mat_exp, "convolution.");
+    }
+
     SUSA_TEST_PRINT_STATS();
+
+    return (uint_failed);
 }

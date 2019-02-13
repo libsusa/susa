@@ -48,20 +48,22 @@ ccode::~ccode()
 ccode::ccode(uint32_t uint_n, uint32_t uint_k, uint32_t uint_m)
 {
     SUSA_ASSERT_MESSAGE(uint_k == 1, "the number of inputs must be one.");
+    SUSA_ASSERT_MESSAGE(uint_m < 32, "the maximum number of memories exceeded.");
     this->uint_k     = uint_k;
     this->uint_n     = uint_n;
     this->uint_m     = uint_m;
     this->uint_mmask = susa::pow(2, uint_m) - 1;
     this->uint_gen   = new uint32_t[uint_n];
+    SUSA_ASSERT_MESSAGE(this->uint_gen != nullptr, "failed to allocate memory for generators.");
 }
 
 
 // Public domain methods
 
-void ccode::set_generator(uint32_t uint_gen, uint32_t uint_gen_id)
+void ccode::set_generator(uint32_t uint_gen, uint32_t uint_gen_indx)
 {
-    SUSA_ASSERT_MESSAGE(uint_gen_id < uint_n, "id exceeded the number of generators.");
-    this->uint_gen[uint_gen_id] = OctToDec(uint_gen);
+    SUSA_ASSERT_MESSAGE(uint_gen_indx < uint_n, "id exceeded the number of generators.");
+    this->uint_gen[uint_gen_indx] = oct_to_dec(uint_gen);
 }
 
 uint32_t ccode::next_state(uint32_t uint_state, bool b_input)
@@ -161,11 +163,10 @@ matrix <uint8_t> ccode::encode(const matrix <uint8_t>& mat_arg)
     return mat_out;
 }
 
-matrix <double> ccode::decode_bcjr(const matrix <double> &mat_arg, double dbl_ebn0)
+matrix <double> ccode::decode_bcjr(const matrix <double> &mat_arg, double dbl_ebn0, double c_k)
 {
     double a       = 1;
     double l_c     = 4 * a * dbl_ebn0;
-    double c_k     = 0.5; // for equiprobable binary signal (bernolli process)
     double dbl_sum = 0;
 
     zero_state();
@@ -255,9 +256,7 @@ matrix <double> ccode::decode_bcjr(const matrix <double> &mat_arg, double dbl_eb
 
             mat_beta(uint_state) += vec_beta[uint_stage](uint_next_zero) * mat_gamma(uint_state, uint_next_zero);
             mat_beta(uint_state) += vec_beta[uint_stage](uint_next_one) * mat_gamma(uint_state, uint_next_one);
-
         }
-
 
         // Normalize the beta
         dbl_sum = 0;
@@ -309,7 +308,7 @@ matrix <double> ccode::decode_bcjr(const matrix <double> &mat_arg, double dbl_eb
 
 // Private methods
 
-uint32_t ccode::OctToDec(uint32_t uintMask)
+uint32_t ccode::oct_to_dec(uint32_t uintMask)
 {
 
     uint32_t uintTmp = 0;

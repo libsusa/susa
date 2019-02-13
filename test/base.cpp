@@ -24,7 +24,7 @@
 
 #include "test.h"
 
-int main(int argc, char const *argv[])
+int main(void)
 {
     susa::matrix <float> mat_m("[0 1 1; 2 3 2; 1 3 2; 4 2 2]");
     susa::matrix <float> result = susa::mean(mat_m);

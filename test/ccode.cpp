@@ -6,7 +6,7 @@ using namespace std;
 using namespace susa;
 
 
-int main(int argc, char const *argv[])
+int main(void)
 {
 
     {

@@ -24,7 +24,7 @@
 
 #include "test.h"
 
-int main(int argc, char const *argv[])
+int main(void)
 {
 
     // ignore the tail of the bits

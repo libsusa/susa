@@ -25,7 +25,7 @@
 #include "test.h"
 #include <utility>
 
-int main(int argc, char const *argv[])
+int main(void)
 {
 
 

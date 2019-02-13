@@ -88,7 +88,7 @@ int main(void)
         for (unsigned int inti = 0; inti < uint_num_stages; inti++) if (mat_l_sign(inti) != mat_bits(inti)) mat_err(EbN0db)++;
 
 
-        cout << "Eb/N0 = " << EbN0db << " \t \t" << "BER  =  " << ((double)mat_err(EbN0db)/_N) << " - " << mat_err(EbN0db) << endl;
+        cout << "Eb/N0 = " << EbN0db << " \t \t" << "BER  =  " << ((double)mat_err(EbN0db)/_N) << endl;
 
     }
 
