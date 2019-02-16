@@ -32,7 +32,7 @@ namespace susa
 
 
 /**
- * @brief Matrix Multiplication
+ * @brief Matrix multiplication
  *
  * @param mat_argl the left-hand-side matrix
  * @param mat_argr the right-hand-side matrix

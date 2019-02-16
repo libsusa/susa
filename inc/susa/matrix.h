@@ -249,9 +249,6 @@ template <class T> class matrix : public susa::memory <T>
     friend matrix <T> operator/<>( const matrix <T> &mat_argl, T T_arg);
 
     //! Element wise Division operator
-    friend matrix <T> operator/<>( T T_arg, const matrix <T> &mat_argr );
-
-    //! Element wise Division operator
     friend matrix <T> operator/<>( const matrix <T> &mat_argl, const matrix <T> &mat_argr);
 
     //! Output stream
@@ -1023,16 +1020,6 @@ template <class T> matrix<T> operator/( const matrix <T> &mat_argl, T T_arg )
     return mat_temp;
 }
 
-template <class T> matrix<T> operator/( T T_arg, const matrix <T> &mat_argr )
-{
-    UNUSED(T_arg);
-    matrix <T> mat_temp(mat_argr.sizet_row, mat_argr.sizet_col);
-    //
-    // NOT IMPLEMENTED YET
-    //
-    SUSA_ASSERT_MESSAGE(false, "NOT IMPLEMENTED YET.");
-    return mat_temp;
-}
 
 //  -=
 template <class T> matrix<T> matrix <T>::operator-=(const matrix <T> &mat_arg)

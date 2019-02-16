@@ -38,8 +38,6 @@
 #ifndef SUSA_H
 #define SUSA_H
 
-#define UNUSED(expr) do { (void)(expr); } while (0)
-
 // Constants
 #define PI  3.1415926535897932384626433
 
