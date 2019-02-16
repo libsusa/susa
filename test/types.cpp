@@ -35,6 +35,18 @@ int main(void)
   SUSA_TEST_EQ(mat_a(4),      4.5, "matrix parser.");
   SUSA_TEST_EQ(mat_a(2,2),     -5, "matrix parser.");
 
+  susa::matrix <double> mat_repl("[4 -5 9.9]");
+  susa::matrix <double> mat_a_repl("[1 4 -3.4;8 -5 1.2;9.1 9.9 -5]");
+  bool ret = mat_a.set_col(1, mat_repl);
+  SUSA_TEST_EQ(mat_a, mat_a_repl, "set column of a matrix");
+  SUSA_TEST_EQ(ret, true, "set column of a matrix");
+
+  mat_a_repl = "[1 4 -3.4;8 -5 1.2;4 -5 9.9]";
+  ret = mat_a.set_row(2, mat_repl);
+  SUSA_TEST_EQ(mat_a, mat_a_repl, "set row of a matrix");
+  SUSA_TEST_EQ(ret, true, "set row of a matrix");
+
+
   mat_a(1,1) = 6.6;
   SUSA_TEST_EQ(mat_a(1,1),    6.6, "matrix element assignment.");
 

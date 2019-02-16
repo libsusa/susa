@@ -94,6 +94,9 @@ template <class T> class matrix : public susa::memory <T>
     // The string initialization can be done using a constructor method
     // and an overloaded assignment operator (=) method
     void parser(std::string str_string);
+    
+    //! compute the internal linear index from row and column indices
+    size_t get_lindex(size_t sizet_row, size_t sizet_col);
 
   public:
     //! Constructor
@@ -182,7 +185,26 @@ template <class T> class matrix : public susa::memory <T>
      */
     bool is_scalar() const;
 
-    //! Returns the size of matrix
+    /**
+     * @brief set a row
+     * 
+     * copy the input matrix elemnts into a row
+     * 
+     * @param row the row index
+     * @param mat_arg the input matrix
+     */
+    bool set_row(size_t row, const matrix <T>& mat_arg);
+
+    /**
+     * @brief set a column
+     * copy the input matrix elemnts into a column
+     * 
+     * @param col the column index
+     * @param mat_arg the input matrix
+     */
+    bool set_col(size_t col, const matrix <T>& mat_arg);
+
+    //! returns the size of matrix
     void set_all(T T_arg);
 
     //! Returns the indicated row
@@ -462,6 +484,12 @@ template <class T> T matrix <T>::get( size_t sizet_elem ) const
 
 }
 
+template <class T> size_t matrix <T>::get_lindex(size_t sizet_row, size_t sizet_col)
+{
+    return (sizet_row + sizet_col * sizet_rows);
+}
+
+
 template <class T> size_t  matrix <T>::no_cols() const
 {
     return sizet_cols;
@@ -530,6 +558,32 @@ template <class T> matrix <T> matrix <T>::col(size_t sizet_col) const
     }
 
     return mat_ret;
+}
+
+template <class T> bool matrix <T>::set_row(size_t row, const matrix <T>& mat_arg)
+{
+    SUSA_ASSERT_MESSAGE((row < sizet_rows || mat_arg.sizet_objects >= sizet_cols), "dimention mismatch");
+    if (row > sizet_rows || mat_arg.sizet_objects < sizet_cols) return false;
+
+    for (size_t indx = 0; indx < sizet_cols; indx++)
+    {
+        this->_matrix[get_lindex(row,indx)] = mat_arg._matrix[indx];
+    }
+
+    return true;
+}
+
+template <class T> bool matrix <T>::set_col(size_t col, const matrix <T>& mat_arg)
+{
+    SUSA_ASSERT_MESSAGE((col < sizet_cols || mat_arg.sizet_objects >= sizet_rows), "dimension mismatch");
+    if (col > sizet_cols || mat_arg.sizet_objects < sizet_rows) return false;
+
+    for (size_t indx = 0; indx < sizet_rows; indx++)
+    {
+        this->_matrix[get_lindex(indx,col)] = mat_arg._matrix[indx];
+    }
+
+    return true;
 }
 
 template <class T> matrix <T> matrix <T>::shrink(size_t sizet_elim_row, size_t sizet_elim_col) const
@@ -805,8 +859,6 @@ template <class T> matrix<T>::operator matrix <std::complex <int> > ()
     }
     return mat_ret;
 }
-
-
 
 template <class T> matrix<T>::operator matrix <std::complex <char> > ()
 {
