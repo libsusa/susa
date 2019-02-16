@@ -25,7 +25,7 @@
  * the cloning of the matrices when the assignment operator is used.
  * It has the necessary memeory management mechanisms to release the allocated memory.
  *
- * @author Behrooz Aliabadi
+ * @author Behrooz Kamary Aliabadi
  * @version 1.0.0
  */
 
@@ -203,6 +203,16 @@ template <class T> class matrix : public susa::memory <T>
      * @param mat_arg the input matrix
      */
     bool set_col(size_t col, const matrix <T>& mat_arg);
+
+    /**
+     * @brief swap two columns of the matrix
+     */
+    void swap_cols(size_t col_a, size_t col_b);
+
+    /**
+     * @brief swap two rows of the matrix
+     */
+    void swap_rows(size_t row_a, size_t row_b);
 
     //! returns the size of matrix
     void set_all(T T_arg);
@@ -584,6 +594,31 @@ template <class T> bool matrix <T>::set_col(size_t col, const matrix <T>& mat_ar
     }
 
     return true;
+}
+
+template <class T> void matrix <T>::swap_cols(size_t col_a, size_t col_b)
+{
+    T T_tmp;
+
+    for (size_t row = 0; row < sizet_rows; row++)
+    {
+        T_tmp = get(row,col_a);
+        this->_matrix[get_lindex(row,col_a)] = this->_matrix[get_lindex(row,col_b)];
+        this->_matrix[get_lindex(row,col_b)] = T_tmp;
+    }
+
+}
+
+template <class T> void matrix <T>::swap_rows(size_t row_a, size_t row_b)
+{
+    T T_tmp;
+
+    for (size_t col = 0; col < sizet_cols; col++)
+    {
+        T_tmp = get(row_a,col);
+        this->_matrix[get_lindex(row_a,col)] = this->_matrix[get_lindex(row_b,col)];
+        this->_matrix[get_lindex(row_b,col)] = T_tmp;
+    }
 }
 
 template <class T> matrix <T> matrix <T>::shrink(size_t sizet_elim_row, size_t sizet_elim_col) const

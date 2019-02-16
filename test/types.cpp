@@ -29,6 +29,7 @@ int main(void)
 {
 
 
+  {
   susa::matrix <double> mat_a("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]");
   SUSA_TEST_EQ(mat_a(1,1),    4.5, "matrix parser.");
   SUSA_TEST_EQ(mat_a(1),        8, "matrix parser.");
@@ -45,8 +46,23 @@ int main(void)
   ret = mat_a.set_row(2, mat_repl);
   SUSA_TEST_EQ(mat_a, mat_a_repl, "set row of a matrix");
   SUSA_TEST_EQ(ret, true, "set row of a matrix");
+  }
 
+  {
+  susa::matrix <double> mat_a("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]");
+  susa::matrix <double> mat_swap_cols("[2.3 1 -3.4;4.5 8 1.2;3 9.1 -5]");
+  mat_a.swap_cols(0,1);
+  SUSA_TEST_EQ(mat_a, mat_swap_cols, "swap columns of a matrix");
+  }
 
+  {
+  susa::matrix <double> mat_a("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]");
+  susa::matrix <double> mat_swap_rows("[8 4.5 1.2;1 2.3 -3.4;9.1 3 -5]");
+  mat_a.swap_rows(0,1);
+  SUSA_TEST_EQ(mat_a, mat_swap_rows, "swap rows of a matrix");
+  }
+
+  susa::matrix <double> mat_a("[1 2.3 -3.4;8 4.5 1.2;9.1 3 -5]");
   mat_a(1,1) = 6.6;
   SUSA_TEST_EQ(mat_a(1,1),    6.6, "matrix element assignment.");
 
