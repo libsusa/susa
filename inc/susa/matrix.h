@@ -1009,20 +1009,23 @@ template <class T> matrix<T> operator/( const matrix <T> &mat_argl, const matrix
     return mat_temp;
 }
 
-template <class T> matrix<T> operator/( const matrix <T> &mat_argl, T T_arg ) {
+template <class T> matrix<T> operator/( const matrix <T> &mat_argl, T T_arg )
+{
 
     matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
     size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
 
-    for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ ) {
+    for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
+    {
         mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] / T_arg;
     }
 
     return mat_temp;
 }
 
-template <class T> matrix<T> operator/( T T_arg, const matrix <T> &mat_argr ) {
-
+template <class T> matrix<T> operator/( T T_arg, const matrix <T> &mat_argr )
+{
+    UNUSED(T_arg);
     matrix <T> mat_temp(mat_argr.sizet_row, mat_argr.sizet_col);
     //
     // NOT IMPLEMENTED YET
