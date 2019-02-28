@@ -51,13 +51,12 @@ template <class T> std::vector <T> fft<T>::radix2(std::vector <T> vec_arg)
 {
     unsigned short int N = vec_arg.size();
     std::vector <T> vec_BitReverse = bit_reverse(vec_arg);
-    std::complex <double> ct;
-    T tTemp=0;
-    int l=0;
+    T tTemp = 0;
+    int l   = 0;
     unsigned short int usiStage = susa::log2(N);
 
-    for (int i=0; i<usiStage; i++) {                    // Stage counter
-        for (int j=0; j < (1 << (usiStage - i - 1)); j++)
+    for (int i = 0; i < usiStage; i++) {                    // Stage counter
+        for (int j = 0; j < (1 << (usiStage - i - 1)); j++)
         {     // Seperated butterflies
             l = (j == 0) ? j:j * (1 << (i + 1));
             for (int k=0; k<(1<<i); k++)
