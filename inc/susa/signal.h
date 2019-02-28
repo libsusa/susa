@@ -91,14 +91,25 @@ template <class T> matrix <T> conv(const matrix <T>& mat_arg_a, const matrix <T>
 template <class T> matrix <T> convmtx(const matrix <T>& mat_arg, size_t size_len);
 
 /**
- * @brief Constructs a toeplitz matrix from the input vector <i>mat_arg</i>
+ * @brief Constructs a toeplitz matrix from input column and row vectors
  *
- * @param mat_arg input vector
+ * @param mat_col input column vector
+ * @param mat_col input row vector
+ * @return toeplitz matrix
+ *
+ * @ingroup Signal
+ */
+template <class T> matrix <T> toeplitz(const matrix <T>& mat_col, const matrix <T>& mat_row);
+
+/**
+ * @brief Constructs a toeplitz matrix from an input column vector
+ *
+ * @param mat_col input column vector
  * @return The toeplitz matrix
  *
  * @ingroup Signal
  */
-template <class T> matrix <T> toeplitz(const matrix <T>& mat_arg);
+template <class T> matrix <T> toeplitz(const matrix <T>& mat_col);
 
 // Implementation
 
@@ -316,15 +327,34 @@ template <class T> matrix <T> convmtx(const matrix <T> &mat_arg, size_t size_len
     return mat_ret;
 }
 
-template <class T> matrix <T> toeplitz(const matrix <T>& mat_arg)
+template <class T> matrix <T> toeplitz(const matrix <T>& mat_col, const matrix <T>& mat_row)
 {
-    size_t size_len = mat_arg.size();
-    matrix <T> mat_ret(size_len,size_len);
+    size_t size_cols = mat_col.size();
+    size_t size_rows = mat_row.size();
+
+    matrix <T> mat_ret(size_cols, size_rows);
+
+    for ( size_t uint_row = 0; uint_row < size_rows; uint_row++)
+    {
+        for ( size_t size_col = 0; size_col < size_cols; size_col++)
+        {
+            mat_ret(uint_row, size_col) = mat_col(std::abs((long int)(size_col - uint_row)));
+        }
+    }
+    return mat_ret;
+}
+
+template <class T> matrix <T> toeplitz(const matrix <T>& mat_col)
+{
+    size_t size_len = mat_col.size();
+
+    matrix <T> mat_ret(size_len, size_len);
+
     for ( size_t uint_row = 0; uint_row < size_len; uint_row++)
     {
         for ( size_t size_col = 0; size_col < size_len; size_col++)
         {
-            mat_ret(uint_row,size_col) = mat_arg(std::abs((long int)(size_col - uint_row)));
+            mat_ret(uint_row, size_col) = mat_col(std::abs((long int)(size_col - uint_row)));
         }
     }
     return mat_ret;
