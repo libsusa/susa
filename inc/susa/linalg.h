@@ -294,6 +294,34 @@ template <class T> matrix <T> flipud(const matrix <T> &mat_arg)
     return mat_ret;
 }
 
+/**
+ * @brief generates a square identity matrix
+ *
+ * @param sizet_n matrix dimention
+ * @return square identity matrix
+ * @ingroup LALG
+ */
+template <class T> matrix<T> eye(size_t sizet_n)
+{
+    matrix<T> mat_ret(sizet_n, sizet_n);
+
+    for (size_t sizet_col = 0; sizet_col < sizet_n; sizet_col++)
+    {
+        for (size_t sizet_row = 0; sizet_row < sizet_n; sizet_row++)
+        {
+            if (sizet_col == sizet_row)
+            {
+                mat_ret(sizet_row, sizet_col) = 1;
+            }
+            else
+            {
+                mat_ret(sizet_row, sizet_col) = 0;
+            }
+        }
+    }
+
+    return mat_ret;
+}
 
 }      // NAMESPACE SUSA
 #endif //SUSA_LINALG_H
