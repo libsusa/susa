@@ -32,6 +32,8 @@
 #ifndef SUSA_MATRIX_H
 #define SUSA_MATRIX_H
 
+#define MAX_STR_LEN     4096
+
 #include <type_traits>
 
 #include <susa/debug.h>
@@ -71,11 +73,11 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg);
  * @brief The <i>matrix</i> class.
  * A matrix is a two dimensional array aimed to
  * be used with algebraic operators and functions.
- * A single row or a single column matrix is considered a <i>vector</i>.
+ * A single row or a single column matrix is a <i>vector</i>.
  * The methods, operators and functions that take vectors as their
  * input parameters perform column-wise computation when they are passed
- * matrices (and not vectors based on the above definition). This is respect
- * the algebraic convention where a matrix column is a vector.
+ * matrices (and not vectors based on the above definition). This is to follow
+ * the algebraic convention where a matrix column is a vector in a space.
  *
  * @ingroup TYPES
  *
@@ -93,7 +95,7 @@ template <class T> class matrix : public susa::memory <T>
     // This parses the strings and initialize the matrix elements.
     // The string initialization can be done using a constructor method
     // and an overloaded assignment operator (=) method
-    void parser(std::string str_string);
+    bool parser(std::string str_string);
     
     //! compute the internal linear index from row and column indices
     size_t get_lindex(size_t sizet_row, size_t sizet_col);
@@ -327,6 +329,7 @@ template <class T> class matrix : public susa::memory <T>
     friend matrix <T> matmul <> (const matrix <T> &mat_argl, const matrix <T> &mat_argr);
     friend matrix <T> transpose <> (const matrix <T> &mat_arg);
 
+
     friend bool operator!=( const susa::matrix <T> &mat_argl, const susa::matrix <T> &mat_argr)
     {
       for (size_t sizet_indx = 0; sizet_indx < mat_argl.sizet_objects; sizet_indx++)
@@ -407,7 +410,7 @@ template <class T> matrix <T>::matrix(const matrix <T> &mat_arg)
 
 }
 
-template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t> &tshape)
+template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t>& tshape)
 : susa::memory<T>()
 , T_fake(new T)
 {
@@ -424,7 +427,7 @@ template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t> &tshape)
 
 }
 
-template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t> &tshape, T Tinitial)
+template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t>& tshape, T Tinitial)
 : susa::memory<T>()
 , T_fake(new T)
 {
@@ -494,18 +497,18 @@ template <class T> T matrix <T>::get( size_t sizet_elem ) const
 
 }
 
-template <class T> size_t matrix <T>::get_lindex(size_t sizet_row, size_t sizet_col)
+template <class T> inline size_t matrix <T>::get_lindex(size_t sizet_row, size_t sizet_col)
 {
     return (sizet_row + sizet_col * sizet_rows);
 }
 
 
-template <class T> size_t  matrix <T>::no_cols() const
+template <class T> size_t inline matrix <T>::no_cols() const
 {
     return sizet_cols;
 }
 
-template <class T> size_t  matrix <T>::no_rows() const
+template <class T> size_t inline matrix <T>::no_rows() const
 {
     return sizet_rows;
 }
@@ -741,8 +744,8 @@ template <class T> matrix <T> matrix <T>::mid(size_t sizet_begin, size_t sizet_e
 
     if (this->sizet_objects > sizet_begin && this->sizet_objects > sizet_end && sizet_end > sizet_begin)
     {
-        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1,sizet_mid + 1);
-        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_mid + 1,1);
+        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1, sizet_mid + 1);
+        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_mid + 1, 1);
         else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
 
         for (size_t sizet_i = sizet_begin; sizet_i <= sizet_end; sizet_i++)
@@ -828,7 +831,8 @@ template <class T> matrix<T>::operator matrix <int> ()
 
     matrix <int> mat_ret(sizet_rows, sizet_cols);
 
-    for (size_t sizet_elem = 0; sizet_elem < this->sizet_objects; sizet_elem++) {
+    for (size_t sizet_elem = 0; sizet_elem < this->sizet_objects; sizet_elem++)
+    {
         mat_ret(sizet_elem) = (int)this->_matrix[sizet_elem];
     }
     return mat_ret;
@@ -1208,7 +1212,7 @@ template <class T> std::ostream &operator<<(std::ostream& outStream, const matri
 }
 
 
-template <class T> void matrix <T>::parser(std::string str_string)
+template <class T> bool matrix <T>::parser(std::string str_string)
 {
 
     pre_parser(str_string);
@@ -1249,11 +1253,7 @@ template <class T> void matrix <T>::parser(std::string str_string)
     sizet_size = sizet_cols_ * sizet_rows_;
 
     SUSA_ASSERT_MESSAGE(sizet_cols_ % sizet_rows_ == 0, "the number of columns are not equal in each row.");
-    
-    if (sizet_cols_ % sizet_rows_ != 0)
-    {
-        return;
-    }
+    if (sizet_cols_ % sizet_rows_ != 0) return false;
     
 
     if (sizet_size != 0)
@@ -1271,9 +1271,9 @@ template <class T> void matrix <T>::parser(std::string str_string)
 
 
         std::stringstream ss_all(str_string);
-        char* char_buff = (char *)std::malloc(4096);
+        char* char_buff = (char *)std::malloc(MAX_STR_LEN);
         SUSA_ASSERT_MESSAGE(char_buff != nullptr, "memory allocation failed.");
-        if (char_buff == nullptr) std::exit(EXIT_FAILURE);
+        if (char_buff == nullptr) return false;
 
         T T_tmp;
         T T_delta = 0;
@@ -1285,11 +1285,11 @@ template <class T> void matrix <T>::parser(std::string str_string)
 
         for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
         {
-            ss_all.getline(char_buff, 4096, ';');
+            ss_all.getline(char_buff, MAX_STR_LEN, ';');
             std::stringstream ssrow(char_buff);
             for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
             {
-                ssrow.getline(char_buff, 4096, ' ');
+                ssrow.getline(char_buff, MAX_STR_LEN, 0x20);
                 if (!(std::istringstream(char_buff) >> T_tmp)) T_tmp = 0;
                 this->_matrix[sizet_row + sizet_col * sizet_rows] = T_tmp - T_delta;
             }
@@ -1305,6 +1305,8 @@ template <class T> void matrix <T>::parser(std::string str_string)
 
         this->deallocate();
     }
+
+    return true;
 }
 }      // NAMESPACE SUSA
 
