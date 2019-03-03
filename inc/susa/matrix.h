@@ -718,17 +718,16 @@ template <class T> matrix <T> matrix <T>::right(size_t sizet_right) const
     matrix <T> mat_ret;
 
     SUSA_ASSERT(this->sizet_objects >= sizet_right);
+    if (this->sizet_objects < sizet_right) return mat_ret;
+    else if (this->sizet_objects == sizet_right) return *this;
 
-    if (this->sizet_objects >= sizet_right )
+    if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix<T>(1, sizet_right);
+    else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix<T>(sizet_right, 1);
+    else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
+
+    for (size_t sizet_i = this->sizet_objects; sizet_i > (this->sizet_objects - sizet_right); sizet_i--)
     {
-        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1,sizet_right);
-        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_right,1);
-        else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
-
-        for (size_t sizet_i = this->sizet_objects; sizet_i > (this->sizet_objects - sizet_right); sizet_i--)
-        {
-            mat_ret(sizet_right - this->sizet_objects + sizet_i - 1) = this->_matrix[sizet_i - 1];
-        }
+        mat_ret(sizet_right - this->sizet_objects + sizet_i - 1) = this->_matrix[sizet_i - 1];
     }
 
     return mat_ret;
