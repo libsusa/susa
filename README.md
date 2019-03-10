@@ -11,14 +11,15 @@ Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia
 The *matrix* and *array* template classes i.e. types are at the heart of Susa bundled with a constellation of classes and functions. A *vector* is simply a single column (or a single row) matrix.
 
 ### Highlights
- - Algebraic types (template classes): *matrix* and multi-dimensional *array*
+ - Algebraic types (template classes): *matrix* and multi-dimensional *array*.
  - Linear algebraic operations and analysis (e.g. Determinant and SVD).
  - Signal processing operations (e.g. FFT, Filter (FIR/IIR), Convolution and Random Number Generators).
  - Convolutional Forward Error Correction (FEC) blocks: encoder, MLSE (Viterbi) and MAP (BCJR) decoders.
  - Channel equalisers: MLSE (Viterbi) and MAP (BCJR).
- - Automatic memory management i.e. allocation, deallocation, move and copy
+ - Automatic memory management i.e. allocation, deallocation, move and copy.
 
-## Build and Test Susa
+## Build, Test and Install
+### Build
 To build Susa you need to have a C++ compiler, Make and [CMake](https://cmake.org) installed.
 
 ```
@@ -27,6 +28,8 @@ cd build
 cmake ..
 make
 ```
+
+### Test
 It is highly recommended to run the tests after the build.
 
 ```
@@ -37,7 +40,7 @@ Should you verify which test(s) has/have been failed, run the following for a mo
 ```
 ctest -V
 ```
-## Install Susa
+### Install
 Once it has been built and tested you are ready to code. Assuming your current path is `build` directory, run
 ```
 make install
