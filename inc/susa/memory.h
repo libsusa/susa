@@ -30,75 +30,104 @@
 
 namespace susa
 {
-  /**
-   * @brief The <i>memory</i> class.
-   *
-   * <i>memory</i> is a base memory manager class for Susq types.
-   *
-   * @ingroup TYPES
-   *
-   */
-    template <class T> class memory
+
+/**
+* @brief The <i>memory</i> class.
+*
+* <i>memory</i> is a base memory manager class for Susa types.
+*
+* @ingroup TYPES
+*
+*/
+template <class T> class memory
+{
+    protected:
+        T*     _matrix;
+        size_t sizet_bytes;
+        size_t sizet_objects;
+
+        /**
+         * Allocates a memory space without initialization.
+         *
+         * @param sizet_size the number of T elements.
+         */
+        void allocate(size_t sizet_size);
+
+        //! Release the allocated memory.
+        void deallocate();
+
+    public:
+        //! Constructor
+        memory();
+
+        //! Destructor
+        virtual ~memory() noexcept;
+
+        //! Copy assignment constructor
+        memory& operator=(const memory <T>& mat_arg);
+
+        //! Copy constructor
+        memory(const memory <T>& mat_arg);
+
+        //! Copy Constructor for rvalues
+        memory(memory <T> &&mat_arg) noexcept;
+
+
+        //! Returns the number of allocated objects.
+        size_t size() const;
+};
+
+template <class T> memory<T>::memory()
+{
+    _matrix        = nullptr;
+    sizet_bytes    = 0;
+    sizet_objects  = 0;
+}
+
+template <class T> memory<T>::~memory() noexcept
+{
+    deallocate();
+}
+
+template <class T> memory<T>::memory(const memory <T>& mat_arg)
+{
+    _matrix           = nullptr;
+    sizet_objects     = 0;
+    sizet_bytes       = 0;
+
+    size_t sizet_size = mat_arg.sizet_objects;
+
+    if (sizet_size != 0)
     {
-        protected:
-            T*     _matrix;
-            size_t sizet_bytes;
-            size_t sizet_objects;
+        this->allocate(sizet_size);
 
-            /**
-             * Allocates a memory space without initialization.
-             *
-             * @param sizet_size the number of T elements.
-             */
-            void allocate(size_t sizet_size);
-
-            //! Release the allocated memory.
-            void deallocate();
-
-        public:
-            //! Constructor
-            memory();
-
-            //! Destructor
-            virtual ~memory() noexcept;
-
-            //! Copy assignment constructor
-            memory& operator=(const memory <T>& mat_arg);
-
-            //! Copy constructor
-            memory(const memory <T>& mat_arg);
-
-            //! Copy Constructor for rvalues
-            memory(memory <T> &&mat_arg) noexcept;
-
-
-            //! Returns the number of allocated objects.
-            size_t size() const;
-    };
-
-    template <class T> memory<T>::memory()
+        for (size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++)
+        {
+            this->_matrix[sizet_index] = mat_arg._matrix[sizet_index];
+        }
+    }
+    else
     {
-        _matrix        = nullptr;
-        sizet_bytes    = 0;
-        sizet_objects  = 0;
+        this->deallocate();
     }
 
-    template <class T> memory<T>::~memory() noexcept
+}
+
+
+template <class T> memory<T>& memory<T>::operator=(const memory <T>& mat_arg)
+{
+
+    size_t sizet_size = mat_arg.sizet_objects;
+
+    if (this != &mat_arg)
     {
-        deallocate();
-    }
-
-    template <class T> memory<T>::memory(const memory <T>& mat_arg)
-    {
-        _matrix           = nullptr;
-        sizet_objects     = 0;
-        sizet_bytes       = 0;
-
-        size_t sizet_size = mat_arg.sizet_objects;
-
         if (sizet_size != 0)
         {
-            this->allocate(sizet_size);
+
+            if (this->sizet_objects != sizet_size)
+            {
+                this->allocate(sizet_size);
+            }
 
             for (size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++)
             {
@@ -109,88 +138,61 @@ namespace susa
         {
             this->deallocate();
         }
-
     }
 
+    return *this;
+}
 
-    template <class T> memory<T>& memory<T>::operator=(const memory <T>& mat_arg)
+template <class T> void memory<T>::allocate(size_t sizet_size)
+{
+
+    if (sizet_objects == sizet_size) return;
+
+    sizet_objects = sizet_size;
+    sizet_bytes   = sizet_size * sizeof(T);
+
+    if (_matrix == nullptr)
     {
-
-        size_t sizet_size = mat_arg.sizet_objects;
-
-        if (this != &mat_arg)
-        {
-            if (sizet_size != 0)
-            {
-
-                if (this->sizet_objects != sizet_size)
-                {
-                    this->allocate(sizet_size);
-                }
-
-                for (size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++)
-                {
-                    this->_matrix[sizet_index] = mat_arg._matrix[sizet_index];
-                }
-            }
-            else
-            {
-                this->deallocate();
-            }
-        }
-
-        return *this;
+        void* block = std::malloc(sizet_bytes);
+        SUSA_ASSERT_MESSAGE(block != nullptr, "memory allocation failed.");
+        if (block == nullptr) std::exit(EXIT_FAILURE);
+        _matrix = static_cast<T*>(block);
     }
-
-    template <class T> void memory<T>::allocate(size_t sizet_size)
+    else if (sizet_size == 0)
     {
+        deallocate();
+    }
+    else
+    {
+        void* block = std::realloc((void*)_matrix, sizet_bytes);
 
-        if (sizet_objects == sizet_size) return;
+        SUSA_ASSERT_MESSAGE(block != nullptr, "memory allocation failed.");
 
-        sizet_objects = sizet_size;
-        sizet_bytes   = sizet_size * sizeof(T);
-
-        if (_matrix == nullptr)
-        {
-            void* block = std::malloc(sizet_bytes);
-            SUSA_ASSERT_MESSAGE(block != nullptr, "memory allocation failed.");
-            if (block == nullptr) std::exit(EXIT_FAILURE);
-            _matrix = static_cast<T*>(block);
-        }
-        else if (sizet_size == 0)
+        if (block == nullptr)
         {
             deallocate();
+            std::exit(EXIT_FAILURE);
         }
-        else
-        {
-            void* block = std::realloc((void*)_matrix, sizet_bytes);
 
-            if (block == nullptr)
-            {
-                deallocate();
-                SUSA_ASSERT_MESSAGE(block != nullptr, "memory allocation failed.");
-                std::exit(EXIT_FAILURE);
-            }
-
-            _matrix = static_cast<T*>(block);
-        }
+        _matrix = static_cast<T*>(block);
     }
+}
 
-    template <class T> void memory<T>::deallocate()
+template <class T> void memory<T>::deallocate()
+{
+    if (_matrix != nullptr)
     {
-        if (_matrix != nullptr)
-        {
-            std::free(_matrix);
-            _matrix       = nullptr;
-            sizet_objects = 0;
-            sizet_bytes   = 0;
-        }
+        std::free(_matrix);
+        _matrix       = nullptr;
+        sizet_objects = 0;
+        sizet_bytes   = 0;
     }
+}
 
-    template <class T> size_t memory <T>::size() const
-    {
-        return sizet_objects;
-    }
+template <class T> size_t memory <T>::size() const
+{
+    return sizet_objects;
+}
 
 
 template <class T> memory <T>::memory(memory&& mat_arg) noexcept
