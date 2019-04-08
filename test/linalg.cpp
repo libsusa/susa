@@ -18,7 +18,7 @@
 /**
  * @file linalg.cpp
  * @brief Unit Test Suit
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 
@@ -59,11 +59,56 @@ int main(void)
     SUSA_TEST_EQ (experiment, expected, "Singular Value Decomposition (SVD) for a sample matrix.");
     }
 
+    {
     susa::matrix <int> mat_left ("5 6;3 2; 7 4;-4 8");
     susa::matrix <int> mat_right ("5 6 9 -3;-1 -2 0 1");
     susa::matrix <int> experiment = matmul(mat_left,mat_right);
     susa::matrix <int> expected   = susa::matrix <int> ("19 18 45 -9;13 14 27 -7;31 34 63 -17;-28 -40 -36 20");
     SUSA_TEST_EQ(experiment, expected, "matmul() matrix multiplication.");
+    }
+
+    {
+    susa::matrix <int>      mat_a("2, -1, -2;-4, 6, 3;-4, -2, 8");
+    susa::lu <int>          solver(mat_a);
+    solver.decompose();
+
+    susa::matrix <int> mat_res = susa::matmul(solver.get_lower(), solver.get_upper());
+    SUSA_TEST_EQ(mat_res, mat_a, "matrix LU decomposition.");
+
+    }
+
+    {
+    susa::matrix <float>      mat_a("2, 1, 1;-1, 1, -1;1, 2, 3");
+    susa::matrix <float>      mat_b("2;3;-10");
+    susa::lup <float>         solver(mat_a);
+    SUSA_TEST_EQ(solver.decompose(), true, "LUP decomposition ret value");
+
+    susa::matrix <float>      mat_res = solver.solve(mat_b);
+    SUSA_TEST_EQ((susa::matmul(mat_a, mat_res) == mat_b), true, "LUP linear equation solution");
+    }
+
+    {
+    susa::matrix <float>      mat_a("2,7,6,2;9,5,1,3;4,3,8,4;5,6,7,8");
+    susa::matrix <float>      mat_p("0 1 0 0;1 0 0 0;0 0 1 0;0 0 0 1");
+    susa::lup <float>         solver(mat_a);
+    solver.compute_pivot();
+
+    SUSA_TEST_EQ(solver.get_pivot(), mat_p, "compute pivot of LUP decomposition");
+
+    susa::matrix <float>      mat_pa("9 5 1 3;2 7 6 2;4 3 8 4;5 6 7 8");
+    susa::matrix <float>      mat_res = susa::matmul(solver.get_pivot(), mat_a);
+
+    SUSA_TEST_EQ(mat_pa, mat_res, "compute pivot of LUP decomposition");
+
+    susa::matrix <float>      mat_lu("9 5 1 3;"
+                                     "0.2222222222222222 5.888888888888889 5.777777777777778 1.3333333333333335;"
+                                     "0.4444444444444444 0.13207547169811318 6.7924528301886795 2.4905660377358494;"
+                                     "0.5555555555555556 0.5471698113207547 0.48333333333333334 4.3999999999999995");
+
+    susa::matrix <float>      mat_err_sum = susa::sum(susa::sum(mat_lu - solver.get_lu()));
+    SUSA_TEST_EQ_DOUBLE(mat_err_sum(0), 0, "compute LUP decomposition");
+    }
+
 
     SUSA_TEST_PRINT_STATS();
 

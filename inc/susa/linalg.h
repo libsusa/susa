@@ -18,7 +18,7 @@
 /**
  * @file linalg.h
  * @brief Basic matrix and linear algebra operations on Susa types.
- * @author Behrooz, Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  *
  * @defgroup LALG Linear Algebra
@@ -26,6 +26,8 @@
 
 #ifndef SUSA_LINALG_H
 #define SUSA_LINALG_H
+
+#include <susa.h>
 
 namespace susa
 {

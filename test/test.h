@@ -18,7 +18,7 @@
 /**
  * @file test.h
  * @brief Unit Test Suit
- * @author Behrooz Aliabadi
+ * @author Behrooz
  * @version 1.0.0
  */
 

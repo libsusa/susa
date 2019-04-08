@@ -20,7 +20,7 @@
  * @brief These methods implement digital base-band communication schemes.
  *
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

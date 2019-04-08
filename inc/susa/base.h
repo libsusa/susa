@@ -19,7 +19,7 @@
  * @file base.h
  * @brief Basic operations on STL and Susa types (declaration and definition).
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  *
  * @defgroup Math Basic Mathematics

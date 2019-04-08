@@ -18,7 +18,7 @@
 /**
  * @file signal.h
  * @brief Signal processing operations on Susa types
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  *
  * @defgroup Signal Signal Processing

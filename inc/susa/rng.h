@@ -20,7 +20,7 @@
  * @brief Random Number Generator (declaration).
  *
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

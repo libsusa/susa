@@ -18,7 +18,7 @@
 /**
  * @file memory.h
  * @brief The <i>memory</i> template definition and declaration.
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

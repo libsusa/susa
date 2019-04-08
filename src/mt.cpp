@@ -19,7 +19,7 @@
  * @file mt.cpp
  * @brief The Mersenne Twister pseudorandom number generator class (definition).
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

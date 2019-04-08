@@ -18,7 +18,7 @@
 /**
  * @file fft.h
  * @brief The Fast Fourier Transform (FFT)
- * @author Behrooz Aliabadi
+ * @author Behrooz
  * @version 1.0.0
  */
 

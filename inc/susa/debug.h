@@ -23,7 +23,7 @@
  * of Susa independent of STL assertion by defining SUSA_NDEBUG.
  * If NDEBUG is defined, it consequently affects this assertion.
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

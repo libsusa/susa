@@ -19,7 +19,7 @@
  * @file base.cpp
  * @brief Basic mathematical operations (definition).
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

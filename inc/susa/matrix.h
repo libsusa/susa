@@ -25,7 +25,7 @@
  * the cloning of the matrices when the assignment operator is used.
  * It has the necessary memeory management mechanisms to release the allocated memory.
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 
@@ -605,7 +605,7 @@ template <class T> void matrix <T>::swap_cols(size_t col_a, size_t col_b)
 
     for (size_t row = 0; row < sizet_rows; row++)
     {
-        T_tmp = get(row,col_a);
+        T_tmp = this->_matrix[get_lindex(row,col_a)];
         this->_matrix[get_lindex(row,col_a)] = this->_matrix[get_lindex(row,col_b)];
         this->_matrix[get_lindex(row,col_b)] = T_tmp;
     }
@@ -618,7 +618,7 @@ template <class T> void matrix <T>::swap_rows(size_t row_a, size_t row_b)
 
     for (size_t col = 0; col < sizet_cols; col++)
     {
-        T_tmp = get(row_a,col);
+        T_tmp = this->_matrix[get_lindex(row_a,col)];
         this->_matrix[get_lindex(row_a,col)] = this->_matrix[get_lindex(row_b,col)];
         this->_matrix[get_lindex(row_b,col)] = T_tmp;
     }

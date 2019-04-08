@@ -18,7 +18,7 @@
 /**
  * @file utility.h
  * @brief Utility functions.
- * @author Behrooz, Aliabadi
+ * @author Behrooz,
  * @version 1.0.0
  * @defgroup Utility
  *

@@ -18,7 +18,7 @@
 /**
  * @file rrcosine.h
  * @brief Root-Raised Cosine (declaration).
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  *
  * @defgroup Communications

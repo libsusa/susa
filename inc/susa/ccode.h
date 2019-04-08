@@ -18,7 +18,7 @@
 /**
  * @file convolutional.h
  * @brief The convolutional encoder/decoder
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

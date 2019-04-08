@@ -18,7 +18,7 @@
 /**
  * @file susa.h
  * @brief Package Header
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 
@@ -79,6 +79,7 @@
 #include "susa/modulation.h"
 #include "susa/utility.h"
 #include "susa/linalg.h"
+#include "susa/solver.h"
 #include "susa/search.h"
 #include "susa/signal.h"
 #include "susa/debug.h"

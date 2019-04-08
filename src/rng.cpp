@@ -19,7 +19,7 @@
  * @file rng.cpp
  * @brief Random Number Generator class (definition).
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

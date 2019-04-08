@@ -23,7 +23,7 @@
  * digital and discrete information to a measurable quantity of an analog
  * signal such as amplitude, frequency and phase.
  *
- * @author Behrooz Kamary Aliabadi
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

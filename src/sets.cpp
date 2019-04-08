@@ -18,7 +18,7 @@
 /**
  * @file sets.cpp
  * @brief Set types and operations.
- * @author Behrooz, Kamary Aliabadi
+ * @author Behrooz, Kamary
  * @version 1.0.0
  */
 
