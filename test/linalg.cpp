@@ -91,7 +91,7 @@ int main(void)
     susa::matrix <float>      mat_a("2,7,6,2;9,5,1,3;4,3,8,4;5,6,7,8");
     susa::matrix <float>      mat_p("0 1 0 0;1 0 0 0;0 0 1 0;0 0 0 1");
     susa::lup <float>         solver(mat_a);
-    solver.compute_pivot();
+    solver.decompose_alt();
 
     SUSA_TEST_EQ(solver.get_pivot(), mat_p, "compute pivot of LUP decomposition");
 
@@ -107,6 +107,16 @@ int main(void)
 
     susa::matrix <float>      mat_err_sum = susa::sum(susa::sum(mat_lu - solver.get_lu()));
     SUSA_TEST_EQ_DOUBLE(mat_err_sum(0), 0, "compute LUP decomposition");
+    }
+
+    {
+    susa::matrix <float>      mat_a("1 0 2;-1 5 0; 0 3 -9");
+    susa::matrix <float>      mat_res = susa::inv(mat_a);
+    susa::matrix <float>      mat_exp("0.8824 -0.1176 0.1961;0.1765 0.1765 0.0392;0.0588 0.0588 -0.0980");
+
+    susa::matrix <float>      mat_err_sum = susa::sum(susa::sum(mat_exp - mat_res));
+    SUSA_TEST_EQ_DOUBLE(mat_err_sum(0), 0, "inverse of a square matrix");
+    std::cout << susa::sum(susa::sum(mat_exp - mat_res)) << std::endl;
     }
 
 

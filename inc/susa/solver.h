@@ -103,8 +103,14 @@ template <class T> class lup
      */
     bool                decompose();
 
-    //! compute the pivot and LU matrix
-    bool                compute_pivot();
+    /**
+     * @brief decomposition
+     *
+     * Doolittle algorithm alternative implementation
+     * @param mat_arg the input square matrix
+     * @return true if the decomposition succeeds
+     */
+    bool                decompose_alt();
 
     /**
      * @brief solve a linear equation of the form Ax = b
@@ -114,10 +120,17 @@ template <class T> class lup
      */
     matrix <T>          solve(const matrix<T>& mat_b);
 
+    /**
+     * @brief inverse of the square matrix
+     * 
+     * @return the inverse of the square matrix 
+     */
+    matrix <T>          invert();
+
     //! get the linear pivot vector
     const matrix<T>&    get_pivot() const { return mat_pp; }
 
-    //! get the LU matrix after calling lup::decompose or lup::compute_pivot
+    //! get the LU matrix after calling lup::decompose or lup::decompose_alt
     const matrix<T>&    get_lu() const {return mat_lu;}
 
   private:
@@ -138,6 +151,7 @@ template <class T> lu<T>::lu(const matrix<T>& mat_arg)
 , sizet_n(0)
 {
     SUSA_ASSERT_MESSAGE(mat_arg.is_square(), "the matrix must be square");
+    sizet_n = mat_a.no_cols();
 }
 
 template <class T> lu<T>::~lu()
@@ -151,6 +165,7 @@ template <class T> lup<T>::lup(const matrix<T>& mat_arg, double dbl_tolerance)
 , sizet_n(0)
 {
     SUSA_ASSERT_MESSAGE(mat_arg.is_square(), "the matrix must be square");
+    sizet_n = mat_a.no_cols();
 }
 
 template <class T> lup<T>::~lup()
@@ -161,8 +176,6 @@ template <class T> lup<T>::~lup()
 template <class T> bool lu<T>::decompose()
 {
     if (!mat_a.is_square()) return false;
-
-    sizet_n = mat_a.no_cols();
 
     for (size_t i = 0; i < sizet_n; i++)
     {
@@ -205,11 +218,8 @@ template <class T> bool lup<T>::decompose()
 {
     if (!mat_a.is_square()) return false;
 
-
-    sizet_n     = mat_a.no_cols();
+    mat_lu      = mat_a;
     mat_p       = matrix<size_t>(sizet_n + 1, 1);
-
-    mat_lu = mat_a;
 
     for (size_t indx = 0; indx <= sizet_n; indx++)
     {
@@ -288,13 +298,16 @@ template <class T> matrix<T> lup<T>::solve(const matrix<T> &mat_b)
 }
 
 
-template <class T> bool lup<T>::compute_pivot()
+template <class T> bool lup<T>::decompose_alt()
 {
-    sizet_n     = mat_a.no_cols();
     mat_lu      = mat_a;
     mat_pp      = eye <T> (sizet_n);
+    mat_p       = matrix<size_t>(sizet_n + 1, 1);
 
-    size_t exchanges = 0;
+    for (size_t indx = 0; indx <= sizet_n; indx++)
+    {
+        mat_p(indx) = indx;
+    }
 
     for (size_t i = 0; i < sizet_n; i++)
     {
@@ -323,9 +336,9 @@ template <class T> bool lup<T>::compute_pivot()
 
         if (i != row)
         { //swap rows
-            exchanges++;
             mat_lu.swap_rows(i,row);
             mat_pp.swap_rows(i,row);
+            mat_p.swap_rows(i,row);
         }
 
         size_t j = i;
@@ -356,6 +369,35 @@ template <class T> bool lup<T>::compute_pivot()
     return true;
 }
 
+template <class T> matrix <T> lup<T>::invert()
+{
+    matrix <T> ret(mat_lu.shape());
+
+    for (size_t j = 0; j < sizet_n; j++)
+    {
+        for (size_t i = 0; i < sizet_n; i++)
+        {
+            if (mat_p(i) == j) 
+                ret(i,j) = 1.0;
+            else
+                ret(i,j) = 0.0;
+
+            for (size_t k = 0; k < i; k++)
+                ret(i,j) -= mat_lu(i,k) * ret(k,j);
+        }
+
+        for (size_t i = sizet_n; i-- > 0;)
+        {
+            for (size_t k = i + 1; k < sizet_n; k++)
+                ret(i,j) -= mat_lu(i,k) * ret(k,j);
+
+            ret(i,j) = ret(i,j) / mat_lu(i,i);
+        }
+    }
+
+    return ret;
+}
+
 /**
  * @brief solve a set of linear equation
  *
@@ -367,11 +409,26 @@ template <class T> bool lup<T>::compute_pivot()
  * @return solution vector
  * @ingroup LALG
  */
-template <class T> matrix<T> linsolve(matrix<T> mat_a, matrix<T> mat_b)
+template <class T> matrix<T> linsolve(const matrix<T>& mat_a, const matrix<T>& mat_b)
 {
     susa::lup <T> solver(mat_a);
     solver.decompose();
     return solver.solve(mat_b);
+}
+
+/**
+ * @brief invert a square matrix
+ *
+ *
+ * @param mat_a input square matrix
+ * @return inverse of the input matrix
+ * @ingroup LALG
+ */
+template <class T> matrix<T> inv(const matrix<T>& mat_arg)
+{
+    susa::lup <T> solver(mat_arg);
+    solver.decompose();
+    return solver.invert();
 }
 
 } // namespace susa

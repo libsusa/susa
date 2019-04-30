@@ -54,7 +54,7 @@ inline void susa_test(bool res, const char* arga, const char* argb, const char* 
 }
 
 #define SUSA_TEST_EQ(ARGA,ARGB,MSG) (susa_test(ARGA == ARGB,#ARGA,#ARGB,#MSG))
-#define SUSA_TEST_EQ_DOUBLE(ARGA,ARGB,MSG) (susa_test(std::abs(ARGA - ARGB) < 1e-4,#ARGA,#ARGB,#MSG))
+#define SUSA_TEST_EQ_DOUBLE(ARGA,ARGB,MSG) (susa_test(std::abs(ARGA - ARGB) < 2e-4,#ARGA,#ARGB,#MSG))
 #define SUSA_TEST_PRINT_STATS() \
     std::cout << std::endl << " -----------------"; \
     std::cout << std::endl << " NUMBER OF FAILED TESTS(" << uint_failed <<")"; \
