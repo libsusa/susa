@@ -107,8 +107,7 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg)
     {
         for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
         {
-            mat_ret._matrix[sizet_col + sizet_row * mat_ret.sizet_rows] =
-            mat_arg._matrix[sizet_row + sizet_col * mat_arg.sizet_rows];
+            mat_ret(sizet_col,sizet_row) = mat_arg(sizet_row,sizet_col);
         }
     }
 
@@ -236,24 +235,28 @@ template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T
  */
 template <class T> matrix <T> fliplr(const matrix <T> &mat_arg)
 {
-    matrix <T> mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
+    size_t sizet_rows = mat_arg.no_rows();
+    size_t sizet_cols = mat_arg.no_cols();
+    size_t sizet_size = mat_arg.size();
 
-    if ( mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1)
+    matrix <T> mat_ret(mat_arg.shape());
+
+    if ( sizet_rows == 1 || sizet_cols == 1)
     {
-        if (mat_arg.no_cols() == 1) SUSA_LOG_INF("fliplr() has been replaced by flipud().");
+        if (sizet_cols == 1) SUSA_LOG_INF("fliplr() has been replaced by flipud().");
 
-        for (size_t sizet_i = 0; sizet_i < mat_arg.size(); sizet_i++)
+        for (size_t sizet_i = 0; sizet_i < sizet_size; sizet_i++)
         {
-          mat_ret(sizet_i) = mat_arg(mat_arg.size() - sizet_i - 1);
+          mat_ret(sizet_i) = mat_arg(sizet_size - sizet_i - 1);
         }
     }
-    else if (mat_arg.no_cols() > 1 || mat_arg.no_rows() > 1)
+    else if (sizet_cols > 1 || sizet_rows > 1)
     {
-        for (size_t sizet_row = 0; sizet_row < mat_arg.no_rows(); sizet_row++)
+        for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
         {
-            for (size_t sizet_col = 0; sizet_col < mat_arg.no_cols(); sizet_col++)
+            for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
             {
-              mat_ret(sizet_row,sizet_col) = mat_arg(sizet_row,mat_arg.no_cols() - sizet_col - 1);
+              mat_ret(sizet_row,sizet_col) = mat_arg(sizet_row, sizet_cols - sizet_col - 1);
             }
         }
     }
@@ -270,25 +273,29 @@ template <class T> matrix <T> fliplr(const matrix <T> &mat_arg)
  */
 template <class T> matrix <T> flipud(const matrix <T> &mat_arg)
 {
-    matrix <T> mat_ret(mat_arg.no_rows(), mat_arg.no_cols());
+    size_t sizet_rows = mat_arg.no_rows();
+    size_t sizet_cols = mat_arg.no_cols();
+    size_t sizet_size = mat_arg.size();
 
-    if ( mat_arg.no_cols() == 1 || mat_arg.no_rows() == 1)
+    matrix <T> mat_ret(mat_arg.shape());
+
+    if ( sizet_cols == 1 || sizet_rows == 1)
     {
 
-        if (mat_arg.no_rows() == 1) SUSA_LOG_INF("flipud() has been replaced by fliplr().");
+        if (sizet_rows == 1) SUSA_LOG_INF("flipud() has been replaced by fliplr().");
 
-        for (size_t sizet_i = 0; sizet_i < mat_arg.size(); sizet_i++)
+        for (size_t sizet_i = 0; sizet_i < sizet_size; sizet_i++)
         {
-          mat_ret(sizet_i) = mat_arg(mat_arg.size() - sizet_i - 1);
+          mat_ret(sizet_i) = mat_arg(sizet_size - sizet_i - 1);
         }
     }
-    else if (mat_arg.no_cols() > 1 || mat_arg.no_rows() > 1)
+    else if (sizet_cols > 1 || sizet_rows > 1)
     {
-        for (size_t sizet_col = 0; sizet_col < mat_arg.no_cols(); sizet_col++)
+        for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
         {
-            for (size_t sizet_row = 0; sizet_row < mat_arg.no_rows(); sizet_row++)
+            for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
             {
-              mat_ret(sizet_row,sizet_col) = mat_arg(mat_arg.no_rows()  - sizet_row - 1, sizet_col);
+              mat_ret(sizet_row,sizet_col) = mat_arg(sizet_rows  - sizet_row - 1, sizet_col);
             }
         }
     }

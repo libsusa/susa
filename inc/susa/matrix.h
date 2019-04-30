@@ -98,7 +98,7 @@ template <class T> class matrix : public susa::memory <T>
     bool parser(std::string str_string);
     
     //! compute the internal linear index from row and column indices
-    size_t get_lindex(size_t sizet_row, size_t sizet_col);
+    size_t get_lindex(size_t sizet_row, size_t sizet_col) const;
 
   public:
     //! Constructor
@@ -482,7 +482,7 @@ template <class T> T matrix <T>::get( size_t sizet_row, size_t sizet_col ) const
 
   SUSA_ASSERT_MESSAGE(sizet_row < sizet_rows && sizet_col < sizet_cols, "one or more indices is/are out of range.");
 
-  return this->_matrix[sizet_row + sizet_col * sizet_rows];
+  return this->_matrix[get_lindex(sizet_row,sizet_col)];
 
 }
 
@@ -497,7 +497,7 @@ template <class T> T matrix <T>::get( size_t sizet_elem ) const
 
 }
 
-template <class T> inline size_t matrix <T>::get_lindex(size_t sizet_row, size_t sizet_col)
+template <class T> inline size_t matrix <T>::get_lindex(size_t sizet_row, size_t sizet_col) const
 {
     return (sizet_row + sizet_col * sizet_rows);
 }
@@ -549,7 +549,7 @@ template <class T> matrix <T> matrix <T>::row(size_t sizet_row) const
     {
         for (size_t sizet_i = 0; sizet_i < sizet_cols; sizet_i++)
         {
-          mat_ret(sizet_i) = this->_matrix[sizet_i * sizet_rows + sizet_row];
+          mat_ret(sizet_i) = this->_matrix[get_lindex(sizet_row,sizet_i)];
         }
     }
 
@@ -562,11 +562,9 @@ template <class T> matrix <T> matrix <T>::col(size_t sizet_col) const
 
     if (sizet_col < sizet_cols)
     {
-        size_t sizet_fix = sizet_col * sizet_rows;
-
         for (size_t sizet_i = 0; sizet_i < sizet_rows; sizet_i++)
         {
-          mat_ret(sizet_i) = this->_matrix[sizet_fix + sizet_i];
+          mat_ret(sizet_i) = this->_matrix[get_lindex(sizet_i,sizet_col)];
         }
     }
 
@@ -662,7 +660,7 @@ template <class T> matrix <T> matrix <T>::shrink(size_t sizet_elim_row, size_t s
                     if (sizet_new_row < (sizet_rows - 1) && sizet_new_col < (sizet_cols - 1))
                     {
                         mat_ret(sizet_new_row, sizet_new_col) =
-                        this->_matrix[sizet_col * sizet_rows + sizet_row];
+                        this->_matrix[get_lindex(sizet_row,sizet_col)];
                     }
                 }
             }
@@ -768,7 +766,7 @@ template <class T> T &matrix<T>::operator ()( size_t sizet_row, size_t sizet_col
 
   if (sizet_row < sizet_rows && sizet_col < sizet_cols && this->_matrix != NULL)
   {
-      return this->_matrix[sizet_row + sizet_col * sizet_rows];
+      return this->_matrix[get_lindex(sizet_row,sizet_col)];
   }
 
   return *T_fake;
@@ -786,7 +784,7 @@ template <class T> T &matrix<T>::operator ()( size_t sizet_elem )
 
     SUSA_ASSERT_MESSAGE(sizet_elem < this->sizet_objects, "the index is out of range.");
 
-    if (sizet_elem < sizet_cols * sizet_rows && this->_matrix != NULL)
+    if (sizet_elem < this->sizet_objects && this->_matrix != NULL)
     {
       return this->_matrix[sizet_elem];
     }
@@ -926,7 +924,7 @@ template <class T> matrix<T>::operator matrix <std::complex <unsigned char> > ()
 template <class T> matrix<T> operator+(const matrix <T> &mat_argl, const matrix <T> &mat_argr)
 {
 
-    matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
+    matrix <T> mat_ret(mat_argl.sizet_rows, mat_argl.sizet_cols);
     size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
 
     SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
@@ -937,39 +935,39 @@ template <class T> matrix<T> operator+(const matrix <T> &mat_argl, const matrix 
     {
         for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
         {
-            mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] + mat_argr._matrix[sizet_index];
+            mat_ret._matrix[sizet_index] = mat_argl._matrix[sizet_index] + mat_argr._matrix[sizet_index];
         }
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 template <class T> matrix<T> operator+( const matrix <T> &mat_argl, T T_arg )
 {
 
-    matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
-    size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
+    matrix <T> mat_ret(mat_argl.shape());
+    size_t sizet_size = mat_argl.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
     {
-        mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] + T_arg;
+        mat_ret._matrix[sizet_index] = mat_argl._matrix[sizet_index] + T_arg;
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 template <class T> matrix<T> operator+( T T_arg, const matrix <T> &mat_argr )
 {
 
-    matrix <T> mat_temp(mat_argr.sizet_rows, mat_argr.sizet_cols);
-    size_t sizet_size = mat_argr.sizet_rows * mat_argr.sizet_cols;
+    matrix <T> mat_ret(mat_argr.shape());
+    size_t sizet_size = mat_argr.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
     {
-        mat_temp._matrix[sizet_index] = mat_argr._matrix[sizet_index] + T_arg;
+        mat_ret._matrix[sizet_index] = mat_argr._matrix[sizet_index] + T_arg;
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 
@@ -978,8 +976,8 @@ template <class T> matrix<T> operator+( T T_arg, const matrix <T> &mat_argr )
 template <class T> matrix<T> operator-( const matrix <T> &mat_argl, const matrix <T> &mat_argr)
 {
 
-    matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
-    size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
+    matrix <T> mat_ret(mat_argl.shape());
+    size_t sizet_size = mat_argl.sizet_objects;
 
     SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
       && (mat_argl.sizet_cols == mat_argr.sizet_cols),
@@ -989,47 +987,47 @@ template <class T> matrix<T> operator-( const matrix <T> &mat_argl, const matrix
     {
         for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
         {
-            mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] - mat_argr._matrix[sizet_index];
+            mat_ret._matrix[sizet_index] = mat_argl._matrix[sizet_index] - mat_argr._matrix[sizet_index];
         }
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 template <class T> matrix<T> operator-( const matrix <T> &mat_argl, T T_arg )
 {
 
-    matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
-    size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
+    matrix <T> mat_ret(mat_argl.shape());
+    size_t sizet_size = mat_argl.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
     {
-        mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] - T_arg;
+        mat_ret._matrix[sizet_index] = mat_argl._matrix[sizet_index] - T_arg;
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 template <class T> matrix<T> operator-( T T_arg, const matrix <T> &mat_argr )
 {
 
-    matrix <T> mat_temp(mat_argr.sizet_rows, mat_argr.sizet_cols);
-    size_t sizet_size = mat_argr.sizet_rows * mat_argr.sizet_cols;
+    matrix <T> mat_ret(mat_argr.shape());
+    size_t sizet_size = mat_argr.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
     {
-        mat_temp._matrix[sizet_index] = T_arg - mat_argr._matrix[sizet_index];
+        mat_ret._matrix[sizet_index] = T_arg - mat_argr._matrix[sizet_index];
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 //  *
 template <class T> matrix<T> operator*( const matrix <T> &mat_argl, const matrix <T> &mat_argr)
 {
 
-    matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
-    size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
+    matrix <T> mat_ret(mat_argl.shape());
+    size_t sizet_size = mat_argl.sizet_objects;
 
     SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
       && (mat_argl.sizet_cols == mat_argr.sizet_cols),
@@ -1039,47 +1037,47 @@ template <class T> matrix<T> operator*( const matrix <T> &mat_argl, const matrix
     {
         for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
         {
-            mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] * mat_argr._matrix[sizet_index];
+            mat_ret._matrix[sizet_index] = mat_argl._matrix[sizet_index] * mat_argr._matrix[sizet_index];
         }
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 template <class T> matrix<T> operator*( const matrix <T> &mat_argl, T T_arg )
 {
 
-    matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
-    size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
+    matrix <T> mat_ret(mat_argl.shape());
+    size_t sizet_size = mat_argl.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
     {
-        mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] * T_arg;
+        mat_ret._matrix[sizet_index] = mat_argl._matrix[sizet_index] * T_arg;
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 template <class T> matrix<T> operator*( T T_arg, const matrix <T> &mat_argr )
 {
 
-    matrix <T> mat_temp(mat_argr.sizet_rows, mat_argr.sizet_cols);
-    size_t sizet_size = mat_argr.sizet_rows * mat_argr.sizet_cols;
+    matrix <T> mat_ret(mat_argr.shape());
+    size_t sizet_size = mat_argr.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
     {
-        mat_temp._matrix[sizet_index] = T_arg * mat_argr._matrix[sizet_index];
+        mat_ret._matrix[sizet_index] = T_arg * mat_argr._matrix[sizet_index];
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 //  /
 template <class T> matrix<T> operator/( const matrix <T> &mat_argl, const matrix <T> &mat_argr)
 {
 
-    matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
-    size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
+    matrix <T> mat_ret(mat_argl.shape());
+    size_t sizet_size = mat_argl.sizet_objects;
 
     SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
       && (mat_argl.sizet_cols == mat_argr.sizet_cols),
@@ -1089,25 +1087,25 @@ template <class T> matrix<T> operator/( const matrix <T> &mat_argl, const matrix
     {
         for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
         {
-            mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] / mat_argr._matrix[sizet_index];
+            mat_ret._matrix[sizet_index] = mat_argl._matrix[sizet_index] / mat_argr._matrix[sizet_index];
         }
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 template <class T> matrix<T> operator/( const matrix <T> &mat_argl, T T_arg )
 {
 
-    matrix <T> mat_temp(mat_argl.sizet_rows, mat_argl.sizet_cols);
-    size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
+    matrix <T> mat_ret(mat_argl.shape());
+    size_t sizet_size = mat_argl.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
     {
-        mat_temp._matrix[sizet_index] = mat_argl._matrix[sizet_index] / T_arg;
+        mat_ret._matrix[sizet_index] = mat_argl._matrix[sizet_index] / T_arg;
     }
 
-    return mat_temp;
+    return mat_ret;
 }
 
 
@@ -1201,7 +1199,7 @@ template <class T> std::ostream &operator<<(std::ostream& outStream, const matri
     {
         for (size_t sizet_col = 0; sizet_col < mat_arg.sizet_cols; sizet_col++)
         {
-            outStream << mat_arg._matrix[sizet_row + sizet_col * mat_arg.sizet_rows];
+            outStream << mat_arg(sizet_row, sizet_col);
             if (sizet_col < mat_arg.sizet_cols - 1) outStream << " ";
         }
         if (sizet_row < mat_arg.sizet_rows - 1) outStream << "\n ";
@@ -1290,7 +1288,7 @@ template <class T> bool matrix <T>::parser(std::string str_string)
             {
                 ssrow.getline(char_buff, MAX_STR_LEN, 0x20);
                 if (!(std::istringstream(char_buff) >> T_tmp)) T_tmp = 0;
-                this->_matrix[sizet_row + sizet_col * sizet_rows] = T_tmp - T_delta;
+                this->_matrix[get_lindex(sizet_row,sizet_col)] = T_tmp - T_delta;
             }
         }
 
