@@ -17,8 +17,7 @@
 
 /**
  * @file modulation.cpp
- * @brief These methods implement digital base-band communication schemes.
- *
+ * @brief digital base-band modulation and demodulation schemes (definiton).
  *
  * @author Behrooz Kamary
  * @version 1.0.0

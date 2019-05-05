@@ -17,7 +17,7 @@
 
 /**
  * @file modulation.h
- * @brief The base-band modulation and demodulation
+ * @brief base-band modulation and demodulation schemes (declaration).
  *
  * <i>Modulation</i> in the communications theory is the technique of mapping
  * digital and discrete information to a measurable quantity of an analog

@@ -33,7 +33,7 @@ namespace susa {
 /**
  * @brief Singular Value Decomposition (SVD)
  *
- * Takes a m by n <i>real</i> matrix a and decomposes it into U * S * V, where U and V are
+ * Takes a m by n <i>real</i> matrix and decomposes it into U * S * V, where U and V are
  * left and right orthogonal transformation matrices, and S is diagonal matrix of singular values.
  *
  *

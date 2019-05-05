@@ -17,7 +17,7 @@
 
 /**
  * @file svd.cpp
- * @brief Singular Value Decomposition (SVD)
+ * @brief Singular Value Decomposition (SVD) (definiton).
  * @author Behrooz Kamary
  * @version 1.0.0
  */
@@ -31,7 +31,7 @@ namespace susa {
 
 static double _susa_svd_pythag( double a, double b )
 {
-    /* This routine is adapted from svdecomp.c in XLISP-STAT 2.1 which is
+    /* This routine has been adopted from svdecomp.c in XLISP-STAT 2.1 which is
      * a code from Numerical Recipes adapted by Luke Tierney and David Betz.
      * http://www.public.iastate.edu/~dicook/JSS/paper/code/svd.c
      * http://svn.lirec.eu/libs/magicsquares/src/SVD.cpp
@@ -53,7 +53,7 @@ int svd(const matrix <float> &mat_arg_a,
               matrix <float> &mat_arg_s,
               matrix <float> &mat_arg_v)
 {
-    /* This routine is adapted from svdecomp.c in XLISP-STAT 2.1 which is
+    /* This routine has been adopted from svdecomp.c in XLISP-STAT 2.1 which is
      * a code from Numerical Recipes adapted by Luke Tierney and David Betz.
      * http://www.public.iastate.edu/~dicook/JSS/paper/code/svd.c
      * http://svn.lirec.eu/libs/magicsquares/src/SVD.cpp

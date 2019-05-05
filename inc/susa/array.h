@@ -17,12 +17,12 @@
 
 /**
  * @file array.h
- * @brief The multi-dimensional array type definition and declaration.
+ * @brief The multi-dimensional array type (declaration and definition).
  *
  * This file contains the <i>array template class</i>. This is a non-intrinsic
  * data type of Susa. Use this class if you need multi-dimensional arrays.
  * This class handles the cloning when the assignment operator is used.
- * It also has the necessary memeory management mechanisms to release
+ * It also has the necessary memory management mechanisms to release
  * the allocated memory.
  *
  * @defgroup TYPES Types
@@ -41,7 +41,7 @@ namespace susa
 {
   /**
    * @brief The <i>array</i> class.
-   * An array is a multidemsional container that should be used
+   * An array is a multidimensional container that should be used
    * to represent three or more dimensions.
    * 
    * @ingroup TYPES

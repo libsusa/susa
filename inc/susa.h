@@ -17,7 +17,7 @@
 
 /**
  * @file susa.h
- * @brief Package Header
+ * @brief Susa Package Header
  * @author Behrooz Kamary
  * @version 1.0.0
  */

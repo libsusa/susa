@@ -17,7 +17,7 @@
 
 /**
  * @file solver.h
- * @brief Linear solvers and algorithms
+ * @brief Linear solvers and algorithms (declaration and definition).
  * @author Behrooz Kamary
  * @version 1.0.0
  *
@@ -402,7 +402,7 @@ template <class T> matrix <T> lup<T>::invert()
  * @brief solve a set of linear equation
  *
  * solves a set of linear equation presented
- * in matrix form Ax = b where A is the coeficient
+ * in matrix form Ax = b where A is the coefficients
  * matrix and x is the solution vector.
  *
  * @param mat_a square coefficient matrix
@@ -418,7 +418,6 @@ template <class T> matrix<T> linsolve(const matrix<T>& mat_a, const matrix<T>& m
 
 /**
  * @brief invert a square matrix
- *
  *
  * @param mat_a input square matrix
  * @return inverse of the input matrix

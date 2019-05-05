@@ -17,8 +17,8 @@
 
 /**
  * @file sets.cpp
- * @brief Set types and operations.
- * @author Behrooz, Kamary
+ * @brief Set types and operations (definition).
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 

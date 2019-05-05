@@ -17,7 +17,7 @@
 
 /**
  * @file rng.cpp
- * @brief Random Number Generator class (definition).
+ * @brief Random Number Generator (definition).
  *
  * @author Behrooz Kamary
  * @version 1.0.0

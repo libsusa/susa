@@ -16,8 +16,8 @@
  */
 
 /**
- * @file convolutional.h
- * @brief The convolutional encoder/decoder
+ * @file ccode.h
+ * @brief convolutional encoder/decoder (declaration).
  * @author Behrooz Kamary
  * @version 1.0.0
  */

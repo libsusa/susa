@@ -17,7 +17,7 @@
 
 /**
  * @file linalg.h
- * @brief Basic matrix and linear algebra operations on Susa types.
+ * @brief Basic matrix and linear algebra operations (declaration and definition).
  * @author Behrooz Kamary
  * @version 1.0.0
  *

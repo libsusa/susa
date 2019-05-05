@@ -17,7 +17,7 @@
 
 /**
  * @file type_traits.h
- * @brief Susa type traits.
+ * @brief Susa type traits (declaration).
  * @author Behrooz Kamary
  * @version 1.0.0
  *

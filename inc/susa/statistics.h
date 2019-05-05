@@ -17,8 +17,8 @@
 
 /**
  * @file statistics.h
- * @brief Basic statistical operations on STL and Susa types
- * @author Behrooz, Kamary
+ * @brief Basic statistical operations (declaration and definition).
+ * @author Behrooz Kamary
  * @version 1.0.0
  *
  * @defgroup Statistics Statistics

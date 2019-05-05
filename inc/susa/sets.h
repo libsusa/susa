@@ -17,7 +17,7 @@
 
 /**
  * @file sets.h
- * @brief The <i>set</i> type definition and declaration.
+ * @brief The <i>set</i> type (declaration and definition).
  * @author Behrooz Kamary
  * @version 1.0.0
  *

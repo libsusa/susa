@@ -16,8 +16,8 @@
  */
 
 /**
- * @file convolutional.cpp
- * @brief The convolutional ecoder/decoder class.
+ * @file ccode.cpp
+ * @brief onvolutional ecoder/decoder implementation.
  * @author Behrooz Kamary
  * @version 1.0.0
  */

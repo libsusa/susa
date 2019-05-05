@@ -17,8 +17,8 @@
 
 /**
  * @file fft.h
- * @brief The Fast Fourier Transform (FFT)
- * @author Behrooz
+ * @brief Fast Fourier Transform (FFT) (declaration and definition).
+ * @author Behrooz Kamary
  * @version 1.0.0
  */
 
