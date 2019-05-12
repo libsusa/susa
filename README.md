@@ -8,7 +8,7 @@ Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia
  Java based mobile applications. Susa is also a simulation framework for the researchers and engineers who design
  computational systems. It has linear algebra, signal processing and common communications blocks.
 
-The *matrix* and *array* template classes i.e. types are at the heart of Susa bundled with a constellation of classes and functions. A *vector* is simply a single column (or a single row) matrix.
+The *matrix* and *array* template classes i.e. types are at the heart of Susa. A *vector* is simply a single column (or a single row) matrix. It is bundled with a constellation of classes and functions.
 
 ### Highlights
  - Algebraic types (template classes): *matrix* and multi-dimensional *array*.
@@ -49,6 +49,8 @@ to be able to build against Susa system-wide. However, you may continue using th
 ## Examples
 In the [examples](https://github.com/behrooza/susa/tree/master/examples) directory
 a number of simulation and tutorial source codes have been provided.
+## Contribution
+This is a non-profit project and it belongs to its users. You can contribute to your project by reporting bugs and extending it by following the provided [guidelines](https://guides.github.com/activities/forking). This paves the way for further improvements and protects the authors' rights.
 ## History
 Susa was born in April 2008 out of a university project course in digital communications.
 At the time the libraries that could be used for digital communications simulation had
@@ -60,7 +62,7 @@ in November 2008.
 
 Later in early 2009, Susa was used for a bandwidth efficient coding scheme, namely,
 [Faster Than Nyquist (FTN)](http://www.eit.lth.se/fileadmin/eit/courses/eit085f/AndersonFasterThanNyquistSignaling.pdf).
-It required prefermant equalizers to decode up to some twenty taps (compared to the fading channels with few taps).
+It required preferment equalizers to decode up to some twenty taps (compared to the fading channels with few taps).
 The simulation of such systems took a long time between an hour to a few days. This library could simulate
 a FTN system with thirteen taps using a modified BCJR algorithm (a sub-optimal variant that could outperform
 the original algorithm) in about an hour whereas a similar script in a commercial computing software took
