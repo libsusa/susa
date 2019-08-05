@@ -22,8 +22,8 @@
  * @version 1.0.0
  */
 
-#ifndef CONVOLUTIONAL_H
-#define CONVOLUTIONAL_H
+#ifndef SUSA_CONVOLUTIONAL_H
+#define SUSA_CONVOLUTIONAL_H
 
 
 namespace susa {
