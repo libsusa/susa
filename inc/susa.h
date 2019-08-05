@@ -82,6 +82,7 @@
 #include "susa/solver.h"
 #include "susa/search.h"
 #include "susa/signal.h"
+#include "susa/mlp.h"
 #include "susa/debug.h"
 
 #endif // SUSA_H
