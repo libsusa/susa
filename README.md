@@ -60,7 +60,7 @@ weighty codes had nested bugs that sometimes stemmed from their third party depe
 The answer to these problems was Susa that was [released](http://sourceforge.net/projects/susa)
 in November 2008.
 
-Later in early 2009, Susa was used for a bandwidth efficient coding scheme, namely,
+Later in early 2009, Susa was used for a bandwidth efficient coding scheme design and simulation, namely,
 [Faster Than Nyquist (FTN)](http://www.eit.lth.se/fileadmin/eit/courses/eit085f/AndersonFasterThanNyquistSignaling.pdf).
 It required preferment equalizers to decode up to some twenty taps (compared to the fading channels with few taps).
 The simulation of such systems took a long time between an hour to a few days. This library could simulate
