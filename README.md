@@ -8,7 +8,7 @@ Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia
  Java based mobile applications. Susa is also a simulation framework for the researchers and engineers who design
  computational systems. It has linear algebra, signal processing and common communications blocks.
 
-The *matrix* and *array* template classes i.e. types are at the heart of Susa. A *vector* is simply a single column (or a single row) matrix. It is bundled with a constellation of classes and functions.
+The *matrix* and *array* template classes i.e. types are at the heart of Susa. A *vector* is a single column (or a single row) matrix. They are bundled with a constellation of classes and functions.
 
 ### Highlights
  - Algebraic types (template classes): *matrix* and multi-dimensional *array*.
