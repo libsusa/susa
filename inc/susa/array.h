@@ -47,100 +47,112 @@ namespace susa
    * @ingroup TYPES
    *
    */
-  template <class T> class array : public susa::memory <T>
+  template <typename T, typename Allocator = std::allocator<T>>
+  class array
   {
 
-    public:
+  public:
+    //! Constructor
+    array();
 
-      //! Constructor
-      array();
-
-      /**
+    /**
        * @brief Constructor
        * @param list initialization list
        */
-      array (std::initializer_list<size_t> list);
+    array(std::initializer_list<size_t> list);
 
-      //! Constructor
-      array(array&& arg);
+    //! Constructor
+    array(array &&arg);
 
-      //! Copy constructor
-      array(const array& arg);
-      
-      //! Copy assignment constructor
-      array& operator=(const array <T>& arg);
-      
-      //! Destructor
-      ~array() noexcept;
+    //! Copy constructor
+    array(const array &arg);
 
-      T get(std::initializer_list<size_t> list) const;
-    
-      T get(const std::vector<size_t>& list) const;
+    //! Copy assignment constructor
+    array &operator=(const array &arg);
 
+    //! Destructor
+    ~array() noexcept;
 
-      /**
+    T get(std::initializer_list<size_t> list) const;
+
+    T get(const std::vector<size_t> &list) const;
+
+    /**
        * @brief Clone the data by pointer that may be read from the disk.
        * The method assumes that you have loaded a compatible binary data
        * into the memory that has the right format.
        *
        * @param data pointer to the data
+       * @param length length of the data
        */
-      void clone(T* data);
+    void clone(T *data, size_t length);
 
-      template <typename... Args> T get(size_t uint_elem, Args... uint_args);
+    template <typename... Args>
+    T get(size_t uint_elem, Args... uint_args);
 
-      //! () operator to set or get elements
-      template <typename... Args> T operator ()( size_t uint_elem, Args... uint_args ) const
+    //! () operator to set or get elements
+    template <typename... Args>
+    T operator()(size_t uint_elem, Args... uint_args) const
+    {
+      return get(uint_elem, uint_args...);
+    }
+
+    template <typename... Args>
+    T &operator()(size_t uint_elem, Args... uint_args)
+    {
+      size_t uint_index = index(uint_elem, uint_args...);
+
+      SUSA_ASSERT_MESSAGE(uint_index < uint_total, "the element index is out of range.");
+
+      if (uint_index < uint_total && this->_matrix != NULL)
       {
-        return get(uint_elem, uint_args...);
+        return this->_matrix[uint_index];
       }
 
-      template <typename... Args> T &operator ()( size_t uint_elem, Args... uint_args )
-      {
-        size_t uint_index = index(uint_elem, uint_args...);
+      return *T_fake;
+    }
 
-        SUSA_ASSERT_MESSAGE(uint_index < uint_total, "the element index is out of range.");
+    template <typename... Args>
+    size_t get_raw_index(size_t uint_elem, Args... uint_args)
+    {
+      return index(uint_elem, uint_args...);
+    }
 
-        if (uint_index < uint_total && this->_matrix != NULL)
-        {
-          return this->_matrix[uint_index];
-        }
+  private:
+    std::vector<size_t> vec_dims;
+    size_t uint_total;
+    size_t uint_num_dims;
+    T *T_fake;
 
-        return *T_fake;
-      }
+    std::vector<size_t> vec_get;
+    size_t uint_get_step;
+    T T_get_value;
 
-      template <typename... Args> size_t get_raw_index(size_t uint_elem, Args... uint_args)
-      {
-        return index(uint_elem, uint_args...);
-      }
+    Allocator alloc;
+    T *_matrix;
 
-    private:
-
-      std::vector<size_t> vec_dims;
-      size_t              uint_total;
-      size_t              uint_num_dims;
-      T*                  T_fake;
-
-      std::vector<size_t> vec_get;
-      size_t              uint_get_step;
-      T                   T_get_value;
-
-      size_t index(size_t uint_elem);
-      size_t index(const std::vector<size_t>& list);
-      template <typename... Args> size_t index(size_t uint_elem, Args... uint_args);
+    size_t index(size_t uint_elem);
+    size_t index(const std::vector<size_t> &list);
+    template <typename... Args>
+    size_t index(size_t uint_elem, Args... uint_args);
   };
 
   // Implementations
-  template <class T> array<T>::array()
-  : susa::memory<T>()
+  template <typename T, typename Allocator>
+  array<T, Allocator>::array()
+  : uint_total(0)
   , T_fake(new T)
+  , uint_get_step(0)
+  , alloc()
+  , _matrix(nullptr)
   {
-      uint_get_step = 0;
   }
 
-  template <class T> array<T>::array (std::initializer_list<size_t> list)
+  template <typename T, typename Allocator>
+  array<T, Allocator>::array(std::initializer_list<size_t> list)
   : vec_dims(list)
   , T_fake(new T)
+  , alloc()
   {
     uint_total = 1;
     for (auto dim_size : vec_dims)
@@ -150,66 +162,94 @@ namespace susa
 
     uint_num_dims = vec_dims.size();
     uint_get_step = 0;
-    vec_get       = std::vector<size_t> (uint_num_dims);
+    vec_get = std::vector<size_t>(uint_num_dims);
 
-    this->allocate(uint_total);
+    _matrix = alloc.allocate(uint_total);
   }
 
-  template <class T> void array<T>::clone(T* data)
-  {
-    std::memset(this->_matrix, 0x00, sizeof(T) * uint_total);
-    std::memcpy(this->_matrix, data, sizeof(T) * uint_total);
-  }
-
-  template <class T> array<T>::array(array&& arg)
-  : susa::memory <T> (std::move(arg))
+  template <typename T, typename Allocator>
+  void array<T, Allocator>::clone(T *data, size_t length)
   {
 
-    uint_total        = arg.uint_total;
-    vec_dims          = arg.vec_dims;
-    uint_num_dims     = vec_dims.size();
-    vec_get           = std::vector<size_t>(uint_num_dims);
-    uint_get_step     = 0;
-
-    T_fake            = arg.T_fake;
-    arg.T_fake        = nullptr;
-
-  }
-
-  template <class T> array<T>::array(const array& arg)
-  : susa::memory<T>(arg)
-  , T_fake(new T)
-  {
-    uint_total        = arg.uint_total;
-    vec_dims          = arg.vec_dims;
-    uint_num_dims     = vec_dims.size();
-    vec_get           = std::vector<size_t>(uint_num_dims);
-    uint_get_step     = 0;
-  }
+    if (length != uint_total)
+    {
+      if (uint_total != 0 && _matrix != nullptr)
+      {
+        alloc.deallocate(_matrix, uint_total);
+      }
+      _matrix       = alloc.allocate(uint_total);
+      uint_total    = length;
+    }
   
-   template <class T> array<T>& array<T>::operator=(const array <T>& arg)
-   {
-     
-      susa::memory<T>::operator=(arg);
-
-      uint_total        = arg.uint_total;
-      vec_dims          = arg.vec_dims;
-      uint_num_dims     = vec_dims.size();
-      vec_get           = std::vector<size_t>(uint_num_dims);
-      uint_get_step     = 0;
-
-      return *this;
-   }
-
-  template <class T> array<T>::~array() noexcept
-  {
-    delete T_fake;
+    std::memset(_matrix, 0x00, sizeof(T) * length);
+    std::memcpy(_matrix, data, sizeof(T) * length);
   }
 
-  template <class T> T array <T>::get( std::initializer_list<size_t> list ) const
+  template <typename T, typename Allocator>
+  array<T, Allocator>::array(array &&arg)
+  : alloc(std::move(arg.alloc))
   {
 
-    SUSA_ASSERT(this->_matrix != NULL);
+    uint_total      = arg.uint_total;
+    vec_dims        = arg.vec_dims;
+    uint_num_dims   = vec_dims.size();
+    vec_get         = std::vector<size_t>(uint_num_dims);
+    uint_get_step   = 0;
+
+    T_fake          = arg.T_fake;
+    _matrix         = arg._matrix;
+  
+    arg.T_fake      = nullptr;
+    arg._matrix     = nullptr;
+    arg.uint_total  = 0;
+  }
+
+  template <typename T, typename Allocator>
+  array<T, Allocator>::array(const array &arg)
+  : T_fake(new T)
+  , alloc(arg.alloc)
+  {
+
+    uint_total    = arg.uint_total;
+    vec_dims      = arg.vec_dims;
+    uint_num_dims = vec_dims.size();
+    vec_get       = std::vector<size_t>(uint_num_dims);
+    uint_get_step = 0;
+    _matrix       = alloc.allocate(uint_total);
+    std::memcpy(_matrix, arg._matrix, uint_total * sizeof(T));
+  }
+
+  template <typename T, typename Allocator>
+  array<T, Allocator> &array<T, Allocator>::operator=(const array &arg)
+  {
+    if (uint_total != 0 && _matrix != nullptr)
+    {
+      alloc.deallocate(_matrix, uint_total);
+    }
+    uint_total    = arg.uint_total;
+    vec_dims      = arg.vec_dims;
+    uint_num_dims = vec_dims.size();
+    vec_get       = std::vector<size_t>(uint_num_dims);
+    uint_get_step = 0;
+
+    _matrix       = alloc.allocate(uint_total);
+    std::memcpy(_matrix, arg._matrix, uint_total * sizeof(T));
+
+    return *this;
+  }
+
+  template <typename T, typename Allocator>
+  array<T, Allocator>::~array() noexcept
+  {
+    if (T_fake != nullptr) delete T_fake;
+    if (_matrix != nullptr) alloc.deallocate(_matrix, uint_total);
+  }
+
+  template <typename T, typename Allocator>
+  T array<T, Allocator>::get(std::initializer_list<size_t> list) const
+  {
+
+    SUSA_ASSERT(_matrix != nullptr);
 
     size_t uint_elem      = 0;
     size_t uint_dim_count = 0;
@@ -230,51 +270,53 @@ namespace susa
 
     SUSA_ASSERT_MESSAGE(uint_elem < uint_total, "the element index is out of range.");
 
-    if (uint_elem < uint_total && this->_matrix != NULL)
+    if (uint_elem < uint_total && _matrix != nullptr)
     {
-      return this->_matrix[uint_elem];
+      return _matrix[uint_elem];
     }
 
     return *T_fake;
   }
 
-  template <class T> T array <T>::get(const std::vector<size_t>& list ) const
+  template <typename T, typename Allocator>
+  T array<T, Allocator>::get(const std::vector<size_t> &list) const
   {
 
-    SUSA_ASSERT(this->_matrix != NULL);
+    SUSA_ASSERT(_matrix != nullptr);
 
     size_t uint_index = index(list);
 
     SUSA_ASSERT_MESSAGE(uint_index < uint_total, "the element index is out of range.");
 
-    if (uint_index < uint_total && this->_matrix != NULL)
+    if (uint_index < uint_total && _matrix != nullptr)
     {
-      return this->_matrix[uint_index];
+      return _matrix[uint_index];
     }
 
     return *T_fake;
   }
 
-  template <class T>
+  template <typename T, typename Allocator>
   template <typename... Args>
-  T array<T>::get(size_t uint_elem, Args... uint_args)
+  T array<T, Allocator>::get(size_t uint_elem, Args... uint_args)
   {
 
-    SUSA_ASSERT(this->_matrix != NULL);
+    SUSA_ASSERT(_matrix != nullptr);
 
     size_t uint_index = index(uint_elem, uint_args...);
 
     SUSA_ASSERT_MESSAGE(uint_index < uint_total, "the element index is out of range.");
 
-    if (uint_index < uint_total && this->_matrix != NULL)
+    if (uint_index < uint_total && _matrix != nullptr)
     {
-      return this->_matrix[uint_index];
+      return _matrix[uint_index];
     }
 
     return *T_fake;
   }
 
-  template <class T> size_t array <T>::index (const std::vector<size_t>& list)
+  template <typename T, typename Allocator>
+  size_t array<T, Allocator>::index(const std::vector<size_t> &list)
   {
 
     size_t uint_elem = 0;
@@ -293,18 +335,21 @@ namespace susa
       uint_elem += dim_size * uint_factor;
       uint_dim_count++;
     }
+    
+    SUSA_ASSERT_MESSAGE(uint_elem < uint_total, "the element index is out of range.");
 
     return uint_elem;
   }
 
-  template <class T> size_t array<T>::index(size_t uint_elem)
+  template <typename T, typename Allocator>
+  size_t array<T, Allocator>::index(size_t uint_elem)
   {
 
     size_t ret;
 
     if (uint_get_step == 0)
     {
-      vec_get = std::vector<size_t>(uint_num_dims);
+      vec_get       = std::vector<size_t>(uint_num_dims);
       uint_get_step = 0;
 
       SUSA_ASSERT_MESSAGE(uint_elem < uint_total, "the element index is out of range.");
@@ -330,9 +375,9 @@ namespace susa
     return ret;
   }
 
-  template <class T>
+  template <typename T, typename Allocator>
   template <typename... Args>
-  size_t array<T>::index(size_t uint_elem, Args... uint_args)
+  size_t array<T, Allocator>::index(size_t uint_elem, Args... uint_args)
   {
 
     SUSA_ASSERT_MESSAGE(uint_get_step < uint_num_dims, "the number of arguments exceeded the number of dimensions.");
@@ -342,5 +387,5 @@ namespace susa
     return index(uint_args...);
   }
 
-}      // NAMESPACE SUSA
+} // namespace susa
 #endif // SUSA_ARRAY_H

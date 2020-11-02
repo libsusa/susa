@@ -21,3 +21,7 @@ target_link_libraries (channel susa)
 add_test (NAME ccode COMMAND ccode)
 add_executable (ccode ccode.cpp)
 target_link_libraries (ccode susa)
+
+add_test (NAME memory COMMAND memory)
+add_executable (memory memory.cpp)
+target_link_libraries (memory susa)

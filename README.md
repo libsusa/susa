@@ -2,7 +2,7 @@
 
 Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia.org/wiki/Software_framework) based on [KISS](https://en.wikipedia.org/wiki/KISS_principle)
  principle. It is stand-alone with a modern architecture. It is designed not to have any dependencies to none standard third
- party libraries. Indeed, a C++11 compiler along with STL is necessary and sufficient in order to compile it. Therefore,
+ party libraries. Indeed, a C++17 compiler along with STL is necessary and sufficient in order to compile it. Therefore,
  portability is the key feature of Susa. For example it can be exploited in mobile platforms such as Android NDK (Native
  Development Toolkit) without any restriction. This brings the power and speed of the C++ native code to the user friendly
  Java based mobile applications. Susa is also a simulation framework for the researchers and engineers who design
@@ -20,13 +20,22 @@ The *matrix* and *array* template classes i.e. types are at the heart of Susa. A
 
 ## Build, Test and Install
 ### Build
-To build Susa you need to have a C++ compiler, Make and [CMake](https://cmake.org) installed.
+To build Susa you need to have a C++17 compiler, Make and [CMake](https://cmake.org) installed.
 
 ```
 mkdir build
 cd build
 cmake ..
 make
+```
+
+or
+
+```
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Debug
 ```
 
 ### Test

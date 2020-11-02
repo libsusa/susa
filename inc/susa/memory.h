@@ -17,7 +17,7 @@
 
 /**
  * @file memory.h
- * @brief The <i>memory</i> template (declaration and definition).
+ * @brief The <i>memory</i> management and logging (declaration and definition).
  * @author Behrooz Kamary
  * @version 1.0.0
  */
@@ -25,11 +25,47 @@
 #ifndef SUSA_MEMORY_H
 #define SUSA_MEMORY_H
 
+#include <atomic>
 #include <cstdlib>
 #include <susa/debug.h>
 
 namespace susa
 {
+
+class memory_tacker 
+{
+    private:
+        memory_tacker() = default;
+        ~memory_tacker() = default;
+        std::atomic_ullong ull_used_memory;
+
+    public:
+        memory_tacker(const memory_tacker&) = delete;
+        memory_tacker(memory_tacker&&) = delete;
+        memory_tacker& operator=(const memory_tacker&) = delete;
+        memory_tacker& operator=(memory_tacker&&) = delete;
+
+        static memory_tacker& instance()
+        {
+            static memory_tacker INSTANCE;
+            return INSTANCE;
+        }
+
+        void add(size_t nbytes)
+        {
+            ull_used_memory.fetch_add(nbytes);
+        }
+
+        void sub(size_t nbytes)
+        {
+            ull_used_memory.fetch_sub(nbytes);
+        }
+
+        size_t read()
+        {
+            return ull_used_memory.load();
+        }
+};
 
 /**
 * @brief The <i>memory</i> class.
@@ -208,5 +244,40 @@ template <class T> memory <T>::memory(memory&& mat_arg) noexcept
 
 }
 
+template <typename T> class allocator_log : public std::allocator<T>
+{
+    public:
+        using base = std::allocator<T>;
+        using pointer = typename std::allocator_traits<base>::pointer;
+        using size_type = typename std::allocator_traits<base>::size_type;
+
+        template <typename U> struct rebind
+        {
+            using other = allocator_log<U>;
+        };
+
+        pointer allocate(size_type n, const void *hint = 0)
+        {
+            memory_tacker::instance().add(n * sizeof(T));
+            pointer p = base::allocate(n, hint);
+            SUSA_LOG_INF("allocate " << n * sizeof(T) << " bytes. pointer (" << p << ")");
+            return p;
+        }
+
+        void deallocate(pointer p, size_type n)
+        {
+            SUSA_LOG_INF("deallocate " << n * sizeof(T) << " bytes. pointer (" << p << ")");
+            memory_tacker::instance().sub(n * sizeof(T));
+            return base::deallocate(p, n);
+        }
+
+        allocator_log() noexcept : base() { SUSA_LOG_INF("constructor"); }
+
+        allocator_log(const allocator_log& arg) noexcept : base(arg) {}
+
+        template <class U> allocator_log(const allocator_log<U>& arg) noexcept : base(arg) {}
+
+        ~allocator_log() noexcept {}
+};
 }
 #endif
