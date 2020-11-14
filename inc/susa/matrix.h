@@ -207,6 +207,22 @@ template <class T> class matrix : public susa::memory <T>
     bool set_col(size_t col, const matrix <T>& mat_arg);
 
     /**
+     * @brief get a column as std::vector
+     * copy the specified matrix column into a std::vector
+     *
+     * @param col the column index
+     */
+    std::vector <T> get_col_as_vec(size_t col);
+
+    /**
+     * @brief get a row as std::vector
+     * copy the specified matrix row into a std::vector
+     *
+     * @param row the row index
+     */
+    std::vector <T> get_row_as_vec(size_t row);
+
+    /**
      * @brief swap two columns of the matrix
      */
     void swap_cols(size_t col_a, size_t col_b);
@@ -595,6 +611,28 @@ template <class T> bool matrix <T>::set_col(size_t col, const matrix <T>& mat_ar
     }
 
     return true;
+}
+
+template <class T> std::vector <T> matrix <T>::get_col_as_vec(size_t col)
+{
+    std::vector<T> ret(sizet_rows);
+    for (size_t indx = 0; indx < sizet_rows; indx++)
+    {
+        ret[indx] = get(indx, col);
+    }
+
+    return ret;
+}
+
+template <class T> std::vector <T> matrix <T>::get_row_as_vec(size_t row)
+{
+    std::vector<T> ret(sizet_cols);
+    for (size_t indx = 0; indx < sizet_cols; indx++)
+    {
+        ret[indx] = get(row, indx);
+    }
+
+    return ret;
 }
 
 template <class T> void matrix <T>::swap_cols(size_t col_a, size_t col_b)
