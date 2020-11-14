@@ -66,6 +66,7 @@
 #include "susa/memory.h"
 #include "susa/sets.h"
 #include "susa/matrix.h"
+#include "susa/vector.h"
 #include "susa/array.h"
 #include "susa/base.h"
 #include "susa/svd.h"
