@@ -62,16 +62,25 @@ template <class T> std::vector <T> diff(const std::vector <T> &vec_arg);
 /**
  * @brief Sum
  *
- * @param mat_arg
- * @return Returns sum of values in the input vector
+ * @param mat_arg input matrix
+ * @return Returns sum of values in the input matrix
  * @ingroup Math
  */
 template <class T> matrix <T> sum(const matrix <T> &mat_arg);
 
 /**
+ * @brief Sum
+ *
+ * @param vec_arg input STL vector
+ * @return Returns sum of values in the input vector
+ * @ingroup Math
+ */
+template <typename T> T sum(const std::vector <T> &vec_arg);
+
+/**
  * @brief Mean
  *
- * @param mat_arg
+ * @param mat_arg input matrix
  * @return Returns mean of values in the input vector
  * @ingroup Math
  */
@@ -80,7 +89,7 @@ template <class T> matrix <T> mean(const matrix <T> &mat_arg);
 /**
  * @brief Magnitude
  *
- * @param mat_arg
+ * @param mat_arg input matrix
  * @return Returns magnitude of the complex input vector
  * @ingroup Math
  */
@@ -89,7 +98,7 @@ template <class T> matrix <T> mag(const matrix <std::complex <T>> &mat_arg);
 /**
  * @brief Norm operator
  *
- * @param mat_arg
+ * @param mat_arg input matrix
  * @return Returns magnitude of the complex input vector
  * @ingroup Math
  */
@@ -98,7 +107,7 @@ template <class T> matrix <T> norm(const matrix <T> &mat_arg);
 /**
  * @brief Real
  *
- * @param vec_arg STL vector
+ * @param vec_arg input STL vector
  * @return Returns real part of the complex input vector
  * @ingroup Math
  */
@@ -107,7 +116,7 @@ template <class T> matrix <T> real(const matrix <std::complex <T>> &mat_arg);
 /**
  * @brief Imaginary
  *
- * @param vec_arg STL vector
+ * @param vec_arg input STL vector
  * @return Returns imaginary part of the complex input vector
  * @ingroup Math
  */
@@ -116,7 +125,7 @@ template <class T> matrix <T> imag(const matrix <std::complex <T>> &mat_arg);
 /**
  * @brief Absolute
  *
- * @param vec_arg STL vector
+ * @param vec_arg input STL vector
  * @return Returns absolut value of the input vector
  * @ingroup Math
  */
@@ -125,7 +134,7 @@ template <class T> std::vector <T> abs(const std::vector <T> &vec_arg);
 /**
  * @brief Conjugate
  *
- * @param vec_arg STL vector
+ * @param vec_arg input STL vector
  * @return Returns conjugate of the complex input vector
  * @ingroup Math
  */
@@ -134,7 +143,7 @@ template <class T> matrix <std::complex <T>> conj(const matrix <std::complex <T>
 /**
  * @brief Sign
  *
- * @param mat_arg input argument
+ * @param mat_arg input matrix
  * @return Returns sign of the input
  * @ingroup Math
  */
@@ -143,7 +152,7 @@ template <class T> matrix <char> sign(const matrix <T> &mat_arg);
 /**
  * @brief Sign
  *
- * @param T_arg input argument
+ * @param T_arg input matrix
  * @return Returns sign of the input
  * @ingroup Math
  */
@@ -152,7 +161,7 @@ template <class T> char sign(T T_arg);
 /**
  * @brief Log
  *
- * @param mat_arg input argument
+ * @param mat_arg input matrix
  * @return Returns natural logarithm of input
  * @ingroup Math
  */
@@ -179,10 +188,11 @@ int pow(int int_b, unsigned int uint_p);
 /**
  * @brief log2
  *
- * @param uint_arg input argument
+ * @param uint_arg unsigned input argument
  * @ingroup Math
  */
-unsigned int log2(unsigned short int int_arg);
+template <typename T, typename std::enable_if_t<std::is_unsigned<T>::value,T>* = nullptr>
+T log2(T int_arg);
 
 /**
  * @brief Normal Cumulative Distribution Function (CDF)
@@ -233,6 +243,20 @@ matrix <double> round(const matrix <double> &mat_arg, int int_decimal = -1);
 
 // Implementations
 
+
+template <typename T, typename std::enable_if_t<std::is_unsigned<T>::value,T>*>
+T log2(T int_arg)
+{
+    T ret(0);
+
+    while ((int_arg >> ret) != 0)
+    {
+        ret++;
+    }
+
+    return (ret - 1);
+}
+
 template <class T> std::vector <T> diff(std::vector <T> &vec_arg)
 {
     std::vector <T> vec_diff(vec_arg.size() - 1, T(0));
@@ -243,6 +267,18 @@ template <class T> std::vector <T> diff(std::vector <T> &vec_arg)
     }
 
     return (vec_diff);
+}
+
+template <typename T> T sum(const std::vector<T> &vec_arg)
+{
+    T       ret(0);
+    size_t  size = vec_arg.size();
+    for (size_t i = 0; i < size; i++)
+    {
+        ret += vec_arg[i];
+    }
+
+    return ret;
 }
 
 template <class T> matrix <T> sum(const matrix <T> &mat_arg)

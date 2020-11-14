@@ -79,18 +79,6 @@ int pow(int int_b, unsigned int uint_p)
     return int_ret;
 }
 
-unsigned int log2(unsigned short int x)
-{
-    unsigned short int r = 0;
-
-    while ((x >> r) != 0)
-    {
-        r++;
-    }
-
-    return (r - 1);
-}
-
 long int mod(long int lint_a, long int lint_mod)
 {
     return(lint_a - std::floor((float)lint_a / lint_mod) * lint_mod);
