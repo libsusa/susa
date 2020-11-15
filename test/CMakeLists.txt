@@ -25,3 +25,7 @@ target_link_libraries (ccode susa)
 add_test (NAME memory COMMAND memory)
 add_executable (memory memory.cpp)
 target_link_libraries (memory susa)
+
+add_test (NAME fft COMMAND fft)
+add_executable (fft fft.cpp)
+target_link_libraries (fft susa)

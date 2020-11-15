@@ -32,65 +32,160 @@ namespace susa {
  *
  * @ingroup Signal
  */
-template <class T> class fft {
+template <typename T, typename Enable = void>
+class fft;
+
+template <typename T>
+class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
+{
   public:
     /**
-    * @brief Fast Fourier Transform (FFT) using the radix2 algorithm
+    * @brief Fast Fourier Transform (FFT) using the radix-2 algorithm
     *
-    * @todo It only supports 2^N input size. It should cope with any vector size.
-    * @param vec_arg Input STL vector
-    * @return returns STL vector
+    * @todo it only supports 2^N input sizes. it shall cope with any vector size.
+    * @param mat_arg input matrix
+    * @return returns a matrix
     */
-    std::vector <T> radix2(std::vector <T> vec_arg);
-  private:
-    std::vector <T> bit_reverse(std::vector <T>);
-};
+    matrix <std::complex<T>> radix2(const matrix <T>& mat_arg)
+    {
+        matrix <std::complex<T>> mat_ret;
 
-
-template <class T> std::vector <T> fft<T>::radix2(std::vector <T> vec_arg)
-{
-    unsigned short int N = vec_arg.size();
-    std::vector <T> vec_BitReverse = bit_reverse(vec_arg);
-    T tTemp = 0;
-    int l   = 0;
-    unsigned short int usiStage = susa::log2(N);
-
-    for (int i = 0; i < usiStage; i++) {                    // Stage counter
-        for (int j = 0; j < (1 << (usiStage - i - 1)); j++)
-        {     // Seperated butterflies
-            l = (j == 0) ? j:j * (1 << (i + 1));
-            for (int k=0; k<(1<<i); k++)
-            {              // Adjacent butterflies
-                tTemp = vec_BitReverse[k+l];
-                vec_BitReverse[k + l] = tTemp + vec_BitReverse[k +(1 << i) + l] *
-                  exp(std::complex<double>(0,(-2 * k * PI * (1 << (usiStage - i - 1))) / N));
-
-                vec_BitReverse[k + (1 << i) + l] = tTemp - vec_BitReverse[k + (1 << i) + l] *
-                  exp(std::complex<double>(0,(-2 * k * PI * (1 << (usiStage - i - 1))) / N));
+        if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
+        {
+            mat_ret = vector_radix2(mat_arg);
+        }
+        else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
+        {
+            mat_ret = matrix <std::complex<T>> (mat_arg.shape());
+            for (size_t sz_col = 0; sz_col < mat_arg.no_cols(); sz_col++)
+            {
+                mat_ret.set_col(sz_col, vector_radix2(mat_arg.col(sz_col)));
             }
         }
+
+        return mat_ret;
     }
-    return vec_BitReverse;
-}
-
-template <class T> std::vector <T> fft<T>::bit_reverse(std::vector <T> vec_arg)
-{
-    unsigned int N = vec_arg.size();
-    unsigned short int intBR;
-    T TSwap=0;
 
 
-    for (unsigned short int i=1; i < N/2; i++ ) {
-        intBR = 0;
-        for (unsigned short int j=0; j < susa::log2(N); j++) {
-            intBR = intBR | (( i >> j)&1)<<(susa::log2(N)-j-1);
+    /**
+    * @brief Discrete Fourier Transform (DFT)
+    *
+    * @param mat_arg input matrix
+    * @return returns a matrix
+    */
+    matrix <std::complex<T>> dft(const matrix <T>& mat_arg)
+    {
+        matrix <std::complex<T>> mat_ret;
+
+        if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
+        {
+            mat_ret = vector_dft(mat_arg);
         }
-        TSwap = vec_arg[i];
-        vec_arg[i] = vec_arg[intBR];
-        vec_arg[intBR] = TSwap;
+        else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
+        {
+            mat_ret = matrix <std::complex<T>> (mat_arg.shape());
+            for (size_t sz_col = 0; sz_col < mat_arg.no_cols(); sz_col++)
+            {
+                mat_ret.set_col(sz_col, vector_dft(mat_arg.col(sz_col)));
+            }
+        }
+
+        return mat_ret;
     }
-    return vec_arg;
-}
+
+
+  private:
+
+    matrix <std::complex<T>> vector_radix2(const matrix <T>& mat_arg)
+    {
+        size_t size = mat_arg.size();
+        SUSA_ASSERT(is_power_of_two(size));
+
+        matrix <std::complex<T>> mat_bit_rev        = bit_reverse(convert_to_complex(mat_arg));
+        size_t sz_stage                             = susa::log2(size);
+
+        for (size_t stage = 1; stage <= sz_stage; stage++)
+        {
+            size_t m = std::pow(2,stage);
+            std::complex<T> w_m = std::exp(std::complex<T>(0,(T)-2 * PI / m));
+            for (size_t k = 0; k < size; k += m)
+            {
+                std::complex<T> w(1,0);
+                for (size_t j = 0; j < m/2; j++)
+                {
+                    std::complex<T> t           = w * mat_bit_rev(k + j + m/2);
+                    std::complex<T> u           = mat_bit_rev(k + j);
+                    mat_bit_rev(k + j)          = u + t;
+                    mat_bit_rev(k + j + m/2)    = u - t;
+                    w                           = w * w_m;
+                }
+            }
+        }
+
+        return mat_bit_rev;
+    }
+
+    matrix <std::complex<T>> vector_dft(const matrix <T>& mat_arg)
+    {
+        size_t size = mat_arg.size();
+        matrix <std::complex<T>> mat_ret(size,1);
+
+        for (size_t k = 0; k < size; k++)
+        {
+            for (size_t n = 0; n < size; n++)
+            {
+                mat_ret(k) += mat_arg(n) * std::exp(std::complex<T>(0, (T)-2 * PI * n * k / size));
+            }
+        }
+
+        return mat_ret;
+    }
+
+    template <typename U>
+    matrix <U> bit_reverse(matrix <U> mat_arg)
+    {
+        size_t  n       = mat_arg.size();
+        size_t  n_bits  = susa::log2(n);
+        U       U_swap  = 0;
+        size_t  sz_brev;
+
+
+        for (size_t indx=1; indx < n; indx++)
+        {
+            sz_brev = 0;
+            for (size_t j=0; j < n_bits; j++)
+            {
+                sz_brev |= (( indx >> j) & 1U) << (n_bits - j - 1);
+            }
+            if (sz_brev > indx)
+            {
+                U_swap = mat_arg(indx);
+                mat_arg(indx) = mat_arg(sz_brev);
+                mat_arg(sz_brev) = U_swap;
+            }
+        }
+        return mat_arg;
+    }
+
+    matrix <std::complex<T>> convert_to_complex(const matrix <T>& mat_arg)
+    {
+        size_t size = mat_arg.size();
+        matrix <std::complex<T>> ret(size,1);
+
+        for (size_t indx = 0; indx < size; indx++)
+        {
+            ret(indx) = std::complex<T>(mat_arg(indx),0);
+        }
+
+        return ret;
+    }
+
+    bool is_power_of_two(size_t arg)
+    {
+        return arg && (!(arg & (arg - 1)));
+    }
+};
+
 
 } // NAMESPACE SUSA
 #endif // SUSA_FFT_H
