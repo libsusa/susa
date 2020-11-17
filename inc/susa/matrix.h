@@ -26,7 +26,6 @@
  * It has the necessary memeory management mechanisms to release the allocated memory.
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #ifndef SUSA_MATRIX_H
@@ -44,30 +43,30 @@ namespace susa
 
 void pre_parser(std::string& str_string);
 
-template <class T> class matrix;
+template <typename T, typename Allocator> class matrix;
 
-template <class T>  matrix <T> operator-( const matrix <T>&, T );
-template <class T>  matrix <T> operator-( T, const matrix <T>& );
-template <class T>  matrix <T> operator-( const matrix <T>&, const matrix <T>& );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator-( const matrix <T, Allocator>&, T );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator-( T, const matrix <T, Allocator>& );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator-( const matrix <T, Allocator>&, const matrix <T, Allocator>& );
 
-template <class T>  matrix <T> operator+( const matrix <T>&, T );
-template <class T>  matrix <T> operator+( T, const matrix <T>& );
-template <class T>  matrix <T> operator+( const matrix <T>&,const matrix <T>& );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator+( const matrix <T, Allocator>&, T );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator+( T, const matrix <T, Allocator>& );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator+( const matrix <T, Allocator>&,const matrix <T, Allocator>& );
 
-template <class T>  matrix <T> operator*( const matrix <T>&, T );
-template <class T>  matrix <T> operator*( T, const matrix <T>& );
-template <class T>  matrix <T> operator*( const matrix <T>&,const matrix <T>& );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator*( const matrix <T, Allocator>&, T );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator*( T, const matrix <T, Allocator>& );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator*( const matrix <T, Allocator>&,const matrix <T, Allocator>& );
 
-template <class T>  matrix <T> operator/( const matrix <T>&, T );
-template <class T>  matrix <T> operator/( T, const matrix <T>& );
-template <class T>  matrix <T> operator/( const matrix <T>&,const matrix <T>& );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator/( const matrix <T, Allocator>&, T );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator/( T, const matrix <T, Allocator>& );
+template <typename T, typename Allocator>  matrix <T, Allocator> operator/( const matrix <T, Allocator>&,const matrix <T, Allocator>& );
 
-template <class T> std::ostream &operator<<(std::ostream &, const matrix <T> &);
-template <class T> std::istream &operator>>(std::istream &, matrix <T> &);
+template <typename T, typename Allocator> std::ostream &operator<<(std::ostream &, const matrix <T, Allocator> &);
+template <typename T, typename Allocator> std::istream &operator>>(std::istream &, matrix <T, Allocator> &);
 
 
-template <class T> matrix <T> matmul(const matrix <T> &mat_argl,const matrix <T> &mat_argr);
-template <class T> matrix <T> transpose(const matrix <T> &mat_arg);
+template <typename T, typename Allocator> matrix <T, Allocator> matmul(const matrix <T, Allocator> &mat_argl,const matrix <T, Allocator> &mat_argr);
+template <typename T, typename Allocator> matrix <T, Allocator> transpose(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief The <i>matrix</i> class.
@@ -82,13 +81,15 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg);
  * @ingroup TYPES
  *
  */
-template <class T> class matrix : public susa::memory <T>
+template <typename T, typename Allocator = std::allocator <T>> class matrix
 {
   private:
-    size_t  sizet_rows;
-    size_t  sizet_cols;
-
-    T* T_fake;
+    size_t          sizet_rows;
+    size_t          sizet_cols;
+    size_t          sizet_objects;
+    T*              T_fake;
+    Allocator       alloc;
+    T*              _matrix;
 
     // UTILITY METHODS
 
@@ -138,10 +139,10 @@ template <class T> class matrix : public susa::memory <T>
     matrix(const std::tuple <size_t,size_t>& tshape, T Tinitial);
 
     //! Copy constructor
-    matrix(const matrix <T> &mat_arg);
+    matrix(const matrix <T, Allocator> &mat_arg);
 
     //! Copy Constructor for rvalues
-    matrix(matrix <T> &&mat_arg) noexcept;
+    matrix(matrix <T, Allocator> &&mat_arg) noexcept;
 
     //! Destructor
     ~matrix() noexcept;
@@ -195,7 +196,7 @@ template <class T> class matrix : public susa::memory <T>
      * @param row the row index
      * @param mat_arg the input matrix
      */
-    bool set_row(size_t row, const matrix <T>& mat_arg);
+    bool set_row(size_t row, const matrix <T, Allocator>& mat_arg);
 
     /**
      * @brief set a column
@@ -204,7 +205,7 @@ template <class T> class matrix : public susa::memory <T>
      * @param col the column index
      * @param mat_arg the input matrix
      */
-    bool set_col(size_t col, const matrix <T>& mat_arg);
+    bool set_col(size_t col, const matrix <T, Allocator>& mat_arg);
 
     /**
      * @brief get a column as std::vector
@@ -236,76 +237,79 @@ template <class T> class matrix : public susa::memory <T>
     void set_all(T T_arg);
 
     //! Returns the indicated row
-    matrix <T> row(size_t sizet_row) const;
+    matrix <T, Allocator> row(size_t sizet_row) const;
 
     //! Returns the indicated column
-    matrix <T> col(size_t sizet_col) const;
+    matrix <T, Allocator> col(size_t sizet_col) const;
+
+    //! Returns the number of allocated objects.
+    size_t size() const;
 
     //! Returns a matrix after eliminating the specified column and the row
-    matrix <T> shrink(size_t sizet_row, size_t sizet_col) const;
+    matrix <T, Allocator> shrink(size_t sizet_row, size_t sizet_col) const;
 
     //! Resize the matrix to the newly specified dimensions
     bool resize(size_t sizet_row, size_t sizet_col);
 
     //! Considers the matrix object as a vector and return left side of that vector
-    matrix <T> left(size_t sizet_left) const;
+    matrix <T, Allocator> left(size_t sizet_left) const;
 
     //! Considers the matrix object as a vector and return right side of that vector
-    matrix <T> right(size_t sizet_right) const;
+    matrix <T, Allocator> right(size_t sizet_right) const;
 
     //! Considers the matrix object as a vector and return mid part of that vector
-    matrix <T> mid(size_t sizet_begin, size_t sizet_end) const;
+    matrix <T, Allocator> mid(size_t sizet_begin, size_t sizet_end) const;
 
     //! Element wise Assignment by Addition operator
-    matrix <T> operator+=( const matrix <T> &mat_arg );
+    matrix <T, Allocator> operator+=( const matrix <T, Allocator> &mat_arg );
 
     //! Element wise Assignment by Subtraction
-    matrix <T> operator-=( const matrix <T> &mat_arg );
+    matrix <T, Allocator> operator-=( const matrix <T, Allocator> &mat_arg );
 
     //! Element wise Assignment operator
-    matrix <T>& operator=( const matrix <T> &mat_arg );
+    matrix <T, Allocator>& operator=( const matrix <T, Allocator> &mat_arg );
 
     //! Element wise Assignment operator
-    matrix <T>& operator=( std::string str_string );
+    matrix <T, Allocator>& operator=( std::string str_string );
 
     //! Element wise Subtraction operator
-    friend matrix <T> operator-<>( const matrix <T> &mat_argl, T T_arg);
+    friend matrix <T, Allocator> operator-<>( const matrix <T, Allocator> &mat_argl, T T_arg);
 
     //! Element wise Subtraction operator
-    friend matrix <T> operator-<>( T T_arg, const matrix <T> &mat_argr );
+    friend matrix <T, Allocator> operator-<>( T T_arg, const matrix <T, Allocator> &mat_argr );
 
     //! Element wise Subtraction operator
-    friend matrix <T> operator-<>( const matrix <T> &mat_argl, const matrix <T> &mat_argr);
+    friend matrix <T, Allocator> operator-<>( const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr);
 
     //! Element wise Addition operator
-    friend matrix <T> operator+<>( const matrix <T> &mat_argl, T T_arg );
+    friend matrix <T, Allocator> operator+<>( const matrix <T, Allocator> &mat_argl, T T_arg );
 
     //! Element wise Addition operator
-    friend matrix <T> operator+<>( T T_arg, const matrix <T> &mat_argr );
+    friend matrix <T, Allocator> operator+<>( T T_arg, const matrix <T, Allocator> &mat_argr );
 
     //! Element wise Addition operator
-    friend matrix <T> operator+<>( const matrix <T> &mat_argl, const matrix <T> &mat_argr);
+    friend matrix <T, Allocator> operator+<>( const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr);
 
     //! Element wise Multiplication  operator
-    friend matrix <T> operator*<>( const matrix <T> &mat_argl, T T_arg);
+    friend matrix <T, Allocator> operator*<>( const matrix <T, Allocator> &mat_argl, T T_arg);
 
     //! Element wise Multiplication  operator
-    friend matrix <T> operator*<>( T T_arg, const matrix <T> &mat_argr );
+    friend matrix <T, Allocator> operator*<>( T T_arg, const matrix <T, Allocator> &mat_argr );
 
     //! Element wise Multiplication  operator
-    friend matrix <T> operator*<>( const matrix <T> &mat_argl, const matrix <T> &mat_argr );
+    friend matrix <T, Allocator> operator*<>( const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr );
 
     //! Element wise Division operator
-    friend matrix <T> operator/<>( const matrix <T> &mat_argl, T T_arg);
+    friend matrix <T, Allocator> operator/<>( const matrix <T, Allocator> &mat_argl, T T_arg);
 
     //! Element wise Division operator
-    friend matrix <T> operator/<>( const matrix <T> &mat_argl, const matrix <T> &mat_argr);
+    friend matrix <T, Allocator> operator/<>( const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr);
 
     //! Output stream
-    friend std::ostream &operator<< <>(std::ostream &outStream, const matrix <T> &mat_arg);
+    friend std::ostream &operator<< <>(std::ostream &outStream, const matrix <T, Allocator> &mat_arg);
 
     //! Input stream
-    friend std::istream &operator>> <>(std::istream &inStream, matrix <T> &mat_arg);
+    friend std::istream &operator>> <>(std::istream &inStream, matrix <T, Allocator> &mat_arg);
 
     //! () operator to set or get elements
     T &operator ()( size_t sizet_row, size_t sizet_col );
@@ -342,121 +346,124 @@ template <class T> class matrix : public susa::memory <T>
     // Friend methods are used to speed up matrix operations.
     // Because they can access '_matrix' directly.
     // They are defined in 'linalg.h'
-    friend matrix <T> matmul <> (const matrix <T> &mat_argl, const matrix <T> &mat_argr);
-    friend matrix <T> transpose <> (const matrix <T> &mat_arg);
+    friend matrix <T, Allocator> matmul <> (const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr);
+    friend matrix <T, Allocator> transpose <> (const matrix <T, Allocator> &mat_arg);
 
 
-    friend bool operator!=( const susa::matrix <T> &mat_argl, const susa::matrix <T> &mat_argr)
+    friend bool operator!=( const susa::matrix <T, Allocator> &mat_argl, const susa::matrix <T, Allocator> &mat_argr)
     {
-      for (size_t sizet_indx = 0; sizet_indx < mat_argl.sizet_objects; sizet_indx++)
-      {
-          if (mat_argl._matrix[sizet_indx] != mat_argr._matrix[sizet_indx]) return true;
-      }
+        if (mat_argl.shape() != mat_argr.shape()) return true;
 
-      return false;
+        for (size_t sizet_indx = 0; sizet_indx < mat_argl.sizet_objects; sizet_indx++)
+        {
+            if (mat_argl._matrix[sizet_indx] != mat_argr._matrix[sizet_indx]) return true;
+        }
+
+        return false;
     }
 
-    friend bool operator==( const susa::matrix <T> &mat_argl, const susa::matrix <T> &mat_argr)
+    friend bool operator==( const susa::matrix <T, Allocator> &mat_argl, const susa::matrix <T, Allocator> &mat_argr)
     {
-      for (size_t sizet_indx = 0; sizet_indx < mat_argl.sizet_objects; sizet_indx++)
-      {
-          if (mat_argl._matrix[sizet_indx] != mat_argr._matrix[sizet_indx]) return false;
-      }
+        if (mat_argl.shape() != mat_argr.shape()) return false;
 
-      return true;
+        for (size_t sizet_indx = 0; sizet_indx < mat_argl.sizet_objects; sizet_indx++)
+        {
+            if (mat_argl._matrix[sizet_indx] != mat_argr._matrix[sizet_indx]) return false;
+        }
+
+        return true;
     }
 };
 
-// Constructor and Destructor
+// Constructors and Destructor
 
-template <class T> matrix <T>::matrix()
-: susa::memory<T>()
+template <typename T, typename Allocator> matrix <T, Allocator>::matrix()
+: sizet_rows(0)
+, sizet_cols(0)
+, sizet_objects(0)
 , T_fake(new T)
+, alloc()
+, _matrix(nullptr)
 {
-  sizet_rows = 0;
-  sizet_cols = 0;
+
 }
 
-template <class T> matrix <T>::matrix(size_t sizet_rows, size_t sizet_cols, T Tinitial)
-: susa::memory<T>()
-, T_fake(new T)
+template <typename T, typename Allocator> matrix <T, Allocator>::matrix(size_t sizet_rows, size_t sizet_cols, T Tinitial)
+: T_fake(new T)
+, alloc()
+, _matrix(nullptr)
 {
 
   SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
 
   this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
   this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
+  sizet_objects = this->sizet_rows * this->sizet_cols;
 
-  this->allocate(this->sizet_rows * this->sizet_cols);
+  _matrix = alloc.allocate(sizet_objects);
+  SUSA_ASSERT(_matrix != nullptr);
 
   for (size_t sizet_index = 0; sizet_index < this->sizet_objects; sizet_index++)
   {
-      this->_matrix[sizet_index] = Tinitial;
+    _matrix[sizet_index] = Tinitial;
   }
 
 }
 
-template <class T> matrix <T>::matrix( size_t sizet_rows, size_t sizet_cols )
-: susa::memory<T>()
-, T_fake(new T)
+template <typename T, typename Allocator> matrix <T, Allocator>::matrix( size_t sizet_rows, size_t sizet_cols )
+: T_fake(new T)
+, alloc()
 {
     SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
-
     this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
     this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
-
-    this->allocate(this->sizet_rows * this->sizet_cols);
+    sizet_objects = this->sizet_rows * this->sizet_cols;
+    _matrix = alloc.allocate(sizet_objects);
+    SUSA_ASSERT(_matrix != nullptr);
 }
 
-template <class T> matrix <T>::matrix(const matrix <T> &mat_arg)
-: susa::memory <T> (mat_arg)
-, T_fake(new T)
+template <typename T, typename Allocator> matrix <T, Allocator>::matrix(const matrix <T, Allocator> &mat_arg)
+: T_fake(new T)
+, alloc(mat_arg.alloc)
 {
-
-  if (this->_matrix != nullptr)
-  {
-      this->sizet_rows = mat_arg.sizet_rows;
-      this->sizet_cols = mat_arg.sizet_cols;
-  }
-  else
-  {
-      this->sizet_rows = 0;
-      this->sizet_cols = 0;
-  }
-
+    this->sizet_rows      = mat_arg.sizet_rows;
+    this->sizet_cols      = mat_arg.sizet_cols;
+    this->sizet_objects   = mat_arg.sizet_objects;
+    _matrix               = alloc.allocate(sizet_objects);
+    SUSA_ASSERT(_matrix != nullptr);
+    std::memcpy(_matrix, mat_arg._matrix, sizet_objects * sizeof(T));
 }
 
-template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t>& tshape)
-: susa::memory<T>()
-, T_fake(new T)
+template <typename T, typename Allocator> matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape)
+: T_fake(new T)
 {
     size_t sizet_rows;
     size_t sizet_cols;
     std::tie(sizet_rows, sizet_cols) = tshape;
 
     SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
-
     this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
     this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
+    sizet_objects = this->sizet_rows * this->sizet_cols;
 
-    this->allocate(this->sizet_rows * this->sizet_cols);
-
+    _matrix = alloc.allocate(this->sizet_rows * this->sizet_cols);
+    SUSA_ASSERT(_matrix != nullptr);
 }
 
-template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t>& tshape, T Tinitial)
-: susa::memory<T>()
-, T_fake(new T)
+template <typename T, typename Allocator> matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape, T Tinitial)
+: T_fake(new T)
 {
     size_t sizet_rows;
     size_t sizet_cols;
     std::tie(sizet_rows, sizet_cols) = tshape;
 
     SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
+    this->sizet_rows    = sizet_rows < 2 ? 1 : sizet_rows;
+    this->sizet_cols    = sizet_cols < 2 ? 1 : sizet_cols;
+    sizet_objects       = this->sizet_rows * this->sizet_cols;
 
-    this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
-    this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
-
-    this->allocate(this->sizet_rows * this->sizet_cols);
+    _matrix             = alloc.allocate(this->sizet_rows * this->sizet_cols);
+    SUSA_ASSERT(_matrix != nullptr);
 
     for (size_t sizet_index = 0; sizet_index < this->sizet_objects; sizet_index++)
     {
@@ -464,92 +471,93 @@ template <class T> matrix <T>::matrix(const std::tuple<size_t, size_t>& tshape, 
     }
 }
 
-template <class T> matrix <T>::matrix(matrix<T>&& mat_arg) noexcept
-: susa::memory <T> (std::move(mat_arg))
+template <typename T, typename Allocator> matrix <T, Allocator>::matrix(matrix<T, Allocator>&& mat_arg) noexcept
 {
-  sizet_rows          = mat_arg.sizet_rows;
-  sizet_cols          = mat_arg.sizet_cols;
-  T_fake              = mat_arg.T_fake;
-  mat_arg.T_fake      = nullptr;
+    sizet_rows          = mat_arg.sizet_rows;
+    sizet_cols          = mat_arg.sizet_cols;
+    sizet_objects       = mat_arg.sizet_objects;
+    T_fake              = mat_arg.T_fake;
+    T_fake              = mat_arg.T_fake;
+    _matrix             = mat_arg._matrix;
+    mat_arg.T_fake      = nullptr;
+    mat_arg._matrix     = nullptr;
 }
 
 
-template <class T> matrix <T>::matrix(std::string str_string)
-: T_fake(new T)
+template <typename T, typename Allocator> matrix <T, Allocator>::matrix(std::string str_string)
+: sizet_rows(0)
+, sizet_cols(0)
+, sizet_objects(0)
+, T_fake(new T)
+, alloc()
+, _matrix(nullptr)
 {
-  sizet_rows     = 0;
-  sizet_cols     = 0;
-  this->_matrix = NULL;
-
   parser(str_string);
 }
 
-template <class T> matrix <T>::~matrix() noexcept
+template <typename T, typename Allocator> matrix <T, Allocator>::~matrix() noexcept
 {
-    delete T_fake;
+    if (T_fake != nullptr) delete T_fake;
+    if (_matrix != nullptr) alloc.deallocate(_matrix, sizet_objects);
 }
 
 // Public methods
 
-template <class T> T matrix <T>::get( size_t sizet_row, size_t sizet_col ) const
+template <typename T, typename Allocator> T matrix <T, Allocator>::get( size_t sizet_row, size_t sizet_col ) const
 {
-
-  SUSA_ASSERT(this->_matrix != NULL);
+  SUSA_ASSERT(_matrix != nullptr);
 
   SUSA_ASSERT_MESSAGE(sizet_row < sizet_rows && sizet_col < sizet_cols, "one or more indices is/are out of range.");
 
-  return this->_matrix[get_lindex(sizet_row,sizet_col)];
-
+  return _matrix[get_lindex(sizet_row,sizet_col)];
 }
 
-template <class T> T matrix <T>::get( size_t sizet_elem ) const
+template <typename T, typename Allocator> T matrix <T, Allocator>::get( size_t sizet_elem ) const
 {
-
-  SUSA_ASSERT(this->_matrix != NULL);
+  SUSA_ASSERT(_matrix != nullptr);
 
   SUSA_ASSERT_MESSAGE(sizet_elem < this->sizet_objects, "the element index is out of range.");
 
   return this->_matrix[sizet_elem];
-
 }
 
-template <class T> inline size_t matrix <T>::get_lindex(size_t sizet_row, size_t sizet_col) const
+template <typename T, typename Allocator> inline size_t matrix <T, Allocator>::get_lindex(size_t sizet_row, size_t sizet_col) const
 {
     return (sizet_row + sizet_col * sizet_rows);
 }
 
 
-template <class T> size_t inline matrix <T>::no_cols() const
+template <typename T, typename Allocator> size_t inline matrix <T, Allocator>::no_cols() const
 {
     return sizet_cols;
 }
 
-template <class T> size_t inline matrix <T>::no_rows() const
+template <typename T, typename Allocator> size_t inline matrix <T, Allocator>::no_rows() const
 {
     return sizet_rows;
 }
 
-template <class T>  std::tuple<size_t, size_t> matrix<T>::shape() const
+template <typename T, typename Allocator>  std::tuple<size_t, size_t> matrix<T, Allocator>::shape() const
 {
     return std::make_tuple(sizet_rows, sizet_cols);
 }
 
-template <class T> bool  matrix <T>::is_square() const
+template <typename T, typename Allocator> bool  matrix <T, Allocator>::is_square() const
 {
     return (sizet_rows == sizet_cols);
 }
 
-template <class T> bool  matrix <T>::is_vector() const
+template <typename T, typename Allocator> bool  matrix <T, Allocator>::is_vector() const
 {
     return ((sizet_rows == 1 && sizet_cols > 1 ) || ( sizet_rows > 1 && sizet_cols == 1));
 }
 
-template <class T> bool  matrix <T>::is_scalar() const
+template <typename T, typename Allocator> bool  matrix <T, Allocator>::is_scalar() const
 {
     return (sizet_rows == 1 && sizet_cols == 1);
 }
 
-template <class T> void  matrix <T>::set_all(T T_arg)
+template <typename T, typename Allocator> void  matrix <T, Allocator>::set_all(T T_arg)
 {
     for (size_t sizet_counter = 0; sizet_counter < this->sizet_objects; sizet_counter++)
     {
@@ -557,9 +565,9 @@ template <class T> void  matrix <T>::set_all(T T_arg)
     }
 }
 
-template <class T> matrix <T> matrix <T>::row(size_t sizet_row) const
+template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::row(size_t sizet_row) const
 {
-    matrix <T> mat_ret(1, sizet_cols);
+    matrix <T, Allocator> mat_ret(1, sizet_cols);
 
     if (sizet_row < sizet_rows)
     {
@@ -572,9 +580,9 @@ template <class T> matrix <T> matrix <T>::row(size_t sizet_row) const
     return mat_ret;
 }
 
-template <class T> matrix <T> matrix <T>::col(size_t sizet_col) const
+template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::col(size_t sizet_col) const
 {
-    matrix <T> mat_ret(sizet_rows, 1);
+    matrix <T, Allocator> mat_ret(sizet_rows, 1);
 
     if (sizet_col < sizet_cols)
     {
@@ -587,7 +595,12 @@ template <class T> matrix <T> matrix <T>::col(size_t sizet_col) const
     return mat_ret;
 }
 
-template <class T> bool matrix <T>::set_row(size_t row, const matrix <T>& mat_arg)
+template <typename T, typename Allocator> size_t matrix <T, Allocator>::size() const
+{
+    return sizet_objects;
+}
+
+template <typename T, typename Allocator> bool matrix <T, Allocator>::set_row(size_t row, const matrix <T, Allocator>& mat_arg)
 {
     SUSA_ASSERT_MESSAGE((row < sizet_rows || mat_arg.sizet_objects >= sizet_cols), "dimention mismatch");
     if (row > sizet_rows || mat_arg.sizet_objects < sizet_cols) return false;
@@ -600,7 +613,7 @@ template <class T> bool matrix <T>::set_row(size_t row, const matrix <T>& mat_ar
     return true;
 }
 
-template <class T> bool matrix <T>::set_col(size_t col, const matrix <T>& mat_arg)
+template <typename T, typename Allocator> bool matrix <T, Allocator>::set_col(size_t col, const matrix <T, Allocator>& mat_arg)
 {
     SUSA_ASSERT_MESSAGE((col < sizet_cols || mat_arg.sizet_objects >= sizet_rows), "dimension mismatch");
     if (col > sizet_cols || mat_arg.sizet_objects < sizet_rows) return false;
@@ -613,7 +626,7 @@ template <class T> bool matrix <T>::set_col(size_t col, const matrix <T>& mat_ar
     return true;
 }
 
-template <class T> std::vector <T> matrix <T>::get_col_as_vec(size_t col)
+template <typename T, typename Allocator> std::vector <T> matrix <T, Allocator>::get_col_as_vec(size_t col)
 {
     std::vector<T> ret(sizet_rows);
     for (size_t indx = 0; indx < sizet_rows; indx++)
@@ -624,7 +637,7 @@ template <class T> std::vector <T> matrix <T>::get_col_as_vec(size_t col)
     return ret;
 }
 
-template <class T> std::vector <T> matrix <T>::get_row_as_vec(size_t row)
+template <typename T, typename Allocator> std::vector <T> matrix <T, Allocator>::get_row_as_vec(size_t row)
 {
     std::vector<T> ret(sizet_cols);
     for (size_t indx = 0; indx < sizet_cols; indx++)
@@ -635,7 +648,7 @@ template <class T> std::vector <T> matrix <T>::get_row_as_vec(size_t row)
     return ret;
 }
 
-template <class T> void matrix <T>::swap_cols(size_t col_a, size_t col_b)
+template <typename T, typename Allocator> void matrix <T, Allocator>::swap_cols(size_t col_a, size_t col_b)
 {
     T T_tmp;
 
@@ -648,7 +661,7 @@ template <class T> void matrix <T>::swap_cols(size_t col_a, size_t col_b)
 
 }
 
-template <class T> void matrix <T>::swap_rows(size_t row_a, size_t row_b)
+template <typename T, typename Allocator> void matrix <T, Allocator>::swap_rows(size_t row_a, size_t row_b)
 {
     T T_tmp;
 
@@ -660,10 +673,10 @@ template <class T> void matrix <T>::swap_rows(size_t row_a, size_t row_b)
     }
 }
 
-template <class T> matrix <T> matrix <T>::shrink(size_t sizet_elim_row, size_t sizet_elim_col) const
+template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::shrink(size_t sizet_elim_row, size_t sizet_elim_col) const
 {
 
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
 
     size_t sizet_new_col;
     size_t sizet_new_row;
@@ -675,7 +688,7 @@ template <class T> matrix <T> matrix <T>::shrink(size_t sizet_elim_row, size_t s
 
     if (sizet_cols > 1 && sizet_rows > 1 && sizet_elim_row >= 0 && sizet_elim_col >= 0)
     {
-        mat_ret = matrix <T> (sizet_rows - 1,sizet_cols - 1);
+        mat_ret = matrix <T, Allocator> (sizet_rows - 1,sizet_cols - 1);
     }
     else
     {
@@ -712,31 +725,30 @@ template <class T> matrix <T> matrix <T>::shrink(size_t sizet_elim_row, size_t s
     return mat_ret;
 }
 
-template <class T> bool matrix <T>::resize( size_t sizet_rows, size_t sizet_cols )
+template <typename T, typename Allocator> bool matrix <T, Allocator>::resize( size_t sizet_rows, size_t sizet_cols )
 {
     SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
 
-    this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
-    this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
+    this->sizet_rows    = sizet_rows < 2 ? 1 : sizet_rows;
+    this->sizet_cols    = sizet_cols < 2 ? 1 : sizet_cols;
+    this->sizet_objects = this->sizet_rows * this->sizet_cols;
+    _matrix = alloc.allocate(sizet_objects);
 
-    this->allocate(this->sizet_rows * this->sizet_cols);
-
-    // The design is to exit if the memory allocation
-    // in susa::memory<T> fails. Thus the returned value
-    // is not taken into account even if it is being tested.
+    // The design is to exit if the memory allocation fails.
+    // Thus the returned value is not taken into account even if it is being tested.
     return true;
 }
 
-template <class T> matrix <T> matrix <T>::left(size_t sizet_left) const
+template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::left(size_t sizet_left) const
 {
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
 
     SUSA_ASSERT(this->sizet_objects >= sizet_left);
 
     if (this->sizet_objects >= sizet_left)
     {
-        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1,sizet_left);
-        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_left,1);
+        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T, Allocator> (1,sizet_left);
+        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T, Allocator> (sizet_left,1);
         else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
 
         for (size_t sizet_i = 0; sizet_i < sizet_left; sizet_i++)
@@ -749,16 +761,16 @@ template <class T> matrix <T> matrix <T>::left(size_t sizet_left) const
 }
 
 
-template <class T> matrix <T> matrix <T>::right(size_t sizet_right) const
+template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::right(size_t sizet_right) const
 {
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
 
     SUSA_ASSERT(this->sizet_objects >= sizet_right);
     if (this->sizet_objects < sizet_right) return mat_ret;
     else if (this->sizet_objects == sizet_right) return *this;
 
-    if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix<T>(1, sizet_right);
-    else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix<T>(sizet_right, 1);
+    if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix<T, Allocator>(1, sizet_right);
+    else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix<T, Allocator>(sizet_right, 1);
     else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
 
     for (size_t sizet_i = this->sizet_objects; sizet_i > (this->sizet_objects - sizet_right); sizet_i--)
@@ -770,17 +782,17 @@ template <class T> matrix <T> matrix <T>::right(size_t sizet_right) const
 }
 
 
-template <class T> matrix <T> matrix <T>::mid(size_t sizet_begin, size_t sizet_end) const
+template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::mid(size_t sizet_begin, size_t sizet_end) const
 {
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
     size_t sizet_mid = sizet_end - sizet_begin;
 
     SUSA_ASSERT(this->sizet_objects > sizet_begin && this->sizet_objects > sizet_end && sizet_end > sizet_begin);
 
     if (this->sizet_objects > sizet_begin && this->sizet_objects > sizet_end && sizet_end > sizet_begin)
     {
-        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T> (1, sizet_mid + 1);
-        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T> (sizet_mid + 1, 1);
+        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T, Allocator> (1, sizet_mid + 1);
+        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T, Allocator> (sizet_mid + 1, 1);
         else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
 
         for (size_t sizet_i = sizet_begin; sizet_i <= sizet_end; sizet_i++)
@@ -795,7 +807,7 @@ template <class T> matrix <T> matrix <T>::mid(size_t sizet_begin, size_t sizet_e
 // Operators
 
 //  ()
-template <class T> T &matrix<T>::operator ()( size_t sizet_row, size_t sizet_col )
+template <typename T, typename Allocator> T &matrix<T, Allocator>::operator ()( size_t sizet_row, size_t sizet_col )
 {
 
   SUSA_ASSERT(this->_matrix != NULL);
@@ -810,33 +822,33 @@ template <class T> T &matrix<T>::operator ()( size_t sizet_row, size_t sizet_col
   return *T_fake;
 }
 
-template <class T> T matrix<T>::operator ()( size_t sizet_row, size_t sizet_col ) const
+template <typename T, typename Allocator> T matrix<T, Allocator>::operator ()( size_t sizet_row, size_t sizet_col ) const
 {
   return get(sizet_row, sizet_col);
 }
 
-template <class T> T &matrix<T>::operator ()( size_t sizet_elem )
+template <typename T, typename Allocator> T &matrix<T, Allocator>::operator ()( size_t sizet_elem )
 {
 
-    SUSA_ASSERT(this->_matrix != NULL);
+    SUSA_ASSERT(_matrix != nullptr);
 
-    SUSA_ASSERT_MESSAGE(sizet_elem < this->sizet_objects, "the index is out of range.");
+    SUSA_ASSERT_MESSAGE(sizet_elem < sizet_objects, "the index is out of range.");
 
-    if (sizet_elem < this->sizet_objects && this->_matrix != NULL)
+    if (sizet_elem < sizet_objects && _matrix != nullptr)
     {
-      return this->_matrix[sizet_elem];
+      return _matrix[sizet_elem];
     }
 
     return *T_fake;
 }
 
-template <class T> T matrix<T>::operator ()( size_t sizet_elem ) const
+template <typename T, typename Allocator> T matrix<T, Allocator>::operator ()( size_t sizet_elem ) const
 {
   return get(sizet_elem);
 }
 
 // Typecasting
-template <class T> matrix<T>::operator matrix <double> ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <double> ()
 {
 
     matrix <double> mat_ret(sizet_rows, sizet_cols);
@@ -849,7 +861,7 @@ template <class T> matrix<T>::operator matrix <double> ()
     return mat_ret;
 }
 
-template <class T> matrix<T>::operator matrix <float> ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <float> ()
 {
 
     matrix <float> mat_ret(sizet_rows, sizet_cols);
@@ -861,7 +873,7 @@ template <class T> matrix<T>::operator matrix <float> ()
     return mat_ret;
 }
 
-template <class T> matrix<T>::operator matrix <int> ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <int> ()
 {
 
     matrix <int> mat_ret(sizet_rows, sizet_cols);
@@ -874,7 +886,7 @@ template <class T> matrix<T>::operator matrix <int> ()
 }
 
 
-template <class T> matrix<T>::operator matrix <char> ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <char> ()
 {
 
     matrix <char> mat_ret(sizet_rows, sizet_cols);
@@ -886,7 +898,7 @@ template <class T> matrix<T>::operator matrix <char> ()
     return mat_ret;
 }
 
-template <class T> matrix<T>::operator matrix <unsigned char> ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <unsigned char> ()
 {
 
     matrix <unsigned char> mat_ret(sizet_rows, sizet_cols);
@@ -898,7 +910,7 @@ template <class T> matrix<T>::operator matrix <unsigned char> ()
     return mat_ret;
 }
 
-template <class T> matrix<T>::operator matrix <std::complex <double> > ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <double> > ()
 {
 
     matrix <std::complex <double> > mat_ret(sizet_rows, sizet_cols);
@@ -910,7 +922,7 @@ template <class T> matrix<T>::operator matrix <std::complex <double> > ()
     return mat_ret;
 }
 
-template <class T> matrix<T>::operator matrix <std::complex <float> > ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <float> > ()
 {
 
     matrix <std::complex <float> > mat_ret(sizet_rows, sizet_cols);
@@ -922,7 +934,7 @@ template <class T> matrix<T>::operator matrix <std::complex <float> > ()
     return mat_ret;
 }
 
-template <class T> matrix<T>::operator matrix <std::complex <int> > ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <int> > ()
 {
 
     matrix <std::complex <int> > mat_ret(sizet_rows, sizet_cols);
@@ -934,7 +946,7 @@ template <class T> matrix<T>::operator matrix <std::complex <int> > ()
     return mat_ret;
 }
 
-template <class T> matrix<T>::operator matrix <std::complex <char> > ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <char> > ()
 {
 
     matrix <std::complex <char> > mat_ret(sizet_rows, sizet_cols);
@@ -946,7 +958,7 @@ template <class T> matrix<T>::operator matrix <std::complex <char> > ()
     return mat_ret;
 }
 
-template <class T> matrix<T>::operator matrix <std::complex <unsigned char> > ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <unsigned char> > ()
 {
 
     matrix <std::complex <unsigned char> > mat_ret(sizet_rows, sizet_cols);
@@ -959,10 +971,10 @@ template <class T> matrix<T>::operator matrix <std::complex <unsigned char> > ()
 }
 
 //  +
-template <class T> matrix<T> operator+(const matrix <T> &mat_argl, const matrix <T> &mat_argr)
+template <typename T, typename Allocator> matrix<T, Allocator> operator+(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
 
-    matrix <T> mat_ret(mat_argl.sizet_rows, mat_argl.sizet_cols);
+    matrix <T, Allocator> mat_ret(mat_argl.sizet_rows, mat_argl.sizet_cols);
     size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
 
     SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
@@ -980,10 +992,10 @@ template <class T> matrix<T> operator+(const matrix <T> &mat_argl, const matrix 
     return mat_ret;
 }
 
-template <class T> matrix<T> operator+( const matrix <T> &mat_argl, T T_arg )
+template <typename T, typename Allocator> matrix<T, Allocator> operator+( const matrix <T, Allocator> &mat_argl, T T_arg )
 {
 
-    matrix <T> mat_ret(mat_argl.shape());
+    matrix <T, Allocator> mat_ret(mat_argl.shape());
     size_t sizet_size = mat_argl.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
@@ -994,10 +1006,10 @@ template <class T> matrix<T> operator+( const matrix <T> &mat_argl, T T_arg )
     return mat_ret;
 }
 
-template <class T> matrix<T> operator+( T T_arg, const matrix <T> &mat_argr )
+template <typename T, typename Allocator> matrix<T, Allocator> operator+( T T_arg, const matrix <T, Allocator> &mat_argr )
 {
 
-    matrix <T> mat_ret(mat_argr.shape());
+    matrix <T, Allocator> mat_ret(mat_argr.shape());
     size_t sizet_size = mat_argr.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
@@ -1011,10 +1023,10 @@ template <class T> matrix<T> operator+( T T_arg, const matrix <T> &mat_argr )
 
 
 //  -
-template <class T> matrix<T> operator-( const matrix <T> &mat_argl, const matrix <T> &mat_argr)
+template <typename T, typename Allocator> matrix<T, Allocator> operator-( const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
 
-    matrix <T> mat_ret(mat_argl.shape());
+    matrix <T, Allocator> mat_ret(mat_argl.shape());
     size_t sizet_size = mat_argl.sizet_objects;
 
     SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
@@ -1032,10 +1044,10 @@ template <class T> matrix<T> operator-( const matrix <T> &mat_argl, const matrix
     return mat_ret;
 }
 
-template <class T> matrix<T> operator-( const matrix <T> &mat_argl, T T_arg )
+template <typename T, typename Allocator> matrix<T, Allocator> operator-( const matrix <T, Allocator> &mat_argl, T T_arg )
 {
 
-    matrix <T> mat_ret(mat_argl.shape());
+    matrix <T, Allocator> mat_ret(mat_argl.shape());
     size_t sizet_size = mat_argl.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
@@ -1046,10 +1058,10 @@ template <class T> matrix<T> operator-( const matrix <T> &mat_argl, T T_arg )
     return mat_ret;
 }
 
-template <class T> matrix<T> operator-( T T_arg, const matrix <T> &mat_argr )
+template <typename T, typename Allocator> matrix<T, Allocator> operator-( T T_arg, const matrix <T, Allocator> &mat_argr )
 {
 
-    matrix <T> mat_ret(mat_argr.shape());
+    matrix <T, Allocator> mat_ret(mat_argr.shape());
     size_t sizet_size = mat_argr.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
@@ -1061,10 +1073,10 @@ template <class T> matrix<T> operator-( T T_arg, const matrix <T> &mat_argr )
 }
 
 //  *
-template <class T> matrix<T> operator*( const matrix <T> &mat_argl, const matrix <T> &mat_argr)
+template <typename T, typename Allocator> matrix<T, Allocator> operator*( const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
 
-    matrix <T> mat_ret(mat_argl.shape());
+    matrix <T, Allocator> mat_ret(mat_argl.shape());
     size_t sizet_size = mat_argl.sizet_objects;
 
     SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
@@ -1082,10 +1094,10 @@ template <class T> matrix<T> operator*( const matrix <T> &mat_argl, const matrix
     return mat_ret;
 }
 
-template <class T> matrix<T> operator*( const matrix <T> &mat_argl, T T_arg )
+template <typename T, typename Allocator> matrix<T, Allocator> operator*( const matrix <T, Allocator> &mat_argl, T T_arg )
 {
 
-    matrix <T> mat_ret(mat_argl.shape());
+    matrix <T, Allocator> mat_ret(mat_argl.shape());
     size_t sizet_size = mat_argl.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
@@ -1096,10 +1108,10 @@ template <class T> matrix<T> operator*( const matrix <T> &mat_argl, T T_arg )
     return mat_ret;
 }
 
-template <class T> matrix<T> operator*( T T_arg, const matrix <T> &mat_argr )
+template <typename T, typename Allocator> matrix<T, Allocator> operator*( T T_arg, const matrix <T, Allocator> &mat_argr )
 {
 
-    matrix <T> mat_ret(mat_argr.shape());
+    matrix <T, Allocator> mat_ret(mat_argr.shape());
     size_t sizet_size = mat_argr.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
@@ -1111,10 +1123,10 @@ template <class T> matrix<T> operator*( T T_arg, const matrix <T> &mat_argr )
 }
 
 //  /
-template <class T> matrix<T> operator/( const matrix <T> &mat_argl, const matrix <T> &mat_argr)
+template <typename T, typename Allocator> matrix<T, Allocator> operator/( const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
 
-    matrix <T> mat_ret(mat_argl.shape());
+    matrix <T, Allocator> mat_ret(mat_argl.shape());
     size_t sizet_size = mat_argl.sizet_objects;
 
     SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
@@ -1132,10 +1144,10 @@ template <class T> matrix<T> operator/( const matrix <T> &mat_argl, const matrix
     return mat_ret;
 }
 
-template <class T> matrix<T> operator/( const matrix <T> &mat_argl, T T_arg )
+template <typename T, typename Allocator> matrix<T, Allocator> operator/( const matrix <T, Allocator> &mat_argl, T T_arg )
 {
 
-    matrix <T> mat_ret(mat_argl.shape());
+    matrix <T, Allocator> mat_ret(mat_argl.shape());
     size_t sizet_size = mat_argl.sizet_objects;
 
     for ( size_t sizet_index = 0; sizet_index < sizet_size; sizet_index++ )
@@ -1148,20 +1160,20 @@ template <class T> matrix<T> operator/( const matrix <T> &mat_argl, T T_arg )
 
 
 //  -=
-template <class T> matrix<T> matrix <T>::operator-=(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix<T, Allocator> matrix <T, Allocator>::operator-=(const matrix <T, Allocator> &mat_arg)
 {
 
-    SUSA_ASSERT(this->_matrix != NULL);
+    SUSA_ASSERT(_matrix != nullptr);
 
     SUSA_ASSERT_MESSAGE((mat_arg.sizet_rows == sizet_rows)
       && (mat_arg.sizet_cols == sizet_cols),
       "the matrices have different sizes.");
 
-    if ((mat_arg.sizet_rows == sizet_rows) && (mat_arg.sizet_cols == sizet_cols) && this->_matrix != NULL)
+    if ((mat_arg.sizet_rows == sizet_rows) && (mat_arg.sizet_cols == sizet_cols) && _matrix != nullptr)
     {
-        for (size_t sizet_index = 0; sizet_index < this->sizet_objects; sizet_index++)
+        for (size_t sizet_index = 0; sizet_index < sizet_objects; sizet_index++)
         {
-            this->_matrix[sizet_index] -= mat_arg._matrix[sizet_index];
+            _matrix[sizet_index] -= mat_arg._matrix[sizet_index];
         }
     }
 
@@ -1169,10 +1181,10 @@ template <class T> matrix<T> matrix <T>::operator-=(const matrix <T> &mat_arg)
 }
 
 //  +=
-template <class T> matrix<T> matrix <T>::operator+=(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix<T, Allocator> matrix <T, Allocator>::operator+=(const matrix <T, Allocator> &mat_arg)
 {
 
-    SUSA_ASSERT(this->_matrix != NULL);
+    SUSA_ASSERT(_matrix != nullptr);
 
     SUSA_ASSERT_MESSAGE((mat_arg.sizet_rows == sizet_rows)
       && (mat_arg.sizet_cols == sizet_cols),
@@ -1182,7 +1194,7 @@ template <class T> matrix<T> matrix <T>::operator+=(const matrix <T> &mat_arg)
     {
         for (size_t sizet_index = 0; sizet_index < this->sizet_objects; sizet_index++)
         {
-            this->_matrix[sizet_index] += mat_arg._matrix[sizet_index];
+            _matrix[sizet_index] += mat_arg._matrix[sizet_index];
         }
     }
 
@@ -1190,25 +1202,23 @@ template <class T> matrix<T> matrix <T>::operator+=(const matrix <T> &mat_arg)
 }
 
 //  =
-template <class T> matrix<T>& matrix <T>::operator=( const matrix <T> &mat_arg )
+template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Allocator>::operator=( const matrix <T, Allocator> &mat_arg )
 {
-    susa::memory<T>::operator=(mat_arg);
-
-    if (this->_matrix != nullptr)
+    if (sizet_objects != 0 && _matrix != nullptr)
     {
-        sizet_rows = mat_arg.sizet_rows;
-        sizet_cols = mat_arg.sizet_cols;
+      alloc.deallocate(_matrix, sizet_objects);
     }
-    else
-    {
-        sizet_rows = 0;
-        sizet_cols = 0;
-    }
+    sizet_rows      = mat_arg.sizet_rows;
+    sizet_cols      = mat_arg.sizet_cols;
+    sizet_objects   = sizet_rows * sizet_cols;
+    _matrix         = alloc.allocate(sizet_objects);
+    SUSA_ASSERT(_matrix != nullptr);
+    std::memcpy(_matrix, mat_arg._matrix, sizet_objects * sizeof(T));
 
     return *this;
 }
 
-template <class T> matrix<T>& matrix <T>::operator=( std::string str_string )
+template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Allocator>::operator=( std::string str_string )
 {
     parser(str_string);
     return *this;
@@ -1229,7 +1239,7 @@ inline std::ostream& operator<<(std::ostream& os, unsigned char c)
     return os << static_cast<unsigned int>(c);
 }
 
-template <class T> std::ostream &operator<<(std::ostream& outStream, const matrix <T>& mat_arg)
+template <typename T, typename Allocator> std::ostream &operator<<(std::ostream& outStream, const matrix <T, Allocator>& mat_arg)
 {
 
     outStream << "[";
@@ -1247,7 +1257,7 @@ template <class T> std::ostream &operator<<(std::ostream& outStream, const matri
 }
 
 
-template <class T> bool matrix <T>::parser(std::string str_string)
+template <typename T, typename Allocator> bool matrix <T, Allocator>::parser(std::string str_string)
 {
 
     pre_parser(str_string);
@@ -1291,55 +1301,61 @@ template <class T> bool matrix <T>::parser(std::string str_string)
     if (sizet_cols_ % sizet_rows_ != 0) return false;
     
 
-    if (sizet_size != 0)
+    if (sizet_size == 0)
     {
-
-        sizet_rows = sizet_rows_;
-        sizet_cols = sizet_cols_ / sizet_rows_;
-
-        sizet_size = sizet_cols * sizet_rows;
-
-        if ((this->sizet_objects) != sizet_size)
-        {
-            this->allocate(sizet_size);
-        }
-
-
-        std::stringstream ss_all(str_string);
-        char* char_buff = (char *)std::malloc(MAX_STR_LEN);
-        SUSA_ASSERT_MESSAGE(char_buff != nullptr, "memory allocation failed.");
-        if (char_buff == nullptr) return false;
-
-        T T_tmp;
-        T T_delta = 0;
-
-        if (std::is_same<T, uint8_t>::value || std::is_same<T, int8_t>::value)
-        {
-            T_delta = 0x30;
-        } 
-
-        for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
-        {
-            ss_all.getline(char_buff, MAX_STR_LEN, ';');
-            std::stringstream ssrow(char_buff);
-            for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
-            {
-                ssrow.getline(char_buff, MAX_STR_LEN, 0x20);
-                if (!(std::istringstream(char_buff) >> T_tmp)) T_tmp = 0;
-                this->_matrix[get_lindex(sizet_row,sizet_col)] = T_tmp - T_delta;
-            }
-        }
-
-        std::free(char_buff);
-
+        sizet_rows      = 0;
+        sizet_cols      = 0;
+        sizet_objects   = 0;
+        if (_matrix != nullptr) alloc.deallocate(_matrix, sizet_size);
+        _matrix = nullptr;
+        return false;
     }
-    else
+
+
+    sizet_rows = sizet_rows_;
+    sizet_cols = sizet_cols_ / sizet_rows_;
+
+    sizet_size = sizet_cols * sizet_rows;
+
+    if ((sizet_objects) != sizet_size)
     {
-        sizet_rows = 0;
-        sizet_cols = 0;
-
-        this->deallocate();
+        if (sizet_objects != 0 && _matrix != nullptr)
+        {
+            alloc.deallocate(_matrix, sizet_objects);
+            _matrix = nullptr;
+        }
+        _matrix = alloc.allocate(sizet_size);
+        SUSA_ASSERT(_matrix != nullptr);
+        sizet_objects = sizet_size;
     }
+
+
+    std::stringstream ss_all(str_string);
+    char* char_buff = new char[MAX_STR_LEN];
+    SUSA_ASSERT_MESSAGE(char_buff != nullptr, "memory allocation failed.");
+    if (char_buff == nullptr) return false;
+
+    T T_tmp;
+    T T_delta = 0;
+
+    if (std::is_same<T, uint8_t>::value || std::is_same<T, int8_t>::value)
+    {
+        T_delta = 0x30;
+    } 
+
+    for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
+    {
+        ss_all.getline(char_buff, MAX_STR_LEN, ';');
+        std::stringstream ssrow(char_buff);
+        for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
+        {
+            ssrow.getline(char_buff, MAX_STR_LEN, 0x20);
+            if (!(std::istringstream(char_buff) >> T_tmp)) T_tmp = 0;
+            _matrix[get_lindex(sizet_row,sizet_col)] = T_tmp - T_delta;
+        }
+    }
+
+    delete[] char_buff;
 
     return true;
 }

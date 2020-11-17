@@ -53,6 +53,11 @@ int main()
     susa::array <int, susa::allocator_log<int> > arr_b = arr_a;
     }
 
+    {
+        susa::matrix <float, susa::allocator_log<float> > mat_m("[0 1 1; 2 3 2; 1 3 2; 4 2 2]");
+        susa::matrix <float> result = susa::mean(mat_m);
+    }
+
     SUSA_TEST_EQ(susa::memory_tacker::instance().read(), 0, "susa::array memory leak with susa allocator");
 
     SUSA_TEST_PRINT_STATS();

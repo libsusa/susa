@@ -19,7 +19,6 @@
  * @file fft.h
  * @brief Fast Fourier Transform (FFT) (declaration and definition).
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #ifndef SUSA_FFT_H
@@ -32,12 +31,20 @@ namespace susa {
  *
  * @ingroup Signal
  */
-template <typename T, typename Enable = void>
+template <typename T, typename Allocator = std::allocator<T>, typename Enable = void>
 class fft;
 
-template <typename T>
-class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
+/**
+ * @brief The Fast Fourier Transform (FFT) class.
+ *
+ * @ingroup Signal
+ */
+template <typename T, typename Allocator>
+class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::value>>
 {
+  private:
+  using value_allocator = typename get_allocator<T, Allocator>::type;
+  using complex_allocator = typename get_allocator<std::complex<T>, Allocator>::type;
   public:
     /**
     * @brief Fast Fourier Transform (FFT) using the radix-2 algorithm
@@ -46,9 +53,9 @@ class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
     * @param mat_arg input matrix
     * @return returns a matrix
     */
-    matrix <std::complex<T>> radix2(const matrix <T>& mat_arg)
+    matrix <std::complex<T>, complex_allocator> radix2(const matrix <T, Allocator>& mat_arg)
     {
-        matrix <std::complex<T>> mat_ret;
+        matrix <std::complex<T>, complex_allocator> mat_ret;
 
         if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
         {
@@ -56,7 +63,7 @@ class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
         }
         else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
         {
-            mat_ret = matrix <std::complex<T>> (mat_arg.shape());
+            mat_ret = matrix <std::complex<T>, complex_allocator> (mat_arg.shape());
             for (size_t sz_col = 0; sz_col < mat_arg.no_cols(); sz_col++)
             {
                 mat_ret.set_col(sz_col, vector_radix2(mat_arg.col(sz_col)));
@@ -73,9 +80,9 @@ class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
     * @param mat_arg input matrix
     * @return returns a matrix
     */
-    matrix <std::complex<T>> dft(const matrix <T>& mat_arg)
+    matrix <std::complex<T>, complex_allocator> dft(const matrix <T, Allocator>& mat_arg)
     {
-        matrix <std::complex<T>> mat_ret;
+        matrix <std::complex<T>, complex_allocator> mat_ret;
 
         if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
         {
@@ -83,7 +90,7 @@ class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
         }
         else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
         {
-            mat_ret = matrix <std::complex<T>> (mat_arg.shape());
+            mat_ret = matrix <std::complex<T>, complex_allocator> (mat_arg.shape());
             for (size_t sz_col = 0; sz_col < mat_arg.no_cols(); sz_col++)
             {
                 mat_ret.set_col(sz_col, vector_dft(mat_arg.col(sz_col)));
@@ -96,13 +103,13 @@ class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
 
   private:
 
-    matrix <std::complex<T>> vector_radix2(const matrix <T>& mat_arg)
+    matrix <std::complex<T>, complex_allocator> vector_radix2(const matrix <T, Allocator>& mat_arg)
     {
         size_t size = mat_arg.size();
         SUSA_ASSERT(is_power_of_two(size));
 
-        matrix <std::complex<T>> mat_bit_rev        = bit_reverse(convert_to_complex(mat_arg));
-        size_t sz_stage                             = susa::log2(size);
+        matrix <std::complex<T>, complex_allocator> mat_bit_rev   = bit_reverse(convert_to_complex(mat_arg));
+        size_t sz_stage                                   = susa::log2(size);
 
         for (size_t stage = 1; stage <= sz_stage; stage++)
         {
@@ -125,10 +132,10 @@ class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
         return mat_bit_rev;
     }
 
-    matrix <std::complex<T>> vector_dft(const matrix <T>& mat_arg)
+    matrix <std::complex<T>, complex_allocator> vector_dft(const matrix <T, Allocator>& mat_arg)
     {
         size_t size = mat_arg.size();
-        matrix <std::complex<T>> mat_ret(size,1);
+        matrix <std::complex<T>, complex_allocator> mat_ret(size,1);
 
         for (size_t k = 0; k < size; k++)
         {
@@ -167,10 +174,11 @@ class fft <T, typename std::enable_if_t<std::is_floating_point<T>::value>>
         return mat_arg;
     }
 
-    matrix <std::complex<T>> convert_to_complex(const matrix <T>& mat_arg)
+
+    matrix <std::complex<T>, complex_allocator> convert_to_complex(const matrix <T, Allocator>& mat_arg)
     {
         size_t size = mat_arg.size();
-        matrix <std::complex<T>> ret(size,1);
+        matrix <std::complex<T>, complex_allocator> ret(size,1);
 
         for (size_t indx = 0; indx < size; indx++)
         {

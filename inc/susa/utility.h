@@ -18,14 +18,13 @@
 /**
  * @file utility.h
  * @brief Utility functions.
- * @author Behrooz,
- * @version 1.0.0
- * @defgroup Utility
+ * @author Behrooz Kamary
+ * @defgroup Utility Utility
  *
  */
 
-#ifndef UTILITY_H
-#define UTILITY_H
+#ifndef SUSA_UTILITY_H
+#define SUSA_UTILITY_H
 
 namespace susa {
 

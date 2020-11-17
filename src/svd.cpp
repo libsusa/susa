@@ -19,7 +19,6 @@
  * @file svd.cpp
  * @brief Singular Value Decomposition (SVD) (definiton).
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #include <susa.h>

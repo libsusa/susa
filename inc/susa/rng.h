@@ -21,7 +21,6 @@
  *
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #ifndef SUSA_RNG_H

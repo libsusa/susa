@@ -19,15 +19,14 @@
  * @file signal.h
  * @brief Signal processing (declaration and definiton).
  * @author Behrooz Kamary
- * @version 1.0.0
  *
  * @defgroup Signal Signal Processing
  *
  * @todo <i>filter</i> and <i>conv</i> do not support all input matrices' sizes. it looks complicated to solve.
  */
 
-#ifndef SIGNAL_H
-#define SIGNAL_H
+#ifndef SUSA_SIGNAL_H
+#define SUSA_SIGNAL_H
 
 namespace susa {
 
@@ -40,7 +39,7 @@ namespace susa {
  *
  * @ingroup Signal
  */
-template <class T> matrix <T> upsample(const matrix <T> &mat_arg, size_t uint_u);
+template <typename T, typename Allocator> matrix <T, Allocator> upsample(const matrix <T, Allocator> &mat_arg, size_t uint_u);
 
 /**
  * @brief Downsample
@@ -51,7 +50,7 @@ template <class T> matrix <T> upsample(const matrix <T> &mat_arg, size_t uint_u)
  *
  * @ingroup Signal
  */
-template <class T> matrix <T> downsample(const matrix <T> &mat_arg, size_t uint_d);
+template <typename T, typename Allocator> matrix <T, Allocator> downsample(const matrix <T, Allocator> &mat_arg, size_t uint_d);
 
 /**
  * @brief Filter
@@ -66,7 +65,9 @@ template <class T> matrix <T> downsample(const matrix <T> &mat_arg, size_t uint_
  *
  * @ingroup Signal
  */
-template <class T, class TT> matrix <T> filter(const matrix <TT>& mat_arg_b, const matrix <TT>& mat_arg_a, const matrix <T>& mat_arg_x, size_t size_length = 0);
+template <typename T, typename Allocator, class TT> matrix <T, Allocator>
+filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& mat_arg_a,
+       const matrix <T, Allocator>& mat_arg_x, size_t size_length = 0);
 
 /**
  * @brief Convolution
@@ -77,7 +78,7 @@ template <class T, class TT> matrix <T> filter(const matrix <TT>& mat_arg_b, con
  *
  * @ingroup Signal
  */
-template <class T> matrix <T> conv(const matrix <T>& mat_arg_a, const matrix <T>& mat_arg_b);
+template <typename T, typename Allocator> matrix <T, Allocator> conv(const matrix <T, Allocator>& mat_arg_a, const matrix <T, Allocator>& mat_arg_b);
 
 /**
  * @brief Constructs a convolution matrix from the impulse response <i>mat_arg</i>
@@ -88,7 +89,7 @@ template <class T> matrix <T> conv(const matrix <T>& mat_arg_a, const matrix <T>
  *
  * @ingroup Signal
  */
-template <class T> matrix <T> convmtx(const matrix <T>& mat_arg, size_t size_len);
+template <typename T, typename Allocator> matrix <T, Allocator> convmtx(const matrix <T, Allocator>& mat_arg, size_t size_len);
 
 /**
  * @brief Constructs a toeplitz matrix from input column and row vectors
@@ -99,7 +100,7 @@ template <class T> matrix <T> convmtx(const matrix <T>& mat_arg, size_t size_len
  *
  * @ingroup Signal
  */
-template <class T> matrix <T> toeplitz(const matrix <T>& mat_col, const matrix <T>& mat_row);
+template <typename T, typename Allocator> matrix <T, Allocator> toeplitz(const matrix <T, Allocator>& mat_col, const matrix <T, Allocator>& mat_row);
 
 /**
  * @brief Constructs a toeplitz matrix from an input column vector
@@ -109,15 +110,15 @@ template <class T> matrix <T> toeplitz(const matrix <T>& mat_col, const matrix <
  *
  * @ingroup Signal
  */
-template <class T> matrix <T> toeplitz(const matrix <T>& mat_col);
+template <typename T, typename Allocator> matrix <T, Allocator> toeplitz(const matrix <T, Allocator>& mat_col);
 
 // Implementation
 
 // UPSAMPLE
 
-template <class T> matrix <T> upsample(const matrix <T> &mat_arg, size_t uint_u)
+template <typename T, typename Allocator> matrix <T, Allocator> upsample(const matrix <T, Allocator> &mat_arg, size_t uint_u)
 {
-    matrix <T> mat_tmp(uint_u * mat_arg.no_rows(), mat_arg.no_cols());
+    matrix <T, Allocator> mat_tmp(uint_u * mat_arg.no_rows(), mat_arg.no_cols());
 
     for (size_t size_col = 0; size_col < mat_arg.no_cols(); size_col++)
     {
@@ -131,9 +132,9 @@ template <class T> matrix <T> upsample(const matrix <T> &mat_arg, size_t uint_u)
 
 // DOWNSAMPLE
 
-template <class T> matrix <T> downsample(const matrix <T> &mat_arg, size_t uint_d)
+template <typename T, typename Allocator> matrix <T, Allocator> downsample(const matrix <T, Allocator> &mat_arg, size_t uint_d)
 {
-    matrix <T> mat_tmp(mat_arg.no_rows()/uint_d,mat_arg.no_cols());
+    matrix <T, Allocator> mat_tmp(mat_arg.no_rows()/uint_d,mat_arg.no_cols());
 
     for (size_t size_col = 0; size_col < mat_arg.no_cols(); size_col++)
     {
@@ -147,11 +148,13 @@ template <class T> matrix <T> downsample(const matrix <T> &mat_arg, size_t uint_
 
 // FILTER
 
-template <class T, class TT> matrix <T> filter( const matrix <TT>& mat_arg_b, const matrix <TT>& mat_arg_a, const matrix <T>& mat_arg_x, size_t size_length)
+template <typename T, typename Allocator, class TT> matrix <T, Allocator>
+filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& mat_arg_a,
+       const matrix <T, Allocator>& mat_arg_x, size_t size_length)
 {
 
     size_t      size_ret_len = 0;
-    matrix <T>  mat_y;
+    matrix <T, Allocator>  mat_y;
 
     size_t size_b       = mat_arg_b.size();
     size_t size_a       = mat_arg_a.size();
@@ -165,7 +168,7 @@ template <class T, class TT> matrix <T> filter( const matrix <TT>& mat_arg_b, co
     if (size_x_cols > 1 && size_x_rows > 1)
     {
         size_ret_len = size_x_rows + size_length;
-        mat_y = matrix <T> (size_ret_len, size_x_cols, 0);
+        mat_y = matrix <T, Allocator> (size_ret_len, size_x_cols, 0);
         size_t size_y_rows = mat_y.no_rows();
 
         for (size_t size_col = 0; size_col < size_x_cols; size_col++)
@@ -189,7 +192,7 @@ template <class T, class TT> matrix <T> filter( const matrix <TT>& mat_arg_b, co
     {
         // for column vector
         size_ret_len = size_x + size_length;
-        mat_y = matrix <T> (size_ret_len, 1, 0);
+        mat_y = matrix <T, Allocator> (size_ret_len, 1, 0);
         size_t size_y      = mat_y.size();
 
         for (size_t i = 0; i< size_ret_len; i++)
@@ -210,7 +213,7 @@ template <class T, class TT> matrix <T> filter( const matrix <TT>& mat_arg_b, co
     {
         // for row vector
         size_ret_len = mat_arg_x.size() + size_length;
-        mat_y = matrix <T> (1, size_ret_len, 0);
+        mat_y = matrix <T, Allocator> (1, size_ret_len, 0);
         size_t size_y      = mat_y.size();
 
         for (size_t i = 0 ; i < size_ret_len; i++)
@@ -231,23 +234,23 @@ template <class T, class TT> matrix <T> filter( const matrix <TT>& mat_arg_b, co
 }
 
 
-template <class T> matrix <T> conv(const matrix <T>& mat_arg_a, const matrix <T>& mat_arg_b)
+template <typename T, typename Allocator> matrix <T, Allocator> conv(const matrix <T, Allocator>& mat_arg_a, const matrix <T, Allocator>& mat_arg_b)
 {
 
-    matrix <T>  mat_ret;
+    matrix <T, Allocator>  mat_ret;
     size_t      size_length;
 
     if ((mat_arg_b.no_rows() > 1 && mat_arg_b.no_cols() == 1) || (mat_arg_b.no_cols() > 1 && mat_arg_b.no_rows() == 1))
     { // mat_arg_b is a vector
 
         size_length = mat_arg_b.size() - 1;
-        mat_ret = filter(mat_arg_b, matrix <T> (1,1,1), mat_arg_a, size_length);
+        mat_ret = filter(mat_arg_b, matrix <T, Allocator> (1,1,1), mat_arg_a, size_length);
 
     } else if ((mat_arg_a.no_rows() > 1 && mat_arg_a.no_cols() == 1) || (mat_arg_a.no_cols() > 1 && mat_arg_a.no_rows() == 1))
     { // mat_arg_a is a vector
 
         size_length = mat_arg_a.size() - 1;
-        mat_ret = filter(mat_arg_a, matrix <T> (1,1,1), mat_arg_b, size_length);
+        mat_ret = filter(mat_arg_a, matrix <T, Allocator> (1,1,1), mat_arg_b, size_length);
 
     } else if (mat_arg_b.no_cols() == 1 && mat_arg_b.no_rows() == 1)
     {
@@ -274,16 +277,16 @@ template <class T> matrix <T> conv(const matrix <T>& mat_arg_a, const matrix <T>
     return mat_ret;
 }
 
-template <class T> matrix <T> convmtx(const matrix <T> &mat_arg, size_t size_len)
+template <typename T, typename Allocator> matrix <T, Allocator> convmtx(const matrix <T, Allocator> &mat_arg, size_t size_len)
 {
     SUSA_ASSERT_MESSAGE(mat_arg.is_vector(), "the input argument is not a vector");
     
     size_t      size_m = mat_arg.size();
-    matrix <T>  mat_ret;
+    matrix <T, Allocator>  mat_ret;
     
     if (mat_arg.no_cols() == 1 && mat_arg.no_rows() >= 1)
     { // It is a column vector
-        mat_ret = matrix <T> (size_m + size_len - 1, size_len, 0);
+        mat_ret = matrix <T, Allocator> (size_m + size_len - 1, size_len, 0);
         for (size_t size_col = 0; size_col < size_len; size_col++)
         {
             for (size_t uint_row = 0; uint_row < size_col; uint_row++)
@@ -304,7 +307,7 @@ template <class T> matrix <T> convmtx(const matrix <T> &mat_arg, size_t size_len
     }
     else if (mat_arg.no_rows() == 1 && mat_arg.no_cols() >= 1)
     { // It is a row vector
-        mat_ret = matrix <T> (size_len, size_m + size_len - 1, 0);
+        mat_ret = matrix <T, Allocator> (size_len, size_m + size_len - 1, 0);
         for (size_t uint_row = 0; uint_row < size_len; uint_row++)
         {
             for (size_t size_col = 0; size_col < uint_row; size_col++)
@@ -327,12 +330,12 @@ template <class T> matrix <T> convmtx(const matrix <T> &mat_arg, size_t size_len
     return mat_ret;
 }
 
-template <class T> matrix <T> toeplitz(const matrix <T>& mat_col, const matrix <T>& mat_row)
+template <typename T, typename Allocator> matrix <T, Allocator> toeplitz(const matrix <T, Allocator>& mat_col, const matrix <T, Allocator>& mat_row)
 {
     size_t size_cols = mat_col.size();
     size_t size_rows = mat_row.size();
 
-    matrix <T> mat_ret(size_cols, size_rows);
+    matrix <T, Allocator> mat_ret(size_cols, size_rows);
 
     for ( size_t uint_row = 0; uint_row < size_rows; uint_row++)
     {
@@ -344,11 +347,11 @@ template <class T> matrix <T> toeplitz(const matrix <T>& mat_col, const matrix <
     return mat_ret;
 }
 
-template <class T> matrix <T> toeplitz(const matrix <T>& mat_col)
+template <typename T, typename Allocator> matrix <T, Allocator> toeplitz(const matrix <T, Allocator>& mat_col)
 {
     size_t size_len = mat_col.size();
 
-    matrix <T> mat_ret(size_len, size_len);
+    matrix <T, Allocator> mat_ret(size_len, size_len);
 
     for ( size_t uint_row = 0; uint_row < size_len; uint_row++)
     {

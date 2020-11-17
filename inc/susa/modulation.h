@@ -24,7 +24,6 @@
  * signal such as amplitude, frequency and phase.
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #ifndef MODULATION_H

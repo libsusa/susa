@@ -24,7 +24,6 @@
  * If NDEBUG is defined, it consequently affects this assertion.
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #ifndef SUSA_DEBUG_H

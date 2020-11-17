@@ -19,7 +19,6 @@
  * @file linalg.h
  * @brief Basic matrix and linear algebra operations (declaration and definition).
  * @author Behrooz Kamary
- * @version 1.0.0
  *
  * @defgroup LALG Linear Algebra
  */
@@ -41,7 +40,7 @@ namespace susa
  * @return multiplication of the two input matrices
  * @ingroup LALG
  */
-template <class T> matrix <T> matmul(const matrix <T> &mat_argl, const matrix <T> &mat_argr)
+template <typename T, typename Allocator> matrix <T, Allocator> matmul(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
     // To make it faster this method has been declared as 'friend' of
     // 'matrix' template class so 'matmul' apears two times in 'matrix.h'
@@ -49,7 +48,7 @@ template <class T> matrix <T> matmul(const matrix <T> &mat_argl, const matrix <T
     size_t sizet_rows = mat_argl.no_rows();
     size_t sizet_cols = mat_argr.no_cols();
 
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
 
     if (mat_argl._matrix == NULL || mat_argr._matrix == NULL)
     {
@@ -59,7 +58,7 @@ template <class T> matrix <T> matmul(const matrix <T> &mat_argl, const matrix <T
 
     if (mat_argl.no_cols() == mat_argr.no_rows())
     {
-        mat_ret = matrix <T> (sizet_rows, sizet_cols, 0);
+        mat_ret = matrix <T, Allocator> (sizet_rows, sizet_cols, 0);
         for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
         {
             for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
@@ -88,11 +87,11 @@ template <class T> matrix <T> matmul(const matrix <T> &mat_argl, const matrix <T
  * @return returns transpose of the input matrices
  * @ingroup LALG
  */
-template <class T> matrix <T> transpose(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix <T, Allocator> transpose(const matrix <T, Allocator> &mat_arg)
 {
     size_t sizet_rows = mat_arg.no_rows();
     size_t sizet_cols = mat_arg.no_cols();
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
 
     SUSA_ASSERT(mat_arg._matrix != NULL);
 
@@ -101,7 +100,7 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg)
         return mat_ret;
     }
 
-    mat_ret = matrix <T> (sizet_cols, sizet_rows);
+    mat_ret = matrix <T, Allocator> (sizet_cols, sizet_rows);
 
     for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
     {
@@ -116,13 +115,13 @@ template <class T> matrix <T> transpose(const matrix <T> &mat_arg)
 
 
 /**
- * @brief Determinant
+ * @brief Determinant of a matrix
  *
  * @param mat_arg
  * @return returns determinant of the input matrices
  * @ingroup LALG
  */
-template <class T> double det(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> double det(const matrix <T, Allocator> &mat_arg)
 {
     double dbl_ret = 0.0;
 
@@ -143,7 +142,7 @@ template <class T> double det(const matrix <T> &mat_arg)
         { // 3 x 3 and more
             for (size_t  sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
             {
-                matrix <T> mat_minor = mat_arg.shrink(0, sizet_col);
+                matrix <T, Allocator> mat_minor = mat_arg.shrink(0, sizet_col);
                 if (mat_minor.size() == mat_arg.size())
                 {
                     // If for any reason something goes wrong in the minor() it returns the matrix without any action.
@@ -166,21 +165,21 @@ template <class T> double det(const matrix <T> &mat_arg)
 /**
  * @brief Concatenation
  *
- * @param mat_argl
- * @param mat_argr
+ * @param mat_argl the input left-hand side matrix
+ * @param mat_argr the right left-hand side matrix
  * @return returns concatenation of the two input matrices
  * @ingroup LALG
  */
-template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T> &mat_argr)
+template <typename T, typename Allocator> matrix <T, Allocator> concat(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
     // should be changed 20101224
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
 
     if ((mat_argl.no_cols() == mat_argr.no_cols() && mat_argl.no_rows() != mat_argr.no_rows()) ||
             (mat_argl.no_cols() == mat_argr.no_cols() && mat_argl.no_rows() == mat_argr.no_rows()))
     { // Case I
 
-        mat_ret = matrix <T> (mat_argl.no_rows() + mat_argr.no_rows(), mat_argl.no_cols());
+        mat_ret = matrix <T, Allocator> (mat_argl.no_rows() + mat_argr.no_rows(), mat_argl.no_cols());
 
         for (size_t sizet_row = 0; sizet_row < mat_argl.no_rows(); sizet_row++)
         {
@@ -200,7 +199,7 @@ template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T
     }
     else if (mat_argl.no_cols() != mat_argr.no_cols() && mat_argl.no_rows() == mat_argr.no_rows())
     { // Case II
-        mat_ret = matrix <T> (mat_argl.no_rows(), mat_argl.no_cols() + mat_argr.no_cols());
+        mat_ret = matrix <T, Allocator> (mat_argl.no_rows(), mat_argl.no_cols() + mat_argr.no_cols());
 
         for (size_t sizet_row = 0; sizet_row < mat_argl.no_rows(); sizet_row++)
         {
@@ -233,13 +232,13 @@ template <class T> matrix <T> concat(const matrix <T> &mat_argl, const matrix <T
  * @return returns flip (left/right) a matrix
  * @ingroup LALG
  */
-template <class T> matrix <T> fliplr(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix <T, Allocator> fliplr(const matrix <T, Allocator> &mat_arg)
 {
     size_t sizet_rows = mat_arg.no_rows();
     size_t sizet_cols = mat_arg.no_cols();
     size_t sizet_size = mat_arg.size();
 
-    matrix <T> mat_ret(mat_arg.shape());
+    matrix <T, Allocator> mat_ret(mat_arg.shape());
 
     if ( sizet_rows == 1 || sizet_cols == 1)
     {
@@ -267,17 +266,17 @@ template <class T> matrix <T> fliplr(const matrix <T> &mat_arg)
 /**
  * @brief Flip up/down
  *
- * @param mat_arg
+ * @param mat_arg the input matrix
  * @return Returns flip (up/down) of the input matrix
  * @ingroup LALG
  */
-template <class T> matrix <T> flipud(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix <T, Allocator> flipud(const matrix <T, Allocator> &mat_arg)
 {
     size_t sizet_rows = mat_arg.no_rows();
     size_t sizet_cols = mat_arg.no_cols();
     size_t sizet_size = mat_arg.size();
 
-    matrix <T> mat_ret(mat_arg.shape());
+    matrix <T, Allocator> mat_ret(mat_arg.shape());
 
     if ( sizet_cols == 1 || sizet_rows == 1)
     {
@@ -310,9 +309,9 @@ template <class T> matrix <T> flipud(const matrix <T> &mat_arg)
  * @return square identity matrix
  * @ingroup LALG
  */
-template <class T> matrix<T> eye(size_t sizet_n)
+template <typename T, typename Allocator = std::allocator<T>> matrix<T, Allocator> eye(size_t sizet_n)
 {
-    matrix<T> mat_ret(sizet_n, sizet_n);
+    matrix<T, Allocator> mat_ret(sizet_n, sizet_n);
 
     for (size_t sizet_col = 0; sizet_col < sizet_n; sizet_col++)
     {

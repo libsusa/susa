@@ -19,7 +19,6 @@
  * @file ccode.cpp
  * @brief onvolutional ecoder/decoder implementation.
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 // https://towardsdatascience.com/building-neural-network-from-scratch-9c88535bf8e9

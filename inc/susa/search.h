@@ -20,7 +20,6 @@
  * @brief Search routines (declaration).
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  *
  * @defgroup Search Search
  */

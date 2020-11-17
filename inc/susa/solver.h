@@ -19,9 +19,8 @@
  * @file solver.h
  * @brief Linear solvers and algorithms (declaration and definition).
  * @author Behrooz Kamary
- * @version 1.0.0
  *
- * @defgroup LALG
+ * @defgroup LALG Linear Algebra
  */
 
 #ifndef SUSA_SOLVER_H

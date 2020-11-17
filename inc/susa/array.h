@@ -28,7 +28,6 @@
  * @defgroup TYPES Types
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #ifndef SUSA_ARRAY_H

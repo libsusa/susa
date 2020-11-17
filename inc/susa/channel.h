@@ -19,7 +19,6 @@
  * @file channel.h
  * @brief Channel Equalizers for ISI channels
  * @author Behrooz Kamary
- * @version 1.0.0
  *
  * @defgroup Communications
  */

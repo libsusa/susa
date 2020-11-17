@@ -19,9 +19,7 @@
  * @file mt.h
  * @brief Mersenne Twister Random Number Generator (declaration).
  *
- *
  * @author Behrooz Kamary
- * @version 1.0.0
  *
  * @defgroup RNG Random Number Generator
  */

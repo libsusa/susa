@@ -20,7 +20,6 @@
  * @brief digital base-band modulation and demodulation schemes (definiton).
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 

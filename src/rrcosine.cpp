@@ -19,7 +19,6 @@
  * @file rrcosine.cpp
  * @brief Root-Raised Cosine (definition).
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #include <susa.h>

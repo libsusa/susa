@@ -20,7 +20,6 @@
  * @brief Random Number Generator (definition).
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 

@@ -19,7 +19,6 @@
  * @file mlp.h
  * @brief Multi-Layer Perceptron (MLP) Neural Network (declaration and definition).
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #ifndef SUSA_MLP_H

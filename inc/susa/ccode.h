@@ -19,7 +19,6 @@
  * @file ccode.h
  * @brief convolutional encoder/decoder (declaration).
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #ifndef SUSA_CONVOLUTIONAL_H

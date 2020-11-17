@@ -18,8 +18,7 @@
 /**
  * @file svd.h
  * @brief Singular Value Decomposition (SVD)
- * @author Behrooz, Kamary
- * @version 1.0.0
+ * @author Behrooz Kamary
  *
  * @defgroup LALG Linear Algebra
  */

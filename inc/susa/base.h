@@ -20,7 +20,6 @@
  * @brief Basic operations on STL and Susa types (declaration and definition).
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  *
  * @defgroup Math Basic Mathematics
  */
@@ -39,7 +38,7 @@ namespace susa {
  * @return returns minimum value indices in the input matrix
  * @ingroup Math
  */
-template <class T> matrix <size_t> min(const matrix <T> &mat_arg);
+template <typename T, typename Allocator> matrix <size_t> min(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Maximum
@@ -48,7 +47,7 @@ template <class T> matrix <size_t> min(const matrix <T> &mat_arg);
  * @return Returns maximum value in the input matrix
  * @ingroup Math
  */
-template <class T> matrix <size_t> max(const matrix <T> &mat_arg);
+template <typename T, typename Allocator> matrix <size_t> max(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Differential
@@ -57,7 +56,7 @@ template <class T> matrix <size_t> max(const matrix <T> &mat_arg);
  * @return returns discrete differential of the input vector
  * @ingroup Math
  */
-template <class T> std::vector <T> diff(const std::vector <T> &vec_arg);
+template <typename T, typename Allocator> std::vector <T> diff(const std::vector <T> &vec_arg);
 
 /**
  * @brief Sum
@@ -66,7 +65,7 @@ template <class T> std::vector <T> diff(const std::vector <T> &vec_arg);
  * @return Returns sum of values in the input matrix
  * @ingroup Math
  */
-template <class T> matrix <T> sum(const matrix <T> &mat_arg);
+template <typename T, typename Allocator> matrix <T, Allocator> sum(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Sum
@@ -84,16 +83,7 @@ template <typename T> T sum(const std::vector <T> &vec_arg);
  * @return Returns mean of values in the input vector
  * @ingroup Math
  */
-template <class T> matrix <T> mean(const matrix <T> &mat_arg);
-
-/**
- * @brief Magnitude
- *
- * @param mat_arg input matrix
- * @return Returns magnitude of the complex input vector
- * @ingroup Math
- */
-template <class T> matrix <T> mag(const matrix <std::complex <T>> &mat_arg);
+template <typename T, typename Allocator> matrix <T, Allocator> mean(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Norm operator
@@ -102,25 +92,37 @@ template <class T> matrix <T> mag(const matrix <std::complex <T>> &mat_arg);
  * @return Returns magnitude of the complex input vector
  * @ingroup Math
  */
-template <class T> matrix <T> norm(const matrix <T> &mat_arg);
+template <typename T, typename Allocator> matrix <T, Allocator> norm(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Real
  *
- * @param vec_arg input STL vector
+ * @param mat_arg input complex matrix
  * @return Returns real part of the complex input vector
  * @ingroup Math
  */
-template <class T> matrix <T> real(const matrix <std::complex <T>> &mat_arg);
+template <typename T, template <typename> typename Allocator>
+matrix <T, Allocator<T>> real(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg);
 
 /**
  * @brief Imaginary
  *
- * @param vec_arg input STL vector
+ * @param mat_arg input complex matrix
  * @return Returns imaginary part of the complex input vector
  * @ingroup Math
  */
-template <class T> matrix <T> imag(const matrix <std::complex <T>> &mat_arg);
+template <typename T, template <typename> typename Allocator>
+matrix <T, Allocator<T>> imag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg);
+
+/**
+ * @brief Magnitude
+ *
+ * @param mat_arg input complex matrix
+ * @return Returns magnitude of the complex input vector
+ * @ingroup Math
+ */
+template <typename T, template <typename> typename Allocator>
+matrix <T, Allocator<T>> mag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg);
 
 /**
  * @brief Absolute
@@ -129,16 +131,16 @@ template <class T> matrix <T> imag(const matrix <std::complex <T>> &mat_arg);
  * @return Returns absolut value of the input vector
  * @ingroup Math
  */
-template <class T> std::vector <T> abs(const std::vector <T> &vec_arg);
+template <typename T, typename Allocator> std::vector <T> abs(const std::vector <T> &vec_arg);
 
 /**
  * @brief Conjugate
  *
- * @param vec_arg input STL vector
+ * @param mat_arg input complex matrix
  * @return Returns conjugate of the complex input vector
  * @ingroup Math
  */
-template <class T> matrix <std::complex <T>> conj(const matrix <std::complex <T>> &mat_arg);
+template <typename T, typename Allocator> matrix <std::complex <T>, Allocator> conj(const matrix <std::complex <T>, Allocator> &mat_arg);
 
 /**
  * @brief Sign
@@ -147,7 +149,7 @@ template <class T> matrix <std::complex <T>> conj(const matrix <std::complex <T>
  * @return Returns sign of the input
  * @ingroup Math
  */
-template <class T> matrix <char> sign(const matrix <T> &mat_arg);
+template <typename T, typename Allocator> matrix <char> sign(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Sign
@@ -156,7 +158,7 @@ template <class T> matrix <char> sign(const matrix <T> &mat_arg);
  * @return Returns sign of the input
  * @ingroup Math
  */
-template <class T> char sign(T T_arg);
+template <typename T, typename Allocator> char sign(T T_arg);
 
 /**
  * @brief Log
@@ -165,7 +167,7 @@ template <class T> char sign(T T_arg);
  * @return Returns natural logarithm of input
  * @ingroup Math
  */
-template <class T> matrix <T> log(const matrix <T> &mat_arg);
+template <typename T, typename Allocator> matrix <T, Allocator> log(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Pow
@@ -257,7 +259,7 @@ T log2(T int_arg)
     return (ret - 1);
 }
 
-template <class T> std::vector <T> diff(std::vector <T> &vec_arg)
+template <typename T> std::vector <T> diff(std::vector <T> &vec_arg)
 {
     std::vector <T> vec_diff(vec_arg.size() - 1, T(0));
 
@@ -281,19 +283,19 @@ template <typename T> T sum(const std::vector<T> &vec_arg)
     return ret;
 }
 
-template <class T> matrix <T> sum(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix <T, Allocator> sum(const matrix <T, Allocator> &mat_arg)
 {
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
 
     if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
     {
-        mat_ret = matrix <T> (1,1, T(0));
+        mat_ret = matrix <T, Allocator> (1,1, T(0));
         for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
             mat_ret(0) += mat_arg(uint_i);
     }
     else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
     {
-        mat_ret = matrix <T> (1, mat_arg.no_cols(), T(0));
+        mat_ret = matrix <T, Allocator> (1, mat_arg.no_cols(), T(0));
         for (size_t uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
         {
             for (size_t uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++)
@@ -304,9 +306,9 @@ template <class T> matrix <T> sum(const matrix <T> &mat_arg)
     return mat_ret;
 }
 
-template <class T> matrix <T> mean(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix <T, Allocator> mean(const matrix <T, Allocator> &mat_arg)
 {
-    matrix <T>  mat_ret;
+    matrix <T, Allocator>  mat_ret;
     T           T_ret(0);
 
     if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
@@ -316,12 +318,12 @@ template <class T> matrix <T> mean(const matrix <T> &mat_arg)
             T_ret += mat_arg(uint_i);
         }
         T_ret /= mat_arg.size();
-        mat_ret = matrix <T> (1, 1, T_ret);
+        mat_ret = matrix <T, Allocator> (1, 1, T_ret);
     }
     else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
     {
         size_t no_rows = mat_arg.no_rows();
-        mat_ret = matrix <T> (1, mat_arg.no_cols());
+        mat_ret = matrix <T, Allocator> (1, mat_arg.no_cols());
         for (size_t uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
         {
             for (size_t uint_row = 0; uint_row < no_rows; uint_row++)
@@ -338,14 +340,14 @@ template <class T> matrix <T> mean(const matrix <T> &mat_arg)
     return mat_ret;
 }
 
-template <class T> std::vector <T> abs(const std::vector <T> &vec_arg)
+template <typename T> std::vector <T> abs(const std::vector <T> &vec_arg)
 {
     std::vector <T> vec_abs(vec_arg.size(),0);
     for (size_t i = 0; i < vec_arg.size(); i++) vec_abs[i] = abs(vec_arg[i]);
     return vec_abs;
 }
 
-template <class T> matrix <size_t> min(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix <size_t> min(const matrix <T, Allocator> &mat_arg)
 {
     matrix <size_t>     mat_ret;
     T                   T_min;
@@ -383,7 +385,7 @@ template <class T> matrix <size_t> min(const matrix <T> &mat_arg)
     return mat_ret;
 }
 
-template <class T> matrix <size_t> max(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix <size_t> max(const matrix <T, Allocator> &mat_arg)
 {
     matrix <size_t> mat_ret;
     T               T_max;
@@ -421,9 +423,9 @@ template <class T> matrix <size_t> max(const matrix <T> &mat_arg)
     return mat_ret;
 }
 
-template <class T> matrix <std::complex <T>> conj(const matrix <std::complex <T>> &mat_arg)
+template <typename T, typename Allocator> matrix <std::complex <T>, Allocator> conj(const matrix <std::complex <T>, Allocator> &mat_arg)
 {
-    matrix < std::complex <T> > mat_ret(mat_arg.shape());
+    matrix <std::complex <T>, Allocator> mat_ret(mat_arg.shape());
 
     for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
     {
@@ -432,24 +434,13 @@ template <class T> matrix <std::complex <T>> conj(const matrix <std::complex <T>
     return mat_ret;
 }
 
-template <class T> matrix <T> mag(const matrix <std::complex <T>> &mat_arg)
+template <typename T, typename Allocator> matrix <T, Allocator> norm(const matrix <T, Allocator> &mat_arg)
 {
-    matrix <T> mat_ret(mat_arg.shape());
-
-    for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
-    {
-        mat_ret(uint_i) = (mat_arg(uint_i) * std::conj(mat_arg(uint_i))).real();
-    }
-    return mat_ret;
-}
-
-template <class T> matrix <T> norm(const matrix <T> &mat_arg)
-{
-    matrix <T> mat_ret;
+    matrix <T, Allocator> mat_ret;
 
     if (mat_arg.is_vector())
     {
-        mat_ret = matrix <T> (1,1, T(0));
+        mat_ret = matrix <T, Allocator> (1,1, T(0));
         for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
         {
             mat_ret(0) += mat_arg(uint_i) * mat_arg(uint_i);
@@ -458,7 +449,7 @@ template <class T> matrix <T> norm(const matrix <T> &mat_arg)
     }
     else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
     {
-        mat_ret = matrix <T> (1, mat_arg.no_cols(), T(0));
+        mat_ret = matrix <T, Allocator> (1, mat_arg.no_cols(), T(0));
         for (size_t uint_col = 0; uint_col < mat_arg.no_cols(); uint_col++)
         {
             for (size_t uint_row = 0; uint_row < mat_arg.no_rows(); uint_row++)
@@ -471,9 +462,10 @@ template <class T> matrix <T> norm(const matrix <T> &mat_arg)
     return mat_ret;
 }
 
-template <class T> matrix <T> real(const matrix < std::complex <T> > &mat_arg)
+template <typename T, template <typename> typename Allocator>
+matrix <T, Allocator<T>> real(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg)
 {
-    matrix <T> mat_ret(mat_arg.shape());
+    matrix <T, Allocator<T>> mat_ret(mat_arg.shape());
 
     for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
     {
@@ -483,9 +475,10 @@ template <class T> matrix <T> real(const matrix < std::complex <T> > &mat_arg)
     return mat_ret;
 }
 
-template <class T> matrix <T> imag(const matrix <std::complex <T>> &mat_arg)
+template <typename T, template <typename> typename Allocator>
+matrix <T, Allocator<T>> imag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg)
 {
-    matrix < std::complex <T> > mat_ret(mat_arg.shape());
+    matrix <T, Allocator<T>> mat_ret(mat_arg.shape());
 
     for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
     {
@@ -495,9 +488,21 @@ template <class T> matrix <T> imag(const matrix <std::complex <T>> &mat_arg)
     return mat_ret;
 }
 
-template <class T> matrix <char> sign(const matrix <T> &mat_arg)
+template <typename T, template <typename> typename Allocator>
+matrix <T, Allocator<T>> mag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg)
 {
-    matrix <T> mat_ret(mat_arg.shape());
+    matrix <T, Allocator<T>> mat_ret(mat_arg.shape());
+
+    for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+    {
+        mat_ret(uint_i) = (mat_arg(uint_i) * std::conj(mat_arg(uint_i))).real();
+    }
+    return mat_ret;
+}
+
+template <typename T, typename Allocator> matrix <char> sign(const matrix <T, Allocator> &mat_arg)
+{
+    matrix <T, Allocator> mat_ret(mat_arg.shape());
 
     for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
     {
@@ -508,16 +513,16 @@ template <class T> matrix <char> sign(const matrix <T> &mat_arg)
     return mat_ret;
 }
 
-template <class T> char sign(T T_arg)
+template <typename T> char sign(T T_arg)
 {
     if (T_arg > 0) return 1;
     else if (T_arg < 0) return -1;
     return 0;
 }
 
-template <class T> matrix <T> log(const matrix <T> &mat_arg)
+template <typename T, typename Allocator> matrix <T, Allocator> log(const matrix <T, Allocator> &mat_arg)
 {
-    matrix <T> mat_ret(mat_arg.shape());
+    matrix <T, Allocator> mat_ret(mat_arg.shape());
 
     for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
     {

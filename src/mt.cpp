@@ -20,7 +20,6 @@
  * @brief The Mersenne Twister pseudorandom number generator (definition).
  *
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #include <susa.h>

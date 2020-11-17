@@ -19,7 +19,8 @@
  * @file memory.h
  * @brief The <i>memory</i> management and logging (declaration and definition).
  * @author Behrooz Kamary
- * @version 1.0.0
+ * 
+ * @defgroup MEMO Memory Management 
  */
 
 #ifndef SUSA_MEMORY_H
@@ -31,7 +32,12 @@
 
 namespace susa
 {
-
+/**
+* @brief The <i>memory_tracker</i> is a singleton class to track allocated and deallocated memory.
+*
+* @ingroup MEMO
+*
+*/
 class memory_tacker 
 {
     private:
@@ -45,6 +51,7 @@ class memory_tacker
         memory_tacker& operator=(const memory_tacker&) = delete;
         memory_tacker& operator=(memory_tacker&&) = delete;
 
+        //! Returns the instance of <i>memory_tacker</i>
         static memory_tacker& instance()
         {
             static memory_tacker INSTANCE;
@@ -68,11 +75,67 @@ class memory_tacker
 };
 
 /**
-* @brief The <i>memory</i> class.
+* @brief The allocator_log class inherits std::allocator to manage and log the dynamic memory allocation/deallocation.
+*
+* @ingroup MEMO
+*
+*/
+template <typename T> class allocator_log : public std::allocator<T>
+{
+    public:
+        using base = std::allocator<T>;
+        using pointer = typename std::allocator_traits<base>::pointer;
+        using size_type = typename std::allocator_traits<base>::size_type;
+        using value_type = T;
+
+
+        template <typename U> struct rebind
+        {
+            using other = allocator_log<U>;
+        };
+
+        /**
+         * Allocates a memory space.
+         *
+         * @param size the number of elements
+         * @param hint the hint
+         */
+        pointer allocate(size_type size, const void *hint = 0)
+        {
+            memory_tacker::instance().add(size * sizeof(T));
+            pointer ptr = base::allocate(size, hint);
+            SUSA_LOG_INF("allocate " << size * sizeof(T) << " bytes. pointer (" << ptr << ")");
+            return ptr;
+        }
+
+        /**
+         * Releases an allocated memory space.
+         *
+         * @param ptr the allocated pointer
+         * @param size the size of allocated memory
+         */
+        void deallocate(pointer ptr, size_type size)
+        {
+            SUSA_LOG_INF("deallocate " << size * sizeof(T) << " bytes. pointer (" << ptr << ")");
+            memory_tacker::instance().sub(size * sizeof(T));
+            return base::deallocate(ptr, size);
+        }
+
+        allocator_log() noexcept : base() { SUSA_LOG_INF("constructor"); }
+
+        allocator_log(const allocator_log& arg) noexcept : base(arg) {}
+
+        template <class U> allocator_log(const allocator_log<U>& arg) noexcept : base(arg) {}
+
+        ~allocator_log() noexcept {}
+};
+
+/**
+* @brief The <i>memory</i> class uses std::malloc() and std::free() to manage the dynamic memory.
 *
 * <i>memory</i> is a base memory manager class for Susa types.
 *
-* @ingroup TYPES
+* @ingroup MEMO
 *
 */
 template <class T> class memory
@@ -244,40 +307,5 @@ template <class T> memory <T>::memory(memory&& mat_arg) noexcept
 
 }
 
-template <typename T> class allocator_log : public std::allocator<T>
-{
-    public:
-        using base = std::allocator<T>;
-        using pointer = typename std::allocator_traits<base>::pointer;
-        using size_type = typename std::allocator_traits<base>::size_type;
-
-        template <typename U> struct rebind
-        {
-            using other = allocator_log<U>;
-        };
-
-        pointer allocate(size_type n, const void *hint = 0)
-        {
-            memory_tacker::instance().add(n * sizeof(T));
-            pointer p = base::allocate(n, hint);
-            SUSA_LOG_INF("allocate " << n * sizeof(T) << " bytes. pointer (" << p << ")");
-            return p;
-        }
-
-        void deallocate(pointer p, size_type n)
-        {
-            SUSA_LOG_INF("deallocate " << n * sizeof(T) << " bytes. pointer (" << p << ")");
-            memory_tacker::instance().sub(n * sizeof(T));
-            return base::deallocate(p, n);
-        }
-
-        allocator_log() noexcept : base() { SUSA_LOG_INF("constructor"); }
-
-        allocator_log(const allocator_log& arg) noexcept : base(arg) {}
-
-        template <class U> allocator_log(const allocator_log<U>& arg) noexcept : base(arg) {}
-
-        ~allocator_log() noexcept {}
-};
 }
 #endif

@@ -19,7 +19,6 @@
  * @file type_traits.h
  * @brief Susa type traits (declaration).
  * @author Behrooz Kamary
- * @version 1.0.0
  *
  */
 
@@ -28,12 +27,23 @@
 
 #include <type_traits>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 namespace susa
 {
 
 template<class T> struct is_complex : public std::false_type {};
-template<class T> struct is_complex<std::complex<T>> : public std::true_type {};
-    
-}
 
-#endif
+template<class T> struct is_complex<std::complex<T>> : public std::true_type {};
+
+template<typename, typename>
+struct get_allocator {};
+
+template<typename A, template<typename> typename C, typename B>
+struct get_allocator<A, C<B>> {
+    using type = C<A>;
+};
+
+}
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+#endif // SUSA_TYPE_TRAITS_H

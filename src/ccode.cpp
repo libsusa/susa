@@ -19,7 +19,6 @@
  * @file ccode.cpp
  * @brief convolutional ecoder/decoder implementation.
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 

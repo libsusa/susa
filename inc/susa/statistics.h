@@ -19,7 +19,6 @@
  * @file statistics.h
  * @brief Basic statistical operations (declaration and definition).
  * @author Behrooz Kamary
- * @version 1.0.0
  *
  * @defgroup Statistics Statistics
  */

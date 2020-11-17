@@ -19,7 +19,6 @@
  * @file susa.h
  * @brief Susa Package Header
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 /**
@@ -66,7 +65,7 @@
 #include "susa/memory.h"
 #include "susa/sets.h"
 #include "susa/matrix.h"
-#include "susa/vector.h"
+#include "susa/auxiliary.h"
 #include "susa/array.h"
 #include "susa/base.h"
 #include "susa/svd.h"

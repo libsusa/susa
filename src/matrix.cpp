@@ -19,7 +19,6 @@
  * @file matrix.cpp
  * @brief <i>matrix</i> class (definition).
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 
