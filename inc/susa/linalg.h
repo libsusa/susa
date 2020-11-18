@@ -40,7 +40,8 @@ namespace susa
  * @return multiplication of the two input matrices
  * @ingroup LALG
  */
-template <typename T, typename Allocator> matrix <T, Allocator> matmul(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
+template <typename T, typename Allocator>
+matrix <T, Allocator> matmul(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
     // To make it faster this method has been declared as 'friend' of
     // 'matrix' template class so 'matmul' apears two times in 'matrix.h'
@@ -81,24 +82,21 @@ template <typename T, typename Allocator> matrix <T, Allocator> matmul(const mat
 }
 
 /**
- * @brief Transpose operator
+ * @brief Transpose of a matrix
  *
  * @param mat_arg the input matrix
  * @return returns transpose of the input matrices
  * @ingroup LALG
  */
-template <typename T, typename Allocator> matrix <T, Allocator> transpose(const matrix <T, Allocator> &mat_arg)
+template <typename T, typename Allocator>
+matrix <T, Allocator> transpose(const matrix <T, Allocator> &mat_arg)
 {
     size_t sizet_rows = mat_arg.no_rows();
     size_t sizet_cols = mat_arg.no_cols();
     matrix <T, Allocator> mat_ret;
 
-    SUSA_ASSERT(mat_arg._matrix != NULL);
-
-    if (mat_arg._matrix == NULL)
-    {
-        return mat_ret;
-    }
+    SUSA_ASSERT(mat_arg._matrix != nullptr);
+    if (mat_arg._matrix == nullptr) return mat_ret;
 
     mat_ret = matrix <T, Allocator> (sizet_cols, sizet_rows);
 
@@ -113,12 +111,41 @@ template <typename T, typename Allocator> matrix <T, Allocator> transpose(const 
     return mat_ret;
 }
 
+/**
+ * @brief Hermitian transpose of a matrix
+ *
+ * @param mat_arg the input matrix
+ * @return returns Hermitian transpose of the input matrix
+ * @ingroup LALG
+ */
+template <typename T, typename Allocator>
+matrix <std::complex<T>, Allocator> hermitian(const matrix <std::complex<T>, Allocator> &mat_arg)
+{
+    size_t sizet_rows = mat_arg.no_rows();
+    size_t sizet_cols = mat_arg.no_cols();
+    matrix <T, Allocator> mat_ret;
+
+    SUSA_ASSERT(mat_arg._matrix != nullptr);
+    if (mat_arg._matrix == nullptr) return mat_ret;
+
+    mat_ret = matrix <T, Allocator> (sizet_cols, sizet_rows);
+
+    for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
+    {
+        for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
+        {
+            mat_ret(sizet_col,sizet_row) = std::conj(mat_arg(sizet_row,sizet_col));
+        }
+    }
+
+    return mat_ret;
+}
 
 /**
  * @brief Determinant of a matrix
  *
  * @param mat_arg
- * @return returns determinant of the input matrices
+ * @return returns determinant of the input matrix
  * @ingroup LALG
  */
 template <typename T, typename Allocator> double det(const matrix <T, Allocator> &mat_arg)
@@ -165,18 +192,20 @@ template <typename T, typename Allocator> double det(const matrix <T, Allocator>
 /**
  * @brief Concatenation
  *
+ * The input matrices must have equal number of rows and columns
+ * or equal number of rows or equal number of columns.
+ *
  * @param mat_argl the input left-hand side matrix
- * @param mat_argr the right left-hand side matrix
+ * @param mat_argr the input right-hand side matrix
  * @return returns concatenation of the two input matrices
  * @ingroup LALG
  */
 template <typename T, typename Allocator> matrix <T, Allocator> concat(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
-    // should be changed 20101224
+    //TODO should be changed 20101224
     matrix <T, Allocator> mat_ret;
 
-    if ((mat_argl.no_cols() == mat_argr.no_cols() && mat_argl.no_rows() != mat_argr.no_rows()) ||
-            (mat_argl.no_cols() == mat_argr.no_cols() && mat_argl.no_rows() == mat_argr.no_rows()))
+    if ((mat_argl.no_cols() == mat_argr.no_cols() && mat_argl.no_rows() != mat_argr.no_rows()) || mat_argl.shape() == mat_argr.shape())
     { // Case I
 
         mat_ret = matrix <T, Allocator> (mat_argl.no_rows() + mat_argr.no_rows(), mat_argl.no_cols());

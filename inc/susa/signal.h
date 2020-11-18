@@ -74,11 +74,23 @@ filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& ma
  *
  * @param mat_arg_a
  * @param mat_arg_b
- * @return convolution of the two input vectors
+ * @return convolution of the two input matrices
  *
  * @ingroup Signal
  */
 template <typename T, typename Allocator> matrix <T, Allocator> conv(const matrix <T, Allocator>& mat_arg_a, const matrix <T, Allocator>& mat_arg_b);
+
+/**
+ * @brief Kronecker product
+ *
+ * @param mat_arg_a
+ * @param mat_arg_b
+ * @return Kronecker product of the two input matrices
+ *
+ * @ingroup Signal
+ */
+template <typename T, typename Allocator>
+matrix <T, Allocator> kron(const matrix <T, Allocator>& mat_arg_a, const matrix <T, Allocator>& mat_arg_b);
 
 /**
  * @brief Constructs a convolution matrix from the impulse response <i>mat_arg</i>
@@ -153,8 +165,8 @@ filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& ma
        const matrix <T, Allocator>& mat_arg_x, size_t size_length)
 {
 
-    size_t      size_ret_len = 0;
-    matrix <T, Allocator>  mat_y;
+    size_t                  size_ret_len = 0;
+    matrix <T, Allocator>   mat_y;
 
     size_t size_b       = mat_arg_b.size();
     size_t size_a       = mat_arg_a.size();
@@ -237,8 +249,8 @@ filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& ma
 template <typename T, typename Allocator> matrix <T, Allocator> conv(const matrix <T, Allocator>& mat_arg_a, const matrix <T, Allocator>& mat_arg_b)
 {
 
-    matrix <T, Allocator>  mat_ret;
-    size_t      size_length;
+    matrix <T, Allocator>   mat_ret;
+    size_t                  size_length;
 
     if ((mat_arg_b.no_rows() > 1 && mat_arg_b.no_cols() == 1) || (mat_arg_b.no_cols() > 1 && mat_arg_b.no_rows() == 1))
     { // mat_arg_b is a vector
@@ -358,6 +370,36 @@ template <typename T, typename Allocator> matrix <T, Allocator> toeplitz(const m
         for ( size_t size_col = 0; size_col < size_len; size_col++)
         {
             mat_ret(uint_row, size_col) = mat_col(std::abs((long int)(size_col - uint_row)));
+        }
+    }
+    return mat_ret;
+}
+
+template <typename T, typename Allocator>
+matrix <T, Allocator> kron(const matrix <T, Allocator>& mat_arg_a, const matrix <T, Allocator>& mat_arg_b)
+{
+    size_t sz_rows_a = mat_arg_a.no_rows();
+    size_t sz_rows_b = mat_arg_b.no_rows();
+    size_t sz_rows   = sz_rows_a * sz_rows_b;
+
+    size_t sz_cols_a = mat_arg_a.no_cols();
+    size_t sz_cols_b = mat_arg_b.no_cols();
+    size_t sz_cols   = sz_cols_a * sz_cols_b;
+
+    matrix <T, Allocator> mat_ret(sz_rows, sz_cols);
+
+    for (size_t sz_row_a = 0; sz_row_a < sz_rows_a; sz_row_a++)
+    {
+        for (size_t sz_col_a = 0; sz_col_a < sz_cols_a; sz_col_a++)
+        {
+            T T_val =  mat_arg_a(sz_row_a, sz_col_a);
+            for (size_t sz_row_b = 0; sz_row_b < sz_rows_b; sz_row_b++)
+            {
+                for (size_t sz_col_b = 0; sz_col_b < sz_cols_b; sz_col_b++)
+                {
+                    mat_ret(sz_row_a * sz_rows_b + sz_row_b, sz_col_a * sz_cols_b + sz_col_b) = T_val * mat_arg_b(sz_row_b, sz_col_b);
+                }
+            }
         }
     }
     return mat_ret;

@@ -40,6 +40,14 @@ int main(void)
         SUSA_TEST_EQ(mat_res, mat_exp, "convolution.");
     }
 
+    {
+        susa::matrix<int> mat_a("[1 2; 3 4]");
+        susa::matrix<int> mat_b("[0 5; 6 7]");
+        susa::matrix<int> mat_exp("[0 5 0 10;6 7 12 14;0 15 0 20;18 21 24 28]");
+        susa::matrix<int> mat_res = kron(mat_a, mat_b);
+        SUSA_TEST_EQ(mat_res, mat_exp, "Kronecker product");
+    }
+
     SUSA_TEST_PRINT_STATS();
 
     return (uint_failed);

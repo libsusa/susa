@@ -26,12 +26,17 @@
  *
  *
  * @section intro Introduction
- * <p> Susa is a library of utility classes (types) and routines (functions) for signal processing and mathematics applications.
+ * <p> Susa is a framework of utility classes (types) and routines (functions) for signal processing and mathematics applications.
  * It is portable and stand-alone, therefore it does not need complicated and time consuming installation of third
  * party libraries. Susa also provides a framework for embedded devices. You may use it to develop quick and efficient
  * signal processing software for mobile platforms such as Android using the companion Native Development Kit (NDK).
- * It is published under GNU Lesser General Public License.</p>
+ * Susa is published under GNU Lesser General Public License.</p>
  *
+ * @section debug Debug and Troubleshooting
+ * <p>Susa have a limited logging (printd to stdout) and assertions. These can be disabled if SUSA_NDEBUG and/or SUSA_NASSERT is/are defined.
+ * This is useful when the application should not be stopped and it knows how to handle such situations.
+ * If assertions are disabled, a default value may be returned as the result of operations. This may result in
+ * undefined behaivior in your application.</p>
  */
 
 #ifndef SUSA_H

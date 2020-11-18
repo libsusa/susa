@@ -49,7 +49,7 @@ namespace susa
 
 } // NAMESAPCE SUSA
 
-#ifdef SUSA_NDEBUG
+#ifdef SUSA_NASSERT
 #define SUSA_ABORT(MSG) ((void)0)
 #define SUSA_ASSERT(EX) ((void)0)
 #define SUSA_ASSERT_MESSAGE(EX,MSG) ((void)0)
