@@ -42,26 +42,27 @@ class fft;
 template <typename T, typename Allocator>
 class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::value>>
 {
-  private:
-  using value_allocator = typename get_allocator<T, Allocator>::type;
-  using complex_allocator = typename get_allocator<std::complex<T>, Allocator>::type;
-  public:
+    private:
+        using value_allocator = typename get_allocator<T, Allocator>::type;
+        using complex_allocator = typename get_allocator<std::complex<T>, Allocator>::type;
+    public:
+  
     /**
     * @brief Fast Fourier Transform (FFT) using the radix-2 algorithm
     *
     * @todo it only supports 2^N input sizes. it shall cope with any vector size.
-    * @param mat_arg input matrix
-    * @return returns a matrix
+    * @param mat_arg input matrix of real numbers
+    * @return returns a matrix of complex numbers
     */
     matrix <std::complex<T>, complex_allocator> radix2(const matrix <T, Allocator>& mat_arg)
     {
         matrix <std::complex<T>, complex_allocator> mat_ret;
 
-        if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
+        if (mat_arg.is_vector())
         {
             mat_ret = vector_radix2(mat_arg);
         }
-        else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
+        else
         {
             mat_ret = matrix <std::complex<T>, complex_allocator> (mat_arg.shape());
             for (size_t sz_col = 0; sz_col < mat_arg.no_cols(); sz_col++)
@@ -77,18 +78,18 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
     /**
     * @brief Discrete Fourier Transform (DFT)
     *
-    * @param mat_arg input matrix
-    * @return returns a matrix
+    * @param mat_arg input matrix of real numbers
+    * @return returns a matrix of complex numbers
     */
     matrix <std::complex<T>, complex_allocator> dft(const matrix <T, Allocator>& mat_arg)
     {
         matrix <std::complex<T>, complex_allocator> mat_ret;
 
-        if (mat_arg.no_rows() == 1 || mat_arg.no_cols() == 1)
+        if (mat_arg.is_vector())
         {
             mat_ret = vector_dft(mat_arg);
         }
-        else if (mat_arg.no_rows() > 1 && mat_arg.no_cols() > 1)
+        else
         {
             mat_ret = matrix <std::complex<T>, complex_allocator> (mat_arg.shape());
             for (size_t sz_col = 0; sz_col < mat_arg.no_cols(); sz_col++)
@@ -105,11 +106,12 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
 
     matrix <std::complex<T>, complex_allocator> vector_radix2(const matrix <T, Allocator>& mat_arg)
     {
-        size_t size = mat_arg.size();
+        size_t          size        = mat_arg.size();
         SUSA_ASSERT(is_power_of_two(size));
+        size_t          sz_stage    = susa::log2(size);
+        matrix <std::complex<T>, complex_allocator> mat_brev = convert_to_complex(mat_arg);
 
-        matrix <std::complex<T>, complex_allocator> mat_bit_rev   = bit_reverse(convert_to_complex(mat_arg));
-        size_t sz_stage                                   = susa::log2(size);
+        bit_reverse(mat_brev);
 
         for (size_t stage = 1; stage <= sz_stage; stage++)
         {
@@ -120,22 +122,22 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
                 std::complex<T> w(1,0);
                 for (size_t j = 0; j < m/2; j++)
                 {
-                    std::complex<T> t           = w * mat_bit_rev(k + j + m/2);
-                    std::complex<T> u           = mat_bit_rev(k + j);
-                    mat_bit_rev(k + j)          = u + t;
-                    mat_bit_rev(k + j + m/2)    = u - t;
+                    std::complex<T> t           = w * mat_brev(k + j + m/2);
+                    std::complex<T> u           = mat_brev(k + j);
+                    mat_brev(k + j)             = u + t;
+                    mat_brev(k + j + m/2)       = u - t;
                     w                           = w * w_m;
                 }
             }
         }
 
-        return mat_bit_rev;
+        return mat_brev;
     }
 
     matrix <std::complex<T>, complex_allocator> vector_dft(const matrix <T, Allocator>& mat_arg)
     {
         size_t size = mat_arg.size();
-        matrix <std::complex<T>, complex_allocator> mat_ret(size,1);
+        matrix <std::complex<T>, complex_allocator> mat_ret(mat_arg.shape(), std::complex <T> (0,0));
 
         for (size_t k = 0; k < size; k++)
         {
@@ -148,16 +150,15 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
         return mat_ret;
     }
 
-    template <typename U>
-    matrix <U> bit_reverse(matrix <U> mat_arg)
+    void bit_reverse(matrix <std::complex<T>, complex_allocator>& mat_arg)
     {
-        size_t  n       = mat_arg.size();
-        size_t  n_bits  = susa::log2(n);
-        U       U_swap  = 0;
-        size_t  sz_brev;
+        size_t              sz_size     = mat_arg.size();
+        size_t              n_bits      = susa::log2(sz_size);
+        std::complex<T>     U_swap      = 0;
+        size_t              sz_brev;
 
 
-        for (size_t indx=1; indx < n; indx++)
+        for (size_t indx=1; indx < sz_size; indx++)
         {
             sz_brev = 0;
             for (size_t j=0; j < n_bits; j++)
@@ -166,19 +167,18 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
             }
             if (sz_brev > indx)
             {
-                U_swap = mat_arg(indx);
-                mat_arg(indx) = mat_arg(sz_brev);
-                mat_arg(sz_brev) = U_swap;
+                U_swap              = mat_arg(indx);
+                mat_arg(indx)       = mat_arg(sz_brev);
+                mat_arg(sz_brev)    = U_swap;
             }
         }
-        return mat_arg;
     }
 
 
     matrix <std::complex<T>, complex_allocator> convert_to_complex(const matrix <T, Allocator>& mat_arg)
     {
         size_t size = mat_arg.size();
-        matrix <std::complex<T>, complex_allocator> ret(size,1);
+        matrix <std::complex<T>, complex_allocator> ret(mat_arg.shape());
 
         for (size_t indx = 0; indx < size; indx++)
         {

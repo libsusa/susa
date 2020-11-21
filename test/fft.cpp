@@ -28,20 +28,24 @@ int main(void)
 {
 
 {
-    susa::fft <double>      fourier;
-    susa::matrix <double>   mat_input("[4.,3.,2.,1.,0.,1.,2.,3.]");
+    susa::fft <double, susa::allocator_log<double>>      fourier;
+    susa::matrix <double, susa::allocator_log<double>>   mat_input("[4.,3.,2.,1.,0.,1.,2.,3.]");
     auto mat_output = fourier.radix2(mat_input);
     auto sum = std::abs(susa::sum(mat_output)(0));
     SUSA_TEST_EQ_DOUBLE(sum, 32.0, "fast fourier transform (FFT) with Radix-2 (symetric reals)");
 }
 
 {
+    // test with the default allocator
     susa::fft<double> fourier;
     susa::matrix <double> mat_input("[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]");
 
     auto mat_output_dft = fourier.dft(mat_input);
     auto mat_output_fft = fourier.radix2(mat_input);
     bool bool_dft_fft_eq = true;
+
+    std::cout << mat_output_dft << std::endl;
+    std::cout << mat_output_fft << std::endl;
 
     for (size_t indx = 0; indx < mat_input.size(); indx++)
     {
@@ -51,6 +55,30 @@ int main(void)
 
     SUSA_TEST_EQ(bool_dft_fft_eq, true, "fast fourier transform (FFT) with Radix-2 (asymetric reals)");
 }
+
+{
+    // test with a custom allocator
+    susa::fft<double, susa::allocator_log<double>> fourier;
+    susa::matrix <double, susa::allocator_log<double>> mat_input("[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]");
+
+    auto mat_output_dft = fourier.dft(mat_input);
+    auto mat_output_fft = fourier.radix2(mat_input);
+    bool bool_dft_fft_eq = true;
+
+    std::cout << mat_output_dft << std::endl;
+    std::cout << mat_output_fft << std::endl;
+
+    for (size_t indx = 0; indx < mat_input.size(); indx++)
+    {
+        auto diff = std::abs(mat_output_dft(indx) - mat_output_fft(indx));
+        if (diff > 1.0e-10) bool_dft_fft_eq = false;
+    }
+
+    SUSA_TEST_EQ(bool_dft_fft_eq, true, "fast fourier transform (FFT) with Radix-2 (asymetric reals)");
+}
+
+    SUSA_TEST_EQ(susa::memory_tacker::instance().read(), 0, "susa::array memory leak with susa allocator");
+
     SUSA_TEST_PRINT_STATS();
 
     return (uint_failed);
