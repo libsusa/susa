@@ -43,6 +43,15 @@ int main(void)
     susa::matrix <double> mat_b(ss.str());
     SUSA_TEST_EQ(mat_b, round(mat_a, 2), "std::string to susa::matrix conversion.");
 
+    susa::matrix <std::complex<int>> mat_c(1,2);
+    mat_c(0) = std::complex <int> (2,2);
+    mat_c(1) = std::complex <int> (-5,5);
+
+    auto mat_mag = susa::mag(mat_c);
+
+    SUSA_TEST_EQ(mat_mag(0), 8, "absolute square of a complex matrix elements");
+    SUSA_TEST_EQ(mat_mag(1), 50, "absolute square of a complex matrix elements");
+
     SUSA_TEST_PRINT_STATS();
 
     return (uint_failed);

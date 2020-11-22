@@ -16,7 +16,7 @@
  */
 
 
-//#define SUSA_NDEBUG
+//#define SUSA_NASSERT
 
 #include <susa.h>
 
@@ -57,7 +57,7 @@ int main(void)
   SUSA_LOG_INF("logs can be disabled by defining SUSA_NDEBUG.");
 
   // this line demonstrates SUSA_ASSERT_MESSAGE macro usage.
-  // to disable the message and the abortion of the software uncomment "#define SUSA_NDEBUG"
+  // to disable the message and the abortion of the software uncomment "#define SUSA_NASSERT"
   std::cout << std::endl << "mat_a = " << std::endl << mat_a(mat_a.size() + 1);
 
   return 0;

@@ -44,9 +44,6 @@ int main(void)
     auto mat_output_fft = fourier.radix2(mat_input);
     bool bool_dft_fft_eq = true;
 
-    std::cout << mat_output_dft << std::endl;
-    std::cout << mat_output_fft << std::endl;
-
     for (size_t indx = 0; indx < mat_input.size(); indx++)
     {
         auto diff = std::abs(mat_output_dft(indx) - mat_output_fft(indx));
@@ -64,9 +61,6 @@ int main(void)
     auto mat_output_dft = fourier.dft(mat_input);
     auto mat_output_fft = fourier.radix2(mat_input);
     bool bool_dft_fft_eq = true;
-
-    std::cout << mat_output_dft << std::endl;
-    std::cout << mat_output_fft << std::endl;
 
     for (size_t indx = 0; indx < mat_input.size(); indx++)
     {
