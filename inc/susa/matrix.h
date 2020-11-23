@@ -1440,13 +1440,8 @@ template <typename T, typename Allocator> bool matrix <T, Allocator>::parser(std
     SUSA_ASSERT_MESSAGE(char_buff != nullptr, "memory allocation failed.");
     if (char_buff == nullptr) return false;
 
-    T T_tmp;
-    T T_delta = 0;
-
-    if (std::is_same<T, uint8_t>::value || std::is_same<T, int8_t>::value)
-    {
-        T_delta = 0x30;
-    } 
+    T   T_tmp;
+    int int_char = 0;
 
     for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
     {
@@ -1455,8 +1450,22 @@ template <typename T, typename Allocator> bool matrix <T, Allocator>::parser(std
         for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
         {
             ssrow.getline(char_buff, MAX_STR_LEN, 0x20);
-            if (!(std::istringstream(char_buff) >> T_tmp)) T_tmp = 0;
-            _matrix[get_lindex(sizet_row,sizet_col)] = T_tmp - T_delta;
+            if (std::is_same<T, uint8_t>::value || std::is_same<T, int8_t>::value)
+            {
+                if (!(std::istringstream(char_buff) >> int_char))
+                {
+                    SUSA_LOG_ERR("std::istringstream failed to parse the string");
+                    int_char = 0;
+                }
+                _matrix[get_lindex(sizet_row,sizet_col)] = int_char;
+                continue;
+            }
+            else if (!(std::istringstream(char_buff) >> T_tmp))
+            {
+                SUSA_LOG_ERR("std::istringstream failed to parse the string");
+                T_tmp = 0;
+            }
+            _matrix[get_lindex(sizet_row,sizet_col)] = T_tmp;
         }
     }
 
