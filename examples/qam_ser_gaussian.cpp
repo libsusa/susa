@@ -54,7 +54,7 @@ int main(void) {
 
     std::cout << std::fixed;
     std::cout << std::setprecision(4);
-    std::cout << setw(25) << "Empirical" << setw(20) << "Theoretical" << endl;
+    std::cout << setw(30) << "Empirical SER" << setw(20) << "Theoretical SER" << setw(20) << "Error (%)" << endl;
 
     for (unsigned int uint_noise_step = 0; uint_noise_step < uint_num_steps; uint_noise_step++)
     {
@@ -80,10 +80,11 @@ int main(void) {
             if (_qam.demodulate_symbol(cmat_noisy_symbols(uint_i)) != cmat_symbols(uint_i))
                 mat_num_errors(uint_noise_step)++;
 
-
+        double dbl_ser_emp = (double) mat_num_errors(uint_noise_step)/uint_n;
         cout << "Eb/N0 = " << dbl_noise_db;
-        cout << setw(10) << "SER = " << (double) mat_num_errors(uint_noise_step)/uint_n;
-        cout << setw(10) << "SER = " << dbl_ser << endl;
+        cout << setw(10)  << dbl_ser_emp;
+        cout << setw(20)  << dbl_ser;
+        cout << setw(25)  << 100.0 * abs(dbl_ser - dbl_ser_emp)/dbl_ser << endl;
         fs_result << dbl_noise_db << "   " <<  (double) mat_num_errors(uint_noise_step)/uint_n << endl;
     }
 
