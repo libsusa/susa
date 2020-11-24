@@ -103,27 +103,37 @@ matrix <T, Allocator> norm(const matrix <T, Allocator> &mat_arg);
  * @ingroup Math
  */
 template <typename T, template <typename> typename Allocator>
-matrix <T, Allocator<T>> real(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg);
+matrix <T, Allocator<T>> real(const matrix <std::complex<T>, Allocator<std::complex<T>>> &cmat_arg);
 
 /**
  * @brief Imaginary
  *
- * @param mat_arg input complex matrix
+ * @param cmat_arg input complex matrix
  * @return Returns imaginary part of the complex input vector
  * @ingroup Math
  */
 template <typename T, template <typename> typename Allocator>
-matrix <T, Allocator<T>> imag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg);
+matrix <T, Allocator<T>> imag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &cmat_arg);
 
 /**
  * @brief Magnitude
  *
- * @param mat_arg input complex matrix
+ * @param cmat_arg input complex matrix
  * @return compute the absolute square of the complex input matrix elements
  * @ingroup Math
  */
 template <typename T, template <typename> typename Allocator>
-matrix <T, Allocator<T>> mag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &mat_arg);
+matrix <T, Allocator<T>> mag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &cmat_arg);
+
+/**
+ * @brief Complex
+ *
+ * @param mat_arg input real matrix
+ * @return convert the input real matrix to a complex matrix
+ * @ingroup Math
+ */
+template <typename T, template <typename> typename Allocator>
+matrix <std::complex <T>, Allocator <std::complex <T>>> complex(const matrix <T, Allocator<T>> &mat_arg);
 
 /**
  * @brief Absolute
@@ -162,7 +172,8 @@ matrix <std::complex <T>, Allocator> conj(const matrix <std::complex <T>, Alloca
  * @return Returns sign of the input
  * @ingroup Math
  */
-template <typename T, typename Allocator> matrix <char> sign(const matrix <T, Allocator> &mat_arg);
+template <typename T, typename Allocator>
+matrix <char> sign(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Sign
@@ -281,7 +292,7 @@ template <typename T> std::vector <T> diff(std::vector <T> &vec_arg)
         vec_diff[i] = vec_arg[i + 1] - vec_arg[i];
     }
 
-    return (vec_diff);
+    return vec_diff;
 }
 
 template <typename T> T sum(const std::vector<T> &vec_arg)
@@ -462,6 +473,18 @@ matrix <std::complex <T>, Allocator> conj(const matrix <std::complex <T>, Alloca
     for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
     {
         mat_ret(uint_i) = std::conj(mat_arg(uint_i));
+    }
+    return mat_ret;
+}
+
+template <typename T, template <typename> typename Allocator>
+matrix <std::complex <T>, Allocator <std::complex <T>>> complex(const matrix <T, Allocator<T>> &mat_arg)
+{
+    matrix <std::complex <T>, Allocator <std::complex <T>>> mat_ret(mat_arg.shape());
+
+    for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
+    {
+        mat_ret(uint_i) = mat_arg(uint_i);
     }
     return mat_ret;
 }
