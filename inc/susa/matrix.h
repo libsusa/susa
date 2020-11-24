@@ -1386,8 +1386,6 @@ bool matrix <T, Allocator>::parser(std::string str_string)
 
     std::stringstream ss_all(str_string);
     char char_buff[MAX_STR_LEN];
-    SUSA_ASSERT_MESSAGE(char_buff != nullptr, "memory allocation failed.");
-    if (char_buff == nullptr) return false;
 
     std::conditional_t<std::is_same_v<T, uint8_t> || std::is_same_v<T, int8_t>, int, T> T_tmp;
 
