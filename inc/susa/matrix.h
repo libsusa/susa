@@ -96,10 +96,12 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
     // This parses the strings and initialize the matrix elements.
     // The string initialization can be done using a constructor method
     // and an overloaded assignment operator (=) method
-    bool parser(std::string str_string);
+    bool    parser(std::string str_string);
     
     //! compute the internal linear index from row and column indices
-    size_t get_lindex(size_t sizet_row, size_t sizet_col) const;
+    size_t  get_lindex(size_t sizet_row, size_t sizet_col) const;
+
+    bool    allocate(size_t sz_objects);
 
   public:
     //! Constructor
@@ -404,73 +406,47 @@ matrix <T, Allocator>::matrix(size_t sizet_rows, size_t sizet_cols, T Tinitial)
   this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
   sizet_objects = this->sizet_rows * this->sizet_cols;
 
-  try
-  {
-      _matrix = alloc.allocate(sizet_objects);
-  }
-  catch(const std::bad_alloc& e)
-  {
-      sizet_rows    = 0;
-      sizet_cols    = 0;
-      sizet_objects = 0;
-  }
-  
-  SUSA_ASSERT(_matrix != nullptr);
+  if (!allocate(sizet_objects)) return;
 
   for (size_t sizet_index = 0; sizet_index < sizet_objects; sizet_index++)
   {
     _matrix[sizet_index] = Tinitial;
   }
-
 }
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix( size_t sizet_rows, size_t sizet_cols )
 : T_fake(new T)
 , alloc()
+, _matrix(nullptr)
 {
     SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
     this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
     this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
     sizet_objects = this->sizet_rows * this->sizet_cols;
-    try
-    {
-        _matrix = alloc.allocate(sizet_objects);
-    }
-    catch(const std::bad_alloc& e)
-    {
-        sizet_rows    = 0;
-        sizet_cols    = 0;
-        sizet_objects = 0;
-    }
-    SUSA_ASSERT(_matrix != nullptr);
+    allocate(sizet_objects);
 }
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix(const matrix <T, Allocator> &mat_arg)
 : T_fake(new T)
 , alloc(mat_arg.alloc)
+, _matrix(nullptr)
 {
     this->sizet_rows      = mat_arg.sizet_rows;
     this->sizet_cols      = mat_arg.sizet_cols;
     this->sizet_objects   = mat_arg.sizet_objects;
-    try
+
+    if (allocate(sizet_objects))
     {
-        _matrix = alloc.allocate(sizet_objects);
         std::memcpy(_matrix, mat_arg._matrix, sizet_objects * sizeof(T));
     }
-    catch(const std::bad_alloc& e)
-    {
-        sizet_rows    = 0;
-        sizet_cols    = 0;
-        sizet_objects = 0;
-    }
-    SUSA_ASSERT(_matrix != nullptr);
 }
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape)
 : T_fake(new T)
+, _matrix(nullptr)
 {
     size_t sizet_rows;
     size_t sizet_cols;
@@ -480,23 +456,13 @@ matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape)
     this->sizet_rows = sizet_rows < 2 ? 1 : sizet_rows;
     this->sizet_cols = sizet_cols < 2 ? 1 : sizet_cols;
     sizet_objects = this->sizet_rows * this->sizet_cols;
-
-    try
-    {
-        _matrix = alloc.allocate(sizet_objects);
-    }
-    catch(const std::bad_alloc& e)
-    {
-        sizet_rows    = 0;
-        sizet_cols    = 0;
-        sizet_objects = 0;
-    }
-    SUSA_ASSERT(_matrix != nullptr);
+    allocate(sizet_objects);
 }
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape, T Tinitial)
 : T_fake(new T)
+, _matrix(nullptr)
 {
     size_t sizet_rows;
     size_t sizet_cols;
@@ -507,18 +473,7 @@ matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape, T Tiniti
     this->sizet_cols    = sizet_cols < 2 ? 1 : sizet_cols;
     sizet_objects       = this->sizet_rows * this->sizet_cols;
 
-    try
-    {
-        _matrix = alloc.allocate(sizet_objects);
-    }
-    catch(const std::bad_alloc& e)
-    {
-        _matrix       = nullptr;
-        sizet_rows    = 0;
-        sizet_cols    = 0;
-        sizet_objects = 0;
-    }
-    SUSA_ASSERT(_matrix != nullptr);
+    if(!allocate(sizet_objects)) return;
 
     for (size_t sizet_index = 0; sizet_index < sizet_objects; sizet_index++)
     {
@@ -526,7 +481,8 @@ matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape, T Tiniti
     }
 }
 
-template <typename T, typename Allocator> matrix <T, Allocator>::matrix(matrix<T, Allocator>&& mat_arg) noexcept
+template <typename T, typename Allocator>
+matrix <T, Allocator>::matrix(matrix<T, Allocator>&& mat_arg) noexcept
 {
     sizet_rows          = mat_arg.sizet_rows;
     sizet_cols          = mat_arg.sizet_cols;
@@ -793,7 +749,7 @@ matrix <T, Allocator> matrix <T, Allocator>::reshape(size_t sizet_rows, size_t s
 }
 
 template <typename T, typename Allocator>
-bool matrix <T, Allocator>::resize(size_t sizet_rows, size_t sizet_cols)
+bool matrix<T, Allocator>::resize(size_t sizet_rows, size_t sizet_cols)
 {
     SUSA_ASSERT(sizet_cols > 0 && sizet_rows > 0);
 
@@ -803,27 +759,22 @@ bool matrix <T, Allocator>::resize(size_t sizet_rows, size_t sizet_cols)
 
     if (sizet_objects != this->sizet_objects)
     {
-        alloc.deallocate(_matrix, this->sizet_objects);
-        try
+        if (_matrix != nullptr)
         {
-            _matrix = alloc.allocate(sizet_objects);
+            alloc.deallocate(_matrix, this->sizet_objects);
+            _matrix = nullptr;
+        }
+        if (allocate(sizet_objects))
+        {
             this->sizet_objects = sizet_objects;
         }
-        catch (const std::bad_alloc& ex)
-        {
-            _matrix             = nullptr;
-            this->sizet_objects = 0;
-            this->sizet_rows    = 0;
-            this->sizet_cols    = 0;
-        }
     }
-
-    SUSA_ASSERT(_matrix != nullptr);
 
     return (_matrix != nullptr);
 }
 
-template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::left(size_t sizet_left) const
+template <typename T, typename Allocator>
+matrix <T, Allocator> matrix <T, Allocator>::left(size_t sizet_left) const
 {
     matrix <T, Allocator> mat_ret;
 
@@ -1290,24 +1241,18 @@ template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Alloc
 {
     if (sizet_objects != 0 && _matrix != nullptr)
     {
-      alloc.deallocate(_matrix, sizet_objects);
+        alloc.deallocate(_matrix, sizet_objects);
+        _matrix         = nullptr;
+        sizet_objects   = 0;
     }
     sizet_rows      = mat_arg.sizet_rows;
     sizet_cols      = mat_arg.sizet_cols;
     sizet_objects   = sizet_rows * sizet_cols;
-    try
+
+    if (allocate(sizet_objects))
     {
-        _matrix = alloc.allocate(sizet_objects);
         std::memcpy(_matrix, mat_arg._matrix, sizet_objects * sizeof(T));
     }
-    catch(const std::bad_alloc& e)
-    {
-        _matrix       = nullptr;
-        sizet_rows    = 0;
-        sizet_cols    = 0;
-        sizet_objects = 0;
-    }
-    SUSA_ASSERT(_matrix != nullptr);
 
     return *this;
 }
@@ -1333,7 +1278,18 @@ inline std::ostream& operator<<(std::ostream& os, unsigned char c)
     return os << static_cast<unsigned int>(c);
 }
 
-template <typename T, typename Allocator> std::ostream &operator<<(std::ostream& outStream, const matrix <T, Allocator>& mat_arg)
+inline std::ostream& operator<<(std::ostream& os, std::complex<int8_t> c)
+{
+    return os << "(" << static_cast<int>(c.real()) << "," << static_cast<int>(c.imag()) << ")";
+}
+
+inline std::ostream& operator<<(std::ostream& os, std::complex<uint8_t> c)
+{
+    return os << "(" << static_cast<unsigned int>(c.real()) << "," << static_cast<unsigned int>(c.imag()) << ")";
+}
+
+template <typename T, typename Allocator>
+std::ostream &operator<<(std::ostream& outStream, const matrix <T, Allocator>& mat_arg)
 {
 
     outStream << "[";
@@ -1351,7 +1307,8 @@ template <typename T, typename Allocator> std::ostream &operator<<(std::ostream&
 }
 
 
-template <typename T, typename Allocator> bool matrix <T, Allocator>::parser(std::string str_string)
+template <typename T, typename Allocator>
+bool matrix <T, Allocator>::parser(std::string str_string)
 {
 
     pre_parser(str_string);
@@ -1416,32 +1373,23 @@ template <typename T, typename Allocator> bool matrix <T, Allocator>::parser(std
         if (sizet_objects != 0 && _matrix != nullptr)
         {
             alloc.deallocate(_matrix, sizet_objects);
-            _matrix = nullptr;
+            _matrix         = nullptr;
+            sizet_objects   = 0;
         }
 
-        try
+        if (allocate(sizet_size))
         {
-            _matrix = alloc.allocate(sizet_size);
             sizet_objects = sizet_size;
         }
-        catch(const std::bad_alloc& e)
-        {
-            _matrix       = nullptr;
-            sizet_rows    = 0;
-            sizet_cols    = 0;
-            sizet_objects = 0;
-        }
-        SUSA_ASSERT(_matrix != nullptr);
     }
 
 
     std::stringstream ss_all(str_string);
-    char* char_buff = new char[MAX_STR_LEN];
+    char char_buff[MAX_STR_LEN];
     SUSA_ASSERT_MESSAGE(char_buff != nullptr, "memory allocation failed.");
     if (char_buff == nullptr) return false;
 
-    T   T_tmp;
-    int int_char = 0;
+    std::conditional_t<std::is_same_v<T, uint8_t> || std::is_same_v<T, int8_t>, int, T> T_tmp;
 
     for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
     {
@@ -1450,17 +1398,7 @@ template <typename T, typename Allocator> bool matrix <T, Allocator>::parser(std
         for (size_t sizet_col = 0; sizet_col < sizet_cols; sizet_col++)
         {
             ssrow.getline(char_buff, MAX_STR_LEN, 0x20);
-            if (std::is_same<T, uint8_t>::value || std::is_same<T, int8_t>::value)
-            {
-                if (!(std::istringstream(char_buff) >> int_char))
-                {
-                    SUSA_LOG_ERR("std::istringstream failed to parse the string");
-                    int_char = 0;
-                }
-                _matrix[get_lindex(sizet_row,sizet_col)] = int_char;
-                continue;
-            }
-            else if (!(std::istringstream(char_buff) >> T_tmp))
+            if (!(std::istringstream(char_buff) >> T_tmp))
             {
                 SUSA_LOG_ERR("std::istringstream failed to parse the string");
                 T_tmp = 0;
@@ -1469,9 +1407,27 @@ template <typename T, typename Allocator> bool matrix <T, Allocator>::parser(std
         }
     }
 
-    delete[] char_buff;
-
     return true;
+}
+
+template <typename T, typename Allocator>
+bool matrix <T, Allocator>::allocate(size_t sz_objects)
+{
+    SUSA_ASSERT_MESSAGE(_matrix == nullptr, "not deallocated and may cause memory leak");
+    try
+    {
+        _matrix = alloc.allocate(sz_objects);
+    }
+    catch(const std::bad_alloc& e)
+    {
+        _matrix       = nullptr;
+        sizet_rows    = 0;
+        sizet_cols    = 0;
+        sizet_objects = 0;
+        SUSA_LOG_ERR("memory allocation failed");
+    }
+    SUSA_ASSERT(_matrix != nullptr);
+    return (_matrix != nullptr);
 }
 }      // NAMESPACE SUSA
 
