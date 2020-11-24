@@ -58,7 +58,7 @@ matrix <unsigned int> rng::rand_mask(unsigned int uint_mask, unsigned int uint_n
     return mat_ret;
 }
 
-double rng::GetDouble()
+double rng::get_double()
 {
 
     return ((double)extract_number() / std::numeric_limits<uint32_t>::max());
@@ -151,40 +151,40 @@ void rng::init(unsigned int uint_seed)
     }
 }
 
-unsigned int rng::GetNonUniform(double* pr, unsigned int n)
+size_t rng::get_nonuniform(double* prob, size_t n)
 {
 
     double  t = 0;
-    double  x = GetDouble();
-    for (unsigned int indx = 0; indx < n; indx++)
+    double  x = get_double();
+    for (size_t indx = 0; indx < n; indx++)
     {
-        t += pr[indx];
+        t += prob[indx];
         if ( t > x ) return indx;
     }
 
     return 0;
 }
 
-unsigned int rng::nonUniform(std::vector <float> pr)
+size_t rng::get_nonuniform(const std::vector <float>& vec_prob)
 {
 
-    int n      = pr.size();
-    double  t  = 0;
-    double x   = GetDouble();
+    size_t n   = vec_prob.size();
+    double t   = 0;
+    double x   = get_double();
 
-    for (int i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
     {
-        t += pr[i];
+        t += vec_prob[i];
         if ( t > x ) return i;
     }
 
     return 0;
 }
 
-matrix <unsigned char> rng::bernoulli(size_t size_num)
+matrix <int8_t> rng::bernoulli(size_t size_num)
 {
     // TODO: optimize the generation time
-    matrix <unsigned char> mat_ret(size_num, 1);
+    matrix <int8_t> mat_ret(size_num, 1);
 
     for (unsigned int uint_i = 0; uint_i < size_num; uint_i++)
     {

@@ -31,7 +31,7 @@
 namespace susa {
 
 /**
-* @brief Random Number Generator class.
+* @brief Random Number Generator (RNG) class.
 *
 *
 * This implementation of "Mersenne Twister" generates uniformly
@@ -119,7 +119,7 @@ class rng {
     matrix <double> rand(unsigned int uint_num);
 
     /**
-     * @brief uniformly distributed random double
+     * @brief uniformly distributed random double matrix
      *
      * @param uint_rows Number of rows
      * @param uint_cols Number of columns
@@ -131,9 +131,11 @@ class rng {
      * @brief Bernoulli random samples
      * 
      * @param size_num number of samples i.e. vector size
-     * @return a column vector of type susa::matrix<unsigned char>
+     * @return a column vector of type susa::matrix<int8_t>
      */
-    matrix <unsigned char> bernoulli(size_t size_num);
+    matrix <int8_t> bernoulli(size_t size_num);
+
+  private:
 
     enum
     {
@@ -159,20 +161,19 @@ class rng {
         MASK_LOWER = (1ull << R) - 1,
         MASK_UPPER = (1ull << R)
     };
-
-  private:
+  
     // Create a length 624 array to store the state of the generator
     uint32_t MT[N];
     uint16_t uint_index;
 
-    void generate_numbers();
-    unsigned int extract_number();
+    void          generate_numbers();
+    unsigned int  extract_number();
 
 
-    unsigned int GetUInt();
-    unsigned int GetNonUniform(double* pr, unsigned int n);
-    unsigned int nonUniform(std::vector <float>);
-    double       GetDouble();
+    unsigned int  get_uint();
+    size_t        get_nonuniform(double* dbl_prob, size_t n);
+    size_t        get_nonuniform(const std::vector <float>& vec_prob);
+    double        get_double();
 };
 
 }      // NAMESPACE SUSA
