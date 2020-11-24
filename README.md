@@ -1,4 +1,4 @@
-# Susa Open Source Project  [![Build Status](https://travis-ci.com/susalib/susa.svg?branch=master)](https://travis-ci.com/susalib/susa)
+# Susa Open Source Project  [![Build Status](https://travis-ci.com/libsusa/susa.svg?branch=master)](https://travis-ci.com/libsusa/susa)
 
 Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia.org/wiki/Software_framework) based on [KISS](https://en.wikipedia.org/wiki/KISS_principle)
  principle. It is stand-alone with a modern architecture. It is designed not to have any dependencies to none standard third
@@ -56,7 +56,7 @@ make install
 ```
 to be able to build against Susa system-wide. However, you may continue using the local build without installation.
 ## Examples
-In the [examples](https://github.com/behrooza/susa/tree/master/examples) directory
+In the [examples](https://github.com/libsusa/susa/tree/master/examples) directory
 a number of simulation and tutorial source codes have been provided.
 ## Contribution
 This is a non-profit project and it belongs to its users. You can contribute to your project by reporting bugs and extending it by following the provided [guidelines](https://guides.github.com/activities/forking). This paves the way for further improvements and protects the authors' rights.
@@ -82,4 +82,4 @@ whereas the other earlier efforts calculated the integer part.
 Since the very first line of code was simply the definition of constant Pi, it has been named Susa.
 
 ## License
-[Susa](http://susalib.org) has been released under GNU Lesser General Public License (LGPL).
+[Susa](http://libsusa.org) has been released under GNU Lesser General Public License (LGPL).
