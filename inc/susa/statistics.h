@@ -23,8 +23,8 @@
  * @defgroup Statistics Statistics
  */
 
-#ifndef STATISTICS_H
-#define STATISTICS_H
+#ifndef SUSA_STATISTICS_H
+#define SUSA_STATISTICS_H
 
 namespace susa {
 
@@ -53,9 +53,11 @@ template <class T> double var(std::vector <T> vec_arg);
 template <class T> double stdv(std::vector <T> vec_arg);
 
 
-template <class T> T mean(std::vector <T> vec_arg) {
+template <class T> T mean(std::vector <T> vec_arg)
+{
     T tMean=0;
-    for (int i=0; i<vec_arg.size(); i++) {
+    for (int i=0; i<vec_arg.size(); i++)
+    {
         tMean += vec_arg[i];
     }
 
@@ -64,10 +66,12 @@ template <class T> T mean(std::vector <T> vec_arg) {
 
 
 
-template <class T> double var(std::vector <T> vec_arg) {
+template <class T> double var(std::vector <T> vec_arg)
+{
     T tMean = mean(vec_arg);
     T tVar = 0;
-    for (int i=0; i<vec_arg.size(); i++) {
+    for (int i=0; i<vec_arg.size(); i++)
+    {
         tVar += (vec_arg[i] - tMean)*(vec_arg[i] - tMean);
     }
 
@@ -77,10 +81,12 @@ template <class T> double var(std::vector <T> vec_arg) {
 
 
 
-template <class T> double stdv(std::vector <T> vec_arg) {
+template <class T> double stdv(std::vector <T> vec_arg)
+{
     T tMean = mean(vec_arg);
     T tStd = 0;
-    for (int i=0; i<vec_arg.size(); i++) {
+    for (int i=0; i<vec_arg.size(); i++)
+    {
         tStd += (vec_arg[i] - tMean)*(vec_arg[i] - tMean);
     }
 

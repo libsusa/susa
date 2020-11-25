@@ -19,7 +19,6 @@
  * @file matrix.cpp
  * @brief Unit Test Suit
  * @author Behrooz Kamary
- * @version 1.0.0
  */
 
 #include "test.h"

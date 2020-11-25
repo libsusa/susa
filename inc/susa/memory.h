@@ -58,16 +58,19 @@ class memory_tacker
             return INSTANCE;
         }
 
+        //! Add a number of bytes
         void add(size_t nbytes)
         {
             ull_used_memory.fetch_add(nbytes);
         }
 
+        //! Subtract a number of bytes
         void sub(size_t nbytes)
         {
             ull_used_memory.fetch_sub(nbytes);
         }
 
+        //! Read the allocated number of bytes
         size_t read()
         {
             return ull_used_memory.load();
@@ -91,7 +94,7 @@ template <typename T> class allocator_log : public std::allocator<T>
 
         template <typename U> struct rebind
         {
-            using other = allocator_log<U>;
+            using type = allocator_log<U>;
         };
 
         /**
