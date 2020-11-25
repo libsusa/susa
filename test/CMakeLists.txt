@@ -29,3 +29,7 @@ target_link_libraries (memory susa)
 add_test (NAME fft COMMAND fft)
 add_executable (fft fft.cpp)
 target_link_libraries (fft susa)
+
+add_test (NAME matrix COMMAND matrix)
+add_executable (matrix matrix.cpp)
+target_link_libraries (matrix susa)

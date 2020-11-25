@@ -778,62 +778,103 @@ matrix <T, Allocator> matrix <T, Allocator>::left(size_t sizet_left) const
 {
     matrix <T, Allocator> mat_ret;
 
-    SUSA_ASSERT(this->sizet_objects >= sizet_left);
+    SUSA_ASSERT(_matrix != nullptr);
+    if (_matrix == nullptr) return mat_ret;
 
-    if (this->sizet_objects >= sizet_left)
+    if (is_vector())
     {
-        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T, Allocator> (1,sizet_left);
-        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T, Allocator> (sizet_left,1);
-        else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
+        SUSA_ASSERT(sizet_objects >= sizet_left);
+
+        if (sizet_rows == 1) mat_ret = matrix <T, Allocator> (1,sizet_left);
+        else if (sizet_cols == 1) mat_ret = matrix <T, Allocator> (sizet_left,1);
 
         for (size_t sizet_i = 0; sizet_i < sizet_left; sizet_i++)
         {
-          mat_ret(sizet_i) = this->_matrix[sizet_i];
+            mat_ret(sizet_i) = _matrix[sizet_i];
         }
     }
-
-    return mat_ret;
-}
-
-
-template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::right(size_t sizet_right) const
-{
-    matrix <T, Allocator> mat_ret;
-
-    SUSA_ASSERT(this->sizet_objects >= sizet_right);
-    if (this->sizet_objects < sizet_right) return mat_ret;
-    else if (this->sizet_objects == sizet_right) return *this;
-
-    if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix<T, Allocator>(1, sizet_right);
-    else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix<T, Allocator>(sizet_right, 1);
-    else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
-
-    for (size_t sizet_i = this->sizet_objects; sizet_i > (this->sizet_objects - sizet_right); sizet_i--)
+    else
     {
-        mat_ret(sizet_right - this->sizet_objects + sizet_i - 1) = this->_matrix[sizet_i - 1];
+        mat_ret = matrix <T, Allocator> (sizet_rows,sizet_left);
+        for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
+            for (size_t sizet_col = 0; sizet_col < sizet_cols && sizet_col < sizet_left; sizet_col++)
+                mat_ret(sizet_row, sizet_col) = get(sizet_row,sizet_col);
     }
 
     return mat_ret;
 }
 
 
-template <typename T, typename Allocator> matrix <T, Allocator> matrix <T, Allocator>::mid(size_t sizet_begin, size_t sizet_end) const
+template <typename T, typename Allocator>
+matrix <T, Allocator> matrix <T, Allocator>::right(size_t sizet_right) const
 {
     matrix <T, Allocator> mat_ret;
-    size_t sizet_mid = sizet_end - sizet_begin;
 
-    SUSA_ASSERT(this->sizet_objects > sizet_begin && this->sizet_objects > sizet_end && sizet_end > sizet_begin);
+    SUSA_ASSERT(_matrix != nullptr);
+    if (_matrix == nullptr) return mat_ret;
 
-    if (this->sizet_objects > sizet_begin && this->sizet_objects > sizet_end && sizet_end > sizet_begin)
+    if (is_vector())
     {
-        if (sizet_rows == 1 && sizet_cols != 1) mat_ret = matrix <T, Allocator> (1, sizet_mid + 1);
-        else if (sizet_rows != 1 && sizet_cols == 1) mat_ret = matrix <T, Allocator> (sizet_mid + 1, 1);
-        else if (sizet_rows != 1 && sizet_cols != 1) SUSA_ASSERT_MESSAGE(false, "not implemented.");
+        SUSA_ASSERT(sizet_objects >= sizet_right);
 
-        for (size_t sizet_i = sizet_begin; sizet_i <= sizet_end; sizet_i++)
+        if (sizet_rows == 1) mat_ret = matrix <T, Allocator> (1,sizet_right);
+        else if (sizet_cols == 1) mat_ret = matrix <T, Allocator> (sizet_right,1);
+
+        size_t sz_start  = sizet_objects - sizet_right - 1;
+        T*     _r_matrix = &_matrix[sz_start];
+        for (size_t sizet_i = 0; sizet_i < sizet_right; sizet_i++)
         {
-          mat_ret(sizet_i - sizet_begin) = this->_matrix[sizet_i];
+            mat_ret(sizet_i) = _r_matrix[sizet_i];
         }
+    }
+    else
+    {
+        size_t sz_start = sizet_cols - sizet_right;
+        mat_ret = matrix <T, Allocator> (sizet_rows, sizet_right);
+        for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
+            for (size_t sizet_col = 0; sizet_col < sizet_cols && sizet_col < sizet_right; sizet_col++)
+                mat_ret(sizet_row, sizet_col) = get(sizet_row, sz_start + sizet_col);
+    }
+
+    return mat_ret;
+}
+
+
+template <typename T, typename Allocator>
+matrix <T, Allocator> matrix <T, Allocator>::mid(size_t sizet_begin, size_t sizet_end) const
+{
+    matrix <T, Allocator> mat_ret;
+
+    SUSA_ASSERT(_matrix != nullptr);
+    if (_matrix == nullptr) return mat_ret;
+    SUSA_ASSERT(sizet_end > sizet_begin);
+    if (sizet_end < sizet_begin) return mat_ret;
+
+    size_t sz_width = sizet_end - sizet_begin + 1;
+
+    if (is_vector())
+    {
+        SUSA_ASSERT(sizet_objects > sizet_begin && sizet_objects < sizet_end);
+        if (sizet_begin > sizet_objects || sizet_end > sizet_objects) return mat_ret;
+
+        if (sizet_rows == 1) mat_ret = matrix <T, Allocator> (1,sz_width);
+        else if (sizet_cols == 1) mat_ret = matrix <T, Allocator> (sz_width,1);
+
+        T*     _r_matrix = &_matrix[sizet_begin];
+        for (size_t sizet_i = 0; sizet_i < sizet_end; sizet_i++)
+        {
+            mat_ret(sizet_i) = _r_matrix[sizet_i];
+        }
+    }
+    else
+    {
+        SUSA_ASSERT(sizet_cols > sizet_begin && sizet_cols > sizet_end);
+        if (sizet_begin > sizet_cols || sizet_end > sizet_cols) return mat_ret;
+
+        mat_ret = matrix <T, Allocator> (sizet_rows, sz_width);
+        for (size_t sizet_row = 0; sizet_row < sizet_rows; sizet_row++)
+            for (size_t sizet_col = 0; sizet_col < sizet_cols && sizet_col < sz_width; sizet_col++)
+                mat_ret(sizet_row, sizet_col) = get(sizet_row, sizet_begin + sizet_col);
     }
 
     return mat_ret;
