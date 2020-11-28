@@ -173,16 +173,17 @@ matrix <std::complex <T>, Allocator> conj(const matrix <std::complex <T>, Alloca
  * @ingroup Math
  */
 template <typename T, typename Allocator>
-matrix <char> sign(const matrix <T, Allocator> &mat_arg);
+matrix <int8_t> sign(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Sign
  *
  * @param T_arg input matrix
- * @return Returns sign of the input
+ * @return the signs of the input matrix elements
  * @ingroup Math
  */
-template <typename T, typename Allocator> char sign(T T_arg);
+template <typename T, typename Allocator>
+int8_t sign(T T_arg);
 
 /**
  * @brief Log
@@ -427,7 +428,8 @@ matrix <size_t> min(const matrix <T, Allocator> &mat_arg)
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix <size_t> max(const matrix <T, Allocator> &mat_arg)
+template <typename T, typename Allocator>
+matrix <size_t> max(const matrix <T, Allocator> &mat_arg)
 {
     matrix <size_t> mat_ret;
     T               T_max;
@@ -557,9 +559,10 @@ matrix <T, Allocator<T>> mag(const matrix <std::complex<T>, Allocator<std::compl
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix <char> sign(const matrix <T, Allocator> &mat_arg)
+template <typename T, template <typename> typename Allocator>
+matrix <int8_t,  Allocator<int8_t>> sign(const matrix <T,  Allocator<T>> &mat_arg)
 {
-    matrix <T, Allocator> mat_ret(mat_arg.shape());
+    matrix <int8_t,  Allocator<int8_t>> mat_ret(mat_arg.shape());
 
     for (size_t uint_i = 0; uint_i < mat_arg.size(); uint_i++)
     {
@@ -570,7 +573,8 @@ template <typename T, typename Allocator> matrix <char> sign(const matrix <T, Al
     return mat_ret;
 }
 
-template <typename T> char sign(T T_arg)
+template <typename T>
+int8_t sign(T T_arg)
 {
     if (T_arg > 0) return 1;
     else if (T_arg < 0) return -1;
