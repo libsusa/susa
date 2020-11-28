@@ -17,7 +17,7 @@
 
 /**
  * @file ccode.cpp
- * @brief convolutional ecoder/decoder implementation.
+ * @brief convolutional encoder/decoder implementation.
  * @author Behrooz Kamary
  */
 
@@ -48,16 +48,24 @@ ccode::ccode(uint32_t uint_n, uint32_t uint_k, uint32_t uint_m)
 {
     SUSA_ASSERT_MESSAGE(uint_k == 1, "the number of inputs must be one.");
     SUSA_ASSERT_MESSAGE(uint_m < 32, "the maximum number of memories exceeded.");
+    SUSA_ASSERT_MESSAGE(uint_m > 0,  "the minimum number of memories is one.");
     this->uint_k     = uint_k;
     this->uint_n     = uint_n;
     this->uint_m     = uint_m;
-    this->uint_mmask = susa::pow(2, uint_m) - 1;
-    this->uint_gen   = new uint32_t[uint_n];
-    SUSA_ASSERT_MESSAGE(this->uint_gen != nullptr, "failed to allocate memory for generators.");
+    uint_mmask       = susa::pow(2, uint_m) - 1;
+
+    try
+    {
+        uint_gen   = new uint32_t[uint_n];
+    }
+    catch(const std::bad_alloc& e)
+    {
+        SUSA_ABORT("failed to allocate memory for generators.");
+    }
 }
 
 
-// Public domain methods
+// public methods implementations
 
 void ccode::set_generator(uint32_t uint_gen, uint32_t uint_gen_indx)
 {
@@ -145,7 +153,6 @@ matrix <uint8_t> ccode::encode(const matrix <uint8_t>& mat_arg)
 
     for (uint32_t uinti = 0; uinti < uint_in_size; uinti++)
     {
-
         if (mat_arg(uinti) != 0)
         {
             for (uint32_t j = 0; j < uint_n; j++) mat_out(uint_counter + j) =  (count_1bits((uint_current_state | (1<<uint_m)) & uint_gen[j]) % 2);
@@ -305,11 +312,10 @@ matrix <double> ccode::decode_bcjr(const matrix <double> &mat_arg, double dbl_eb
 
 
 
-// Private methods
+// private methods implementation
 
 uint32_t ccode::oct_to_dec(uint32_t uintMask)
 {
-
     uint32_t uintTmp = 0;
 
     for (uint32_t j=1; uintMask!=0; j*=8)

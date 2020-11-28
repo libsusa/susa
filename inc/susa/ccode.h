@@ -84,6 +84,24 @@ class ccode
     }
 
     /**
+     * @brief get the next state for a specific current state and input bit
+     *
+     * @param uint_state the current state
+     * @param b_input the input
+     * @return the internal state of the encoder
+     */
+    uint32_t next_state(uint32_t uint_state, bool b_input);
+
+    /**
+     * @brief get the next output for a specific current state and input bit
+     *
+     * @param uint_state the current state
+     * @param b_input the input
+     * @return the output of the encoder 
+     */
+    uint8_t  next_output(uint32_t uint_state, bool b_input);
+  
+    /**
      * @brief the rate of the convolutional code
      **/
     float rate()
@@ -110,22 +128,12 @@ class ccode
   private:
 
     /**
-     * @brief get the next state
-     *
-     * @param uint_state the current state
-     * @param b_input the input
-     */
-    uint32_t next_state(uint32_t uint_state, bool b_input);
-
-    /**
      * @brief get the next state using the internal state
      *
      */
     uint32_t next_state(bool b_input);
 
-    uint8_t next_output(uint32_t uint_state, bool b_input);
-
-    uint8_t next_output(bool b_input);
+    uint8_t  next_output(bool b_input);
     
     /**
      * @brief get all possible previous states

@@ -17,7 +17,9 @@
 
 /**
  * This program simulates a communication system with BPSK modulation scheme
- * and R=1/2 convolutional code G(1 + D^2, 1 + D + D^2) over an AWGN noisy channel.
+ * and R=1/2 convolutional code G(1 + D^2, 1 + D + D^2) over an AWGN channel.
+ * (n,k,m) = (2,1,2) since the current input bit does not need a memory register.
+ * In some textbooks this is denoted by (2,1,3).
  */
 
 #include "susa.h"
@@ -73,10 +75,8 @@ int main(void)
         awgn            = sqrt(1 / EbN0) * _rng.randn(mat_coded.size());
         awgn_mod_bpsk   = mod_bpsk + awgn;
 
-
         // BCJR decoder
         mat_l = state.decode_bcjr(awgn_mod_bpsk, EbN0);
-
 
         unsigned int uint_num_stages = awgn_mod_bpsk.size() / 2;
 
@@ -87,9 +87,7 @@ int main(void)
 
         for (unsigned int inti = 0; inti < uint_num_stages; inti++) if (mat_l_sign(inti) != mat_bits(inti)) mat_err(EbN0db)++;
 
-
         cout << "Eb/N0 = " << EbN0db << " \t \t" << "BER  =  " << ((double)mat_err(EbN0db)/_N) << endl;
-
     }
 
 
@@ -102,7 +100,7 @@ int main(void)
     for (int inti = 0; inti < 10; inti++)
     {
         dbl_tmp = (double)mat_err(inti)/_N;
-        fs_result << inti << " " << scientific << dbl_tmp << endl;
+        fs_result << inti << " " << std::scientific << dbl_tmp << std::endl;
     }
 
     fs_result.close();

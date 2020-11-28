@@ -36,6 +36,17 @@ int main(void)
         state.set_generator(7, 0);
         state.set_generator(5, 1);
 
+        state.set_internal_state(0);
+
+        SUSA_TEST_EQ(state.next_state(2,true),3,"next state of (2,true) is 3");
+        SUSA_TEST_EQ(state.next_state(2,false),1,"next state of (2,false) is 1");
+    }
+
+    {
+        susa::ccode state(2, 1, 2);
+        state.set_generator(7, 0);
+        state.set_generator(5, 1);
+
         matrix<uint8_t> mat_bits("1 0 1 1 0");
 
         matrix<uint8_t> mat_expected("1 1 1 0 0 0 0 1 0 1");
