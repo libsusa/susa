@@ -31,6 +31,7 @@ int main(void)
         susa::matrix<int> mat_res = conv(mat_a, mat_a);
         SUSA_TEST_EQ(mat_res, mat_exp, "convolution.");
     }
+
     {
         susa::matrix<int> mat_a("[3 4 5]");
         susa::matrix<int> mat_b("[6 7 8]");
@@ -47,6 +48,47 @@ int main(void)
         SUSA_TEST_EQ(mat_res, mat_exp, "Kronecker product");
     }
 
+    {
+        susa::matrix<int> mat_a("1 2 3 4 5");
+        susa::matrix<int> mat_exp("1   2   3   4   5;"
+                                  "2   1   2   3   4;"
+                                  "3   2   1   2   3;"
+                                  "4   3   2   1   2;"
+                                  "5   4   3   2   1");
+        SUSA_TEST_EQ(susa::toeplitz(mat_a), mat_exp, "single row toeplitz");
+    }
+    {
+        susa::matrix<int> mat_a = susa::toeplitz(susa::matrix<int> ("1 2 3 4 5"),susa::matrix<int> ("1 6 7 8 9"));
+        susa::matrix<int> mat_exp("1   6   7   8   9;"
+                                  "2   1   6   7   8;"
+                                  "3   2   1   6   7;"
+                                  "4   3   2   1   6;"
+                                  "5   4   3   2   1");
+        SUSA_TEST_EQ(mat_a, mat_exp, "row and column toeplitz");
+    }
+
+    {
+        susa::matrix<int> mat_a = susa::toeplitz(susa::matrix<int> ("1 2 3 4 5"),susa::matrix<int> ("1 6 7 8 9 10"));
+        susa::matrix<int> mat_exp("1  6  7  8  9  10;"
+                                  "2  1  6  7  8  9;"
+                                  "3  2  1  6  7  8;"
+                                  "4  3  2  1  6  7;"
+                                  "5  4  3  2  1  6");
+
+        SUSA_TEST_EQ(mat_a, mat_exp, "asymetric row and column toeplitz");
+    }
+
+    {
+        susa::matrix<int> mat_a = susa::toeplitz(susa::matrix<int> ("1 6 7 8 9 10"),susa::matrix<int> ("1 2 3 4 5"));
+        susa::matrix<int> mat_exp("1  2  3  4  5;"
+                                  "6  1  2  3  4;"
+                                  "7  6  1  2  3;"
+                                  "8  7  6  1  2;"
+                                  "9  8  7  6  1;"
+                                  "10  9  8  7  6");
+
+        SUSA_TEST_EQ(mat_a, mat_exp, "asymetric row and column toeplitz");
+    }
     SUSA_TEST_PRINT_STATS();
 
     return (uint_failed);

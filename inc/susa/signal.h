@@ -347,22 +347,28 @@ matrix <T, Allocator> convmtx(const matrix <T, Allocator> &mat_arg, size_t size_
 template <typename T, typename Allocator>
 matrix <T, Allocator> toeplitz(const matrix <T, Allocator>& mat_col, const matrix <T, Allocator>& mat_row)
 {
-    size_t size_cols = mat_col.size();
-    size_t size_rows = mat_row.size();
+    size_t sz_cols = mat_row.size();
+    size_t sz_rows = mat_col.size();
 
-    matrix <T, Allocator> mat_ret(size_cols, size_rows);
+    matrix <T, Allocator> mat_ret(sz_rows, sz_cols);
 
-    for ( size_t uint_row = 0; uint_row < size_rows; uint_row++)
+    for (size_t sz_row = 0; sz_row < sz_rows; sz_row++)
     {
-        for ( size_t size_col = 0; size_col < size_cols; size_col++)
+        for (size_t sz_col = 0; sz_col < sz_row && sz_col < sz_cols; sz_col++)
         {
-            mat_ret(uint_row, size_col) = mat_col(std::abs((long int)(size_col - uint_row)));
+            mat_ret(sz_row, sz_col) = mat_col(sz_row - sz_col);
+        }
+
+        for (size_t sz_col = sz_row; sz_col < sz_cols && sz_col >= sz_row; sz_col++)
+        {
+            mat_ret(sz_row, sz_col) = mat_row(sz_col - sz_row);
         }
     }
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix <T, Allocator> toeplitz(const matrix <T, Allocator>& mat_col)
+template <typename T, typename Allocator>
+matrix <T, Allocator> toeplitz(const matrix <T, Allocator>& mat_col)
 {
     size_t size_len = mat_col.size();
 
