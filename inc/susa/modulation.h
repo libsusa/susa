@@ -39,8 +39,6 @@ namespace susa {
 matrix <int8_t> bpsk(const matrix <uint8_t> &mat_arg);
 
 
-
-
 /**
  * @brief QAM Modulation
  * This is a wrapper class for QAM modulation and demodulation methods.
@@ -51,7 +49,7 @@ class qam {
   public:
     /**
      * @brief The constructor of the QAM modulation class
-     * @param uint_m The modulation order, e.g., 4,8,16,64,256
+     * @param uint_m The modulation order, e.g., 4, 8, 16, 64, 128, 256
      */
     qam(unsigned int uint_m);
 
@@ -62,18 +60,11 @@ class qam {
         return mat_s;
     }
 
-
     /**
-     * @brief This method computes the AWGN noise deviation.
+     * @brief compute the AWGN noise deviation
      * @param dbl_arg Eb / N_0 in dB.
      */
     double get_noise_deviation(double dbl_arg);
-
-    matrix < std::complex <double> > modulate_bits(matrix <char> mat_bits);
-
-    matrix <char>   demodulate_bits(const matrix < std::complex <double> >& mat_symbols);
-
-    matrix <int>    demodulate_symbols(const matrix < std::complex <double> >& mat_symbols);
 
     std::complex <double> demodulate_symbol(std::complex <double> complex_arg);
 
@@ -86,9 +77,62 @@ class qam {
     matrix < std::complex <double> > mat_s;
     matrix < std::complex <double> > mat_axis;
 
-    unsigned int log2(unsigned int uint_x);
-
 };
+
+/**
+ * @brief add Additive white Gaussian noise (AWGN) to the given signal
+ *
+ * AWGN is a basic noise model used in information theory to mimic
+ * the effect of many random processes that occur in nature.
+ *
+ * @param mat_signal the input signal can be a real or a complex matrix
+ * @param ovs oversamplaing rate
+ *
+ * @ingroup Communications
+ */
+template <typename T, template <typename> typename Allocator>
+auto awgn(matrix <T, Allocator<T>> mat_signal, float flt_snr_db, unsigned ovs = 1)
+{
+    // Es = k * Eb
+    // k = log2(M)
+    // gamma_s = Es / N0 = k * gamma_b
+    // N0 = P / gamma
+    // Noise_var = N0 / 2
+
+    double P;
+    if constexpr (is_complex<T>::value)
+    {
+        P = ovs * sum(sum(mag(mat_signal)))(0)/mat_signal.size();
+    }
+    else
+    {
+        P = ovs * sum(sum(mat_signal * mat_signal))(0)/mat_signal.size();
+    }
+
+    double gamma        = std::pow(10, flt_snr_db/10);
+    double N0           = P / gamma;
+    double dbl_std_dev  = std::sqrt(0.5f * N0);
+
+    rng  random;
+
+    std::conditional_t<is_complex<T>::value,
+                      matrix <std::complex<double>, Allocator<std::complex<double>>>,
+                      matrix <double, Allocator<double>>> mat_noise(mat_signal.shape());
+
+
+    if constexpr (is_complex<T>::value)
+    {
+        for (size_t indx = 0; indx < mat_noise.size(); indx++)
+            mat_noise(indx) = dbl_std_dev * std::complex<double> (random.randn(), random.randn());
+    }
+    else
+    {
+        for (size_t indx = 0; indx < mat_noise.size(); indx++)
+            mat_noise(indx) = dbl_std_dev * random.randn();
+    }
+
+    return mat_noise;
+}
 
 } // NAMESPACE SUSA
 #endif // MODULATION_H

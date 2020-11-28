@@ -27,17 +27,6 @@
 
 namespace susa {
 
-unsigned int qam::log2(unsigned int uint_x)
-{
-    unsigned int r = 0;
-
-    while( (uint_x >> r) != 0)
-    {
-        r++;
-    }
-    return (r - 1);
-}
-
 matrix <int8_t> bpsk(const matrix <uint8_t> &mat_arg)
 {
     matrix <int8_t> mat_ret(mat_arg.shape());
@@ -54,7 +43,6 @@ matrix <int8_t> bpsk(const matrix <uint8_t> &mat_arg)
 qam::qam(unsigned int uint_m)
 : uint_m(uint_m)
 {
-
     uint_bps                = log2(uint_m);
     double          dbl_p   = sqrt(uint_m);
     unsigned int    uint_l  = (unsigned int)(uint_m/dbl_p);
