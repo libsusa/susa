@@ -87,7 +87,7 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
     size_t          sizet_rows;
     size_t          sizet_cols;
     size_t          sizet_objects;
-    T*              T_fake;
+    T*              T_default;
     Allocator       alloc;
     T*              _matrix;
 
@@ -277,6 +277,9 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
     //! Element wise Assignment operator
     matrix <T, Allocator>& operator=( std::string str_string );
 
+    //! Element wise Assignment operator
+    matrix <T, Allocator>& operator=( const char* char_string );
+
     //! Element wise Subtraction operator
     friend matrix <T, Allocator> operator-<>( const matrix <T, Allocator> &mat_argl, T T_arg);
 
@@ -333,9 +336,9 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
 
     operator matrix <int> ();
 
-    operator matrix <char> ();
+    operator matrix <int8_t> ();
 
-    operator matrix <unsigned char> ();
+    operator matrix <uint8_t> ();
 
     operator matrix <std::complex <double> > ();
 
@@ -343,9 +346,9 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
 
     operator matrix <std::complex <int> > ();
 
-    operator matrix <std::complex <char> > ();
+    operator matrix <std::complex <int8_t> > ();
 
-    operator matrix <std::complex <unsigned char> > ();
+    operator matrix <std::complex <uint8_t> > ();
 
 
     // Friend methods are used to speed up matrix operations.
@@ -386,7 +389,7 @@ template <typename T, typename Allocator> matrix <T, Allocator>::matrix()
 : sizet_rows(0)
 , sizet_cols(0)
 , sizet_objects(0)
-, T_fake(new T)
+, T_default(new T)
 , alloc()
 , _matrix(nullptr)
 {
@@ -395,7 +398,7 @@ template <typename T, typename Allocator> matrix <T, Allocator>::matrix()
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix(size_t sizet_rows, size_t sizet_cols, T Tinitial)
-: T_fake(new T)
+: T_default(new T)
 , alloc()
 , _matrix(nullptr)
 {
@@ -416,7 +419,7 @@ matrix <T, Allocator>::matrix(size_t sizet_rows, size_t sizet_cols, T Tinitial)
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix( size_t sizet_rows, size_t sizet_cols )
-: T_fake(new T)
+: T_default(new T)
 , alloc()
 , _matrix(nullptr)
 {
@@ -429,7 +432,7 @@ matrix <T, Allocator>::matrix( size_t sizet_rows, size_t sizet_cols )
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix(const matrix <T, Allocator> &mat_arg)
-: T_fake(new T)
+: T_default(new T)
 , alloc(mat_arg.alloc)
 , _matrix(nullptr)
 {
@@ -445,7 +448,7 @@ matrix <T, Allocator>::matrix(const matrix <T, Allocator> &mat_arg)
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape)
-: T_fake(new T)
+: T_default(new T)
 , _matrix(nullptr)
 {
     size_t sizet_rows;
@@ -461,7 +464,7 @@ matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape)
 
 template <typename T, typename Allocator>
 matrix <T, Allocator>::matrix(const std::tuple<size_t, size_t>& tshape, T Tinitial)
-: T_fake(new T)
+: T_default(new T)
 , _matrix(nullptr)
 {
     size_t sizet_rows;
@@ -487,10 +490,10 @@ matrix <T, Allocator>::matrix(matrix<T, Allocator>&& mat_arg) noexcept
     sizet_rows          = mat_arg.sizet_rows;
     sizet_cols          = mat_arg.sizet_cols;
     sizet_objects       = mat_arg.sizet_objects;
-    T_fake              = mat_arg.T_fake;
-    T_fake              = mat_arg.T_fake;
+    T_default              = mat_arg.T_default;
+    T_default              = mat_arg.T_default;
     _matrix             = mat_arg._matrix;
-    mat_arg.T_fake      = nullptr;
+    mat_arg.T_default      = nullptr;
     mat_arg._matrix     = nullptr;
 }
 
@@ -499,7 +502,7 @@ template <typename T, typename Allocator> matrix <T, Allocator>::matrix(std::str
 : sizet_rows(0)
 , sizet_cols(0)
 , sizet_objects(0)
-, T_fake(new T)
+, T_default(new T)
 , alloc()
 , _matrix(nullptr)
 {
@@ -508,7 +511,7 @@ template <typename T, typename Allocator> matrix <T, Allocator>::matrix(std::str
 
 template <typename T, typename Allocator> matrix <T, Allocator>::~matrix() noexcept
 {
-    if (T_fake != nullptr) delete T_fake;
+    if (T_default != nullptr) delete T_default;
     if (_matrix != nullptr) alloc.deallocate(_matrix, sizet_objects);
 }
 
@@ -895,7 +898,7 @@ template <typename T, typename Allocator> T &matrix<T, Allocator>::operator ()( 
       return this->_matrix[get_lindex(sizet_row,sizet_col)];
   }
 
-  return *T_fake;
+  return *T_default;
 }
 
 template <typename T, typename Allocator> T matrix<T, Allocator>::operator ()( size_t sizet_row, size_t sizet_col ) const
@@ -915,7 +918,7 @@ template <typename T, typename Allocator> T &matrix<T, Allocator>::operator ()( 
       return _matrix[sizet_elem];
     }
 
-    return *T_fake;
+    return *T_default;
 }
 
 template <typename T, typename Allocator> T matrix<T, Allocator>::operator ()( size_t sizet_elem ) const
@@ -962,31 +965,34 @@ template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix 
 }
 
 
-template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <char> ()
+template <typename T, typename Allocator>
+matrix<T, Allocator>::operator matrix <int8_t> ()
 {
 
-    matrix <char> mat_ret(sizet_rows, sizet_cols);
+    matrix <int8_t> mat_ret(sizet_rows, sizet_cols);
 
     for (size_t sizet_elem = 0; sizet_elem < this->sizet_objects; sizet_elem++)
     {
-        mat_ret(sizet_elem) = (char)this->_matrix[sizet_elem];
+        mat_ret(sizet_elem) = (int8_t)this->_matrix[sizet_elem];
     }
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <unsigned char> ()
+template <typename T, typename Allocator>
+matrix<T, Allocator>::operator matrix <uint8_t> ()
 {
 
-    matrix <unsigned char> mat_ret(sizet_rows, sizet_cols);
+    matrix <uint8_t> mat_ret(sizet_rows, sizet_cols);
 
     for (size_t sizet_elem = 0; sizet_elem < this->sizet_objects; sizet_elem++)
     {
-        mat_ret(sizet_elem) = (unsigned char)this->_matrix[sizet_elem];
+        mat_ret(sizet_elem) = (uint8_t)this->_matrix[sizet_elem];
     }
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <double> > ()
+template <typename T, typename Allocator>
+matrix<T, Allocator>::operator matrix <std::complex <double> > ()
 {
 
     matrix <std::complex <double> > mat_ret(sizet_rows, sizet_cols);
@@ -998,7 +1004,8 @@ template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix 
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <float> > ()
+template <typename T, typename Allocator>
+matrix<T, Allocator>::operator matrix <std::complex <float> > ()
 {
 
     matrix <std::complex <float> > mat_ret(sizet_rows, sizet_cols);
@@ -1010,7 +1017,8 @@ template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix 
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <int> > ()
+template <typename T, typename Allocator>
+matrix<T, Allocator>::operator matrix <std::complex <int> > ()
 {
 
     matrix <std::complex <int> > mat_ret(sizet_rows, sizet_cols);
@@ -1022,26 +1030,27 @@ template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix 
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <char> > ()
+template <typename T, typename Allocator>
+matrix<T, Allocator>::operator matrix <std::complex <int8_t> > ()
 {
 
-    matrix <std::complex <char> > mat_ret(sizet_rows, sizet_cols);
+    matrix <std::complex <int8_t> > mat_ret(sizet_rows, sizet_cols);
 
     for (size_t sizet_elem = 0; sizet_elem < this->sizet_objects; sizet_elem++)
     {
-        mat_ret(sizet_elem) = std::complex <char> ((char)this->_matrix[sizet_elem].real(), (char)this->_matrix[sizet_elem].imag());
+        mat_ret(sizet_elem) = std::complex <int8_t> ((int8_t)this->_matrix[sizet_elem].real(), (int8_t)this->_matrix[sizet_elem].imag());
     }
     return mat_ret;
 }
 
-template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <unsigned char> > ()
+template <typename T, typename Allocator> matrix<T, Allocator>::operator matrix <std::complex <uint8_t> > ()
 {
 
-    matrix <std::complex <unsigned char> > mat_ret(sizet_rows, sizet_cols);
+    matrix <std::complex <uint8_t> > mat_ret(sizet_rows, sizet_cols);
 
     for (size_t sizet_elem = 0; sizet_elem < this->sizet_objects; sizet_elem++)
     {
-        mat_ret(sizet_elem) = std::complex <unsigned char> ((unsigned char)this->_matrix[sizet_elem].real(), (unsigned char)this->_matrix[sizet_elem].imag());
+        mat_ret(sizet_elem) = std::complex <uint8_t> ((uint8_t)this->_matrix[sizet_elem].real(), (uint8_t)this->_matrix[sizet_elem].imag());
     }
     return mat_ret;
 }
@@ -1301,6 +1310,12 @@ template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Alloc
 template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Allocator>::operator=( std::string str_string )
 {
     parser(str_string);
+    return *this;
+}
+
+template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Allocator>::operator=( const char* char_string )
+{
+    parser(std::string(char_string));
     return *this;
 }
 

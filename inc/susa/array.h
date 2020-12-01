@@ -108,7 +108,7 @@ namespace susa
         return this->_matrix[uint_index];
       }
 
-      return *T_fake;
+      return *T_default;
     }
 
     template <typename... Args>
@@ -121,7 +121,7 @@ namespace susa
     std::vector<size_t> vec_dims;
     size_t uint_total;
     size_t uint_num_dims;
-    T *T_fake;
+    T *T_default;
 
     std::vector<size_t> vec_get;
     size_t uint_get_step;
@@ -140,7 +140,7 @@ namespace susa
   template <typename T, typename Allocator>
   array<T, Allocator>::array()
   : uint_total(0)
-  , T_fake(new T)
+  , T_default(new T)
   , uint_get_step(0)
   , alloc()
   , _matrix(nullptr)
@@ -150,7 +150,7 @@ namespace susa
   template <typename T, typename Allocator>
   array<T, Allocator>::array(std::initializer_list<size_t> list)
   : vec_dims(list)
-  , T_fake(new T)
+  , T_default(new T)
   , alloc()
   {
     uint_total = 1;
@@ -195,17 +195,17 @@ namespace susa
     vec_get         = std::vector<size_t>(uint_num_dims);
     uint_get_step   = 0;
 
-    T_fake          = arg.T_fake;
+    T_default          = arg.T_default;
     _matrix         = arg._matrix;
   
-    arg.T_fake      = nullptr;
+    arg.T_default      = nullptr;
     arg._matrix     = nullptr;
     arg.uint_total  = 0;
   }
 
   template <typename T, typename Allocator>
   array<T, Allocator>::array(const array &arg)
-  : T_fake(new T)
+  : T_default(new T)
   , alloc(arg.alloc)
   {
 
@@ -240,7 +240,7 @@ namespace susa
   template <typename T, typename Allocator>
   array<T, Allocator>::~array() noexcept
   {
-    if (T_fake != nullptr) delete T_fake;
+    if (T_default != nullptr) delete T_default;
     if (_matrix != nullptr) alloc.deallocate(_matrix, uint_total);
   }
 
@@ -274,7 +274,7 @@ namespace susa
       return _matrix[uint_elem];
     }
 
-    return *T_fake;
+    return *T_default;
   }
 
   template <typename T, typename Allocator>
@@ -292,7 +292,7 @@ namespace susa
       return _matrix[uint_index];
     }
 
-    return *T_fake;
+    return *T_default;
   }
 
   template <typename T, typename Allocator>
@@ -311,7 +311,7 @@ namespace susa
       return _matrix[uint_index];
     }
 
-    return *T_fake;
+    return *T_default;
   }
 
   template <typename T, typename Allocator>
