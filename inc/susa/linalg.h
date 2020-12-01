@@ -148,7 +148,8 @@ matrix <std::complex<T>, Allocator> hermitian(const matrix <std::complex<T>, All
  * @return returns determinant of the input matrix
  * @ingroup LALG
  */
-template <typename T, typename Allocator> double det(const matrix <T, Allocator> &mat_arg)
+template <typename T, typename Allocator>
+double det(const matrix <T, Allocator> &mat_arg)
 {
     double dbl_ret = 0.0;
 
@@ -200,7 +201,8 @@ template <typename T, typename Allocator> double det(const matrix <T, Allocator>
  * @return returns concatenation of the two input matrices
  * @ingroup LALG
  */
-template <typename T, typename Allocator> matrix <T, Allocator> concat(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
+template <typename T, typename Allocator>
+matrix <T, Allocator> concat(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
     //TODO should be changed 20101224
     matrix <T, Allocator> mat_ret;
@@ -261,7 +263,8 @@ template <typename T, typename Allocator> matrix <T, Allocator> concat(const mat
  * @return returns flip (left/right) a matrix
  * @ingroup LALG
  */
-template <typename T, typename Allocator> matrix <T, Allocator> fliplr(const matrix <T, Allocator> &mat_arg)
+template <typename T, typename Allocator>
+matrix <T, Allocator> fliplr(const matrix <T, Allocator> &mat_arg)
 {
     size_t sizet_rows = mat_arg.no_rows();
     size_t sizet_cols = mat_arg.no_cols();
@@ -299,7 +302,8 @@ template <typename T, typename Allocator> matrix <T, Allocator> fliplr(const mat
  * @return Returns flip (up/down) of the input matrix
  * @ingroup LALG
  */
-template <typename T, typename Allocator> matrix <T, Allocator> flipud(const matrix <T, Allocator> &mat_arg)
+template <typename T, typename Allocator>
+matrix <T, Allocator> flipud(const matrix <T, Allocator> &mat_arg)
 {
     size_t sizet_rows = mat_arg.no_rows();
     size_t sizet_cols = mat_arg.no_cols();
@@ -338,7 +342,8 @@ template <typename T, typename Allocator> matrix <T, Allocator> flipud(const mat
  * @return square identity matrix
  * @ingroup LALG
  */
-template <typename T, typename Allocator = std::allocator<T>> matrix<T, Allocator> eye(size_t sizet_n)
+template <typename T, typename Allocator = std::allocator<T>>
+matrix<T, Allocator> eye(size_t sizet_n)
 {
     matrix<T, Allocator> mat_ret(sizet_n, sizet_n);
 
@@ -358,6 +363,60 @@ template <typename T, typename Allocator = std::allocator<T>> matrix<T, Allocato
     }
 
     return mat_ret;
+}
+
+/**
+ * @brief compute the rank of an input matrix
+ *
+ * rank of the input matrix is computed with Gaussian elimination
+ * that is O(n^3)
+ *
+ * @param mat_arg input matrix
+ * @param epsilon the precision of rank detection
+ * @return rank of the input matrix
+ * @ingroup LALG
+ */
+template <typename T, template <typename> typename Allocator>
+unsigned int rank(susa::matrix<T, Allocator<T>> mat_arg, double epsilon = 1e-9)
+{
+    unsigned int uint_ret = 0;
+    size_t sz_rows = mat_arg.no_rows();
+    size_t sz_cols = mat_arg.no_cols();
+
+
+    susa::matrix <bool, Allocator<bool>> row_selected(sz_rows, 1, false);
+    for (size_t sz_col = 0; sz_col < sz_cols; ++sz_col)
+    {
+        size_t sz_row;
+        for (sz_row = 0; sz_row < sz_rows; ++sz_row)
+        {
+            if (!row_selected(sz_row) && std::abs(mat_arg(sz_row,sz_col)) > epsilon)
+                break;
+        }
+
+        if (sz_row != sz_rows)
+        {
+            uint_ret++;
+            row_selected(sz_row) = true;
+            for (size_t p = sz_col + 1; p < sz_cols; ++p)
+            {
+                mat_arg(sz_row,p) /= mat_arg(sz_row,sz_col);
+            }
+
+            for (size_t k = 0; k < sz_rows; ++k)
+            {
+                if (k != sz_row && std::abs(mat_arg(k,sz_col)) > epsilon)
+                {
+                    for (size_t p = sz_col + 1; p < sz_cols; ++p)
+                    {
+                        mat_arg(k,p) -= mat_arg(sz_row,p) * mat_arg(k,sz_col);
+                    }
+                }
+            }
+        }
+    }
+
+    return uint_ret;
 }
 
 }      // NAMESPACE SUSA

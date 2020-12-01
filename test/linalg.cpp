@@ -115,7 +115,16 @@ int main(void)
 
     susa::matrix <float>      mat_err_sum = susa::sum(susa::sum(mat_exp - mat_res));
     SUSA_TEST_EQ_DOUBLE(mat_err_sum(0), 0, "inverse of a square matrix");
-    std::cout << susa::sum(susa::sum(mat_exp - mat_res)) << std::endl;
+    }
+
+    {
+    susa::matrix<int> mat_a("[1 2 3;4 5 7; -1 4 6]");
+    SUSA_TEST_EQ(susa::rank(mat_a), 3U, "full rank of a square matrix");
+    }
+
+    {
+    susa::matrix<int> mat_a("[3 2 ; -1 1 ; 9  10]");
+    SUSA_TEST_EQ(susa::rank(mat_a), 2U, "full rank of a square matrix");
     }
 
 
