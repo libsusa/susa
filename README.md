@@ -1,4 +1,4 @@
-# Susa Open Source Project  [![Build Status](https://travis-ci.com/libsusa/susa.svg?branch=master)](https://travis-ci.com/libsusa/susa)
+# Susa Open Source Project [![Build Status][travis-badge]][travis-link] [![codecov][codecov-badge]][codecov-link]
 
 Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia.org/wiki/Software_framework) based on [KISS](https://en.wikipedia.org/wiki/KISS_principle)
  principle. It is stand-alone with a modern architecture. It is designed not to have any dependencies to none standard third
@@ -83,3 +83,9 @@ Since the very first line of code was simply the definition of constant Pi, it h
 
 ## License
 [Susa](http://libsusa.org) has been released under GNU Lesser General Public License (LGPL).
+
+
+[codecov-link]:  https://codecov.io/gh/libsusa/susa
+[codecov-badge]: https://codecov.io/gh/libsusa/susa/branch/master/graph/badge.svg
+[travis-link]: https://travis-ci.com/libsusa/susa
+[travis-badge]: https://travis-ci.com/libsusa/susa.svg?branch=master
