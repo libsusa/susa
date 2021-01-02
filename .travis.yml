@@ -19,9 +19,11 @@ compiler:
 before_script:
   - mkdir build
   - cd build
-  - cmake .. -DCODE_COVERAGE=ON
+  - cmake .. -DCODE_COVERAGE=ON -DEXAMPLES=OFF
 
-script: make && make test
+script:
+  - make
+  - make test
 
 after_success:
   - lcov --directory . --capture --output-file coverage.info

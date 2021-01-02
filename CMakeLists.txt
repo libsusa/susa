@@ -23,7 +23,6 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   )
 
   link_libraries(--coverage)
-
 endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 
 
@@ -41,7 +40,10 @@ set (SRC_FILES src/rng.cpp
 
 add_library (susa SHARED ${SRC_FILES})
 
+option(EXAMPLES "Enable examples build" ON)
+if (EXAMPLES)
 add_subdirectory (examples)
+endif(EXAMPLES)
 
 add_subdirectory (test)
 
