@@ -17,11 +17,13 @@
 
 /**
  * @file debug.h
- * @brief A separate assertion method to catch the fatal errors.
+ * @brief Logging and assertion methods to catch the fatal errors.
  *
- * This may be useful when one needs to desactivate debugging
- * of Susa independent of STL assertion by defining SUSA_NDEBUG.
- * If NDEBUG is defined, it consequently affects this assertion.
+ * When SUSA_NDEBUG is defined Susa log messages (written to stout and stderr) are deactivated.
+ * When SUSA_NASSERT is defined Susa assertions (throwing abort() if not satisfied) are deactivated.
+ * This may be useful in production where the software has to continuously run without interruption.
+ * N.B. the methods return a predefined result when assertions are disabled and their conditions are not
+ * satisfied. 
  *
  * @author Behrooz Kamary
  */
