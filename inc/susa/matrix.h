@@ -45,6 +45,9 @@ void pre_parser(std::string& str_string);
 
 template <typename T, typename Allocator> class matrix;
 
+template<class T, template <typename> typename Allocator = std::allocator>
+using cmatrix = matrix<std::complex<T>, Allocator<std::complex<T>>>;
+
 template <typename T, typename Allocator>  matrix <T, Allocator> operator-( const matrix <T, Allocator>&, T );
 template <typename T, typename Allocator>  matrix <T, Allocator> operator-( T, const matrix <T, Allocator>& );
 template <typename T, typename Allocator>  matrix <T, Allocator> operator-( const matrix <T, Allocator>&, const matrix <T, Allocator>& );
