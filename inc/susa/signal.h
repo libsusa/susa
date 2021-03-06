@@ -64,9 +64,9 @@ template <typename T, typename Allocator> matrix <T, Allocator> downsample(const
  *
  * @ingroup Signal
  */
-template <typename T, typename Allocator, class TT> matrix <T, Allocator>
-filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& mat_arg_a,
-       const matrix <T, Allocator>& mat_arg_x, size_t size_length = 0);
+template <typename T, template <typename> typename Allocator, typename TT> matrix <T, Allocator<T>>
+filter(const matrix <TT, Allocator<TT>>& mat_arg_b, const matrix <TT, Allocator<TT>>& mat_arg_a,
+       const matrix <T, Allocator<T>>& mat_arg_x, size_t size_length = 0);
 
 /**
  * @brief Convolution
@@ -169,13 +169,13 @@ matrix <T, Allocator> downsample(const matrix <T, Allocator> &mat_arg, size_t ui
 
 // FILTER
 
-template <typename T, typename Allocator, class TT> matrix <T, Allocator>
-filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& mat_arg_a,
-       const matrix <T, Allocator>& mat_arg_x, size_t size_length)
+template <typename T, template <typename> typename Allocator, typename TT> matrix <T, Allocator<T>>
+filter(const matrix <TT, Allocator<TT>>& mat_arg_b, const matrix <TT, Allocator<TT>>& mat_arg_a,
+       const matrix <T, Allocator<T>>& mat_arg_x, size_t size_length)
 {
 
     size_t                  size_ret_len = 0;
-    matrix <T, Allocator>   mat_y;
+    matrix <T, Allocator<T>>   mat_y;
 
     size_t size_b       = mat_arg_b.size();
     size_t size_a       = mat_arg_a.size();
@@ -189,7 +189,7 @@ filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& ma
     if (size_x_cols > 1 && size_x_rows > 1)
     {
         size_ret_len = size_x_rows + size_length;
-        mat_y = matrix <T, Allocator> (size_ret_len, size_x_cols, 0);
+        mat_y = matrix <T, Allocator<T>> (size_ret_len, size_x_cols, 0);
         size_t size_y_rows = mat_y.no_rows();
 
         for (size_t size_col = 0; size_col < size_x_cols; size_col++)
@@ -213,7 +213,7 @@ filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& ma
     {
         // for column vector
         size_ret_len = size_x + size_length;
-        mat_y = matrix <T, Allocator> (size_ret_len, 1, 0);
+        mat_y = matrix <T, Allocator<T>> (size_ret_len, 1, 0);
         size_t size_y      = mat_y.size();
 
         for (size_t i = 0; i< size_ret_len; i++)
@@ -234,7 +234,7 @@ filter(const matrix <TT, Allocator>& mat_arg_b, const matrix <TT, Allocator>& ma
     {
         // for row vector
         size_ret_len = mat_arg_x.size() + size_length;
-        mat_y = matrix <T, Allocator> (1, size_ret_len, 0);
+        mat_y = matrix <T, Allocator<T>> (1, size_ret_len, 0);
         size_t size_y      = mat_y.size();
 
         for (size_t i = 0 ; i < size_ret_len; i++)
