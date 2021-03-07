@@ -20,9 +20,7 @@
  The output is a list of Eb/N0 vs. Symbol Error Rate (SER).
  */
 
-
-
-#include "susa.h"
+#include <susa.h>
 
 #include <cmath>
 #include <iomanip>
@@ -46,11 +44,10 @@ int main(void) {
 
     matrix <unsigned int> mat_num_errors(uint_num_steps,1,0);
 
-    qam _qam(uint_m);
+    qam mapper(uint_m);
 
-    matrix < std::complex <double> > cmat_symbols = matrix < std::complex <double> > (uint_n, 1, std::complex <double>(0,0));
-
-    matrix < std::complex <double> > cmat_noise(uint_n,1);
+    cmatrix <double> cmat_symbols = matrix < std::complex <double> > (uint_n, 1, std::complex <double>(0,0));
+    cmatrix <double> cmat_noise(uint_n,1);
 
     std::cout << std::fixed;
     std::cout << std::setprecision(4);
@@ -60,31 +57,31 @@ int main(void) {
     {
 
         double dbl_noise_db     = dbl_min_noise_db + uint_noise_step * (dbl_max_noise_db - dbl_min_noise_db)/(uint_num_steps - 1);
-        double dbl_noise_dev    = _qam.get_noise_deviation(dbl_noise_db);
+        double dbl_noise_dev    = mapper.get_noise_deviation(dbl_noise_db);
         double dbl_ser          = 1.5 * std::erfc(std::sqrt(0.1 * std::pow(10, ( dbl_noise_db/10 )) * 4 ));
         
         /* Uniform symbol generation */
         for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++)
-            cmat_symbols(uint_i) = _qam.get_constellation()(_rng.rand_mask(0xF));
+            cmat_symbols(uint_i) = mapper.get_constellation()(_rng.rand_mask(0xF));
         
         /* AWGN channel generation */
         for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++)
-            cmat_noise(uint_i) = dbl_noise_dev * std::complex <double> (_rng.randn(), _rng.randn());
+            cmat_noise(uint_i) = dbl_noise_dev * std::complex<double>(_rng.randn(), _rng.randn());
 
         /* The QAM symbols pass AWGN channel */
-        matrix < std::complex <double> > cmat_noisy_symbols = cmat_symbols + cmat_noise;
+        cmatrix <double> cmat_noisy_symbols = cmat_symbols + cmat_noise;
 
 
         /* Demodulate the noisy symbols */
         for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++)
-            if (_qam.demodulate_symbol(cmat_noisy_symbols(uint_i)) != cmat_symbols(uint_i))
+            if (mapper.demodulate_symbol(cmat_noisy_symbols(uint_i)) != cmat_symbols(uint_i))
                 mat_num_errors(uint_noise_step)++;
 
         double dbl_ser_emp = (double) mat_num_errors(uint_noise_step)/uint_n;
-        cout << "Eb/N0 = " << dbl_noise_db;
-        cout << setw(10)  << dbl_ser_emp;
-        cout << setw(20)  << dbl_ser;
-        cout << setw(25)  << 100.0 * abs(dbl_ser - dbl_ser_emp)/dbl_ser << endl;
+        cout << "Es/N0 = " << dbl_noise_db;
+        cout << setw(10)   << dbl_ser_emp;
+        cout << setw(20)   << dbl_ser;
+        cout << setw(25)   << 100.0 * abs(dbl_ser - dbl_ser_emp)/dbl_ser << endl;
         fs_result << dbl_noise_db << "   " <<  (double) mat_num_errors(uint_noise_step)/uint_n << endl;
     }
 

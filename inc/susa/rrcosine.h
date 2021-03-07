@@ -29,33 +29,36 @@
 namespace susa
 {
     
-template <class T> int antipodal(T T_arg);
 
 /**
- * @brief Root-Raised Cosine
+ * @brief Root-Raised Cosine Filter
  *
  * This class generates Root-Raised Cosine filter taps.
  *
  * @ingroup Communications
  */
-class RRCosine
+class rrcosine
 {
   private:
 
     double xrc(double, double, double);
 
-    matrix <std::complex <double>>      cmat_g_T;
-    matrix <double>                     mat_g_T;
+    cmatrix<double>     cmat_g_T;
+    matrix <double>     mat_g_T;
 
   public:
 
     /**
      * @brief Constructor
      *
+     * @param dbl_fd the input sample frequency
+     * @param dbl_fs the output sample frequency. dbl_fs must be an integer multiple of dbl_fd.
+     * @param dbl_alpha the roll-off factor that determines the width of the transition band of the filter.
+     *
      */
-    RRCosine(double, double, double, int);
+    rrcosine(double dbl_fs, double dbl_fd, double dbl_alpha, int intN);
 
-    matrix <double> get();
+    susa::matrix <double> get();
 };
 
 }       // NAMESPACE SUSA
