@@ -126,14 +126,14 @@ template <typename T, template <typename> typename Allocator>
 matrix <T, Allocator<T>> mag(const matrix <std::complex<T>, Allocator<std::complex<T>>> &cmat_arg);
 
 /**
- * @brief Complex
+ * @brief To Complex
  *
- * @param mat_arg input real matrix
- * @return convert the input real matrix to a complex matrix
+ * @param mat_arg input non-complex matrix
+ * @return convert the input non-complex matrix to a complex matrix
  * @ingroup Math
  */
 template <typename T, template <typename> typename Allocator>
-matrix <std::complex <T>, Allocator <std::complex <T>>> complex(const matrix <T, Allocator<T>> &mat_arg);
+matrix <std::complex <T>, Allocator <std::complex <T>>> to_complex(const matrix <T, Allocator<T>> &mat_arg);
 
 /**
  * @brief Absolute
@@ -480,7 +480,7 @@ matrix <std::complex <T>, Allocator> conj(const matrix <std::complex <T>, Alloca
 }
 
 template <typename T, template <typename> typename Allocator>
-matrix <std::complex <T>, Allocator <std::complex <T>>> complex(const matrix <T, Allocator<T>> &mat_arg)
+matrix <std::complex <T>, Allocator <std::complex <T>>> to_complex(const matrix <T, Allocator<T>> &mat_arg)
 {
     matrix <std::complex <T>, Allocator <std::complex <T>>> mat_ret(mat_arg.shape());
 
