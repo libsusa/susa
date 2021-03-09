@@ -27,13 +27,13 @@ using namespace susa;
 int main(void)
 {
 	rng _rng(29009);
-	rrcosine rrc(11, 1, 0.65, 7);
+	rrcosine rrc(11, 0.65, 7);
 
 	cout << "Root-Raised Cosine (RRC) : " << endl;
 	cout << "\t Alpha = 65 %" << endl;
 	cout << "\t Order = 7" << endl;
 	cout << "\t Upsampling ratio = 8" << endl;
-	cout << "\t Fs/Fd = 11" << endl;
+	cout << "\t Fs/Fd = L = 11" << endl;
 
 	unsigned int uintM = 16;
 	unsigned int uintN = 100000;
@@ -50,7 +50,7 @@ int main(void)
 
 	/*Root-Raised Cosine filtering on symbols*/
 	cmatrix<double> cmat_t_rrc_symbols;
-	cmat_t_rrc_symbols = filter(rrc.get(), susa::matrix<double>(1, 1, 1), upsample(cmat_t_symbols, 8), 0);
+	cmat_t_rrc_symbols = filter(rrc.get(), susa::matrix<double>(1, 1, 1), upsample(cmat_t_symbols, 8));
 
 	/* AWGN channel generation */
 	cmatrix<double> cmat_noise(cmat_t_rrc_symbols.no_rows(), 1);
@@ -70,7 +70,7 @@ int main(void)
 		/*Receiver*/
 
 		/*Root-Raised Cosine filtering on noisy symbols*/
-		cmatrix<double> cmat_noisy_rrc_symbols = filter(rrc.get(), susa::matrix<double>(1, 1, 1), cmat_noisy_symbols, 100);
+		cmatrix<double> cmat_noisy_rrc_symbols = filter(rrc.get(), susa::matrix<double>(1, 1, 1), cmat_noisy_symbols);
 		cmatrix<double> cmat_noisy_d_symbols(uintN, 1);
 
 		for (size_t j = 0; j < uintN; j++)

@@ -33,7 +33,8 @@ namespace susa
 /**
  * @brief Root-Raised Cosine Filter
  *
- * This class generates Root-Raised Cosine filter taps.
+ * This class generates Root-Raised Cosine FIR filter taps.
+ * The filter taps are computed through frequency sampling method.
  *
  * @ingroup Communications
  */
@@ -41,7 +42,7 @@ class rrcosine
 {
   private:
 
-    double xrc(double, double, double);
+    double xrc(double, double);
 
     cmatrix<double>     cmat_g_T;
     matrix <double>     mat_g_T;
@@ -51,12 +52,12 @@ class rrcosine
     /**
      * @brief Constructor
      *
-     * @param dbl_fd the input sample frequency
-     * @param dbl_fs the output sample frequency. dbl_fs must be an integer multiple of dbl_fd.
+     * @param dbl_l the filter interpolation (upsampling) factor L = Fs/Fd.
      * @param dbl_alpha the roll-off factor that determines the width of the transition band of the filter.
+     * @param int_ord the FIR filter order that must be an odd positive integer.
      *
      */
-    rrcosine(double dbl_fs, double dbl_fd, double dbl_alpha, int intN);
+    rrcosine(unsigned dbl_l, double dbl_alpha, int uint_ord);
 
     susa::matrix <double> get();
 };

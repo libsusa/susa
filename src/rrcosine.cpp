@@ -26,49 +26,44 @@
 namespace susa {
 
 
-rrcosine::rrcosine(double dFs, double dFd, double dAlpha, int intN)
+rrcosine::rrcosine(unsigned dbl_l, double dbl_alpha, int int_ord)
 {
-    cmat_g_T = cmatrix <double> (intN, 1, std::complex<double>(0,0));
+    SUSA_ASSERT(int_ord > 0);
+    SUSA_ASSERT_MESSAGE(int_ord % 2 == 1, "the filter order must be odd.");
+
+    cmat_g_T = cmatrix <double> (int_ord, 1, std::complex<double>(0,0));
     double rc_norm = 0;
 
-    if (intN % 2 == 1)
+    for (int i = 0; i < int_ord; i++)
     {
-        for (int i=0; i<intN; i++)
+        for (int m=-(int_ord - 1)/2; m <= (int_ord - 1)/2 ; m++)
         {
-            for (int m=-(intN - 1)/2; m <= (intN - 1)/2 ; m++)
-            {
-                cmat_g_T(i) += sqrt(xrc(dFs*m/intN,dAlpha,dFd)) * 
-                               exp(std::complex<double>(0, 2 * PI * m * (i - (intN - 1)/2)/intN));
-            }
-        }
-
-        mat_g_T = real(cmat_g_T);
-
-        for (unsigned int i=0; i<mat_g_T.size(); i++)
-        {
-            rc_norm += mat_g_T(i) * mat_g_T(cmat_g_T.size() - i - 1);
-        }
-
-        for (unsigned int i=0; i<mat_g_T.size(); i++)
-        {
-            mat_g_T(i) = mat_g_T(i) / sqrt(rc_norm);
+            cmat_g_T(i) += sqrt(xrc(dbl_l * m / int_ord, dbl_alpha)) * 
+                            exp(std::complex<double>(0, 2 * PI * m * (i - (int_ord - 1)/2)/int_ord));
         }
     }
-    else
+
+    mat_g_T = real(cmat_g_T);
+
+    for (unsigned int i=0; i<mat_g_T.size(); i++)
     {
-        // TODO: fix this odd case
-        SUSA_ABORT("the filter order must be odd.");
+        rc_norm += mat_g_T(i) * mat_g_T(cmat_g_T.size() - i - 1);
+    }
+
+    for (unsigned int i=0; i<mat_g_T.size(); i++)
+    {
+        mat_g_T(i) = mat_g_T(i) / sqrt(rc_norm);
     }
 }
 
 // Private methods
-double rrcosine::xrc(double dF, double dAlpha, double dT)
+double rrcosine::xrc(double dbl_f, double dbl_alpha)
 {
-    if (std::abs(dF) > (1 + dAlpha)/(2*dT))
+    if (std::abs(dbl_f) > ((1 + dbl_alpha) * 0.5))
         return 0;
-    else if (std::abs(dF) > ((1 - dAlpha)/(2*dT)))
-        return (dT/2.0)*(1+cos((PI*dT/dAlpha)*(std::abs(dF)-(1-dAlpha)/(2*dT))));
-    else return dT;
+    else if (std::abs(dbl_f) > ((1 - dbl_alpha)*0.5))
+        return 0.5 * (1 + cos((PI / dbl_alpha) * (std::abs(dbl_f) - (1 - dbl_alpha) * 0.5)));
+    else return 1;
 }
 
 // Public methods
