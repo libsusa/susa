@@ -42,8 +42,10 @@
 #ifndef SUSA_H
 #define SUSA_H
 
+namespace susa {
 // Constants
-#define PI  3.1415926535897932384626433
+const double PI = 3.1415926535897932384626433;
+}
 
 // STL headers
 #include <cmath>
