@@ -278,7 +278,7 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
     matrix <T, Allocator>& operator=( const matrix <T, Allocator> &mat_arg );
 
     //! Element wise Assignment operator
-    matrix <T, Allocator>& operator=( std::string str_string );
+    matrix <T, Allocator>& operator=( const std::string& str_string );
 
     //! Element wise Assignment operator
     matrix <T, Allocator>& operator=( const char* char_string );
@@ -860,14 +860,14 @@ matrix <T, Allocator> matrix <T, Allocator>::mid(size_t sizet_begin, size_t size
 
     if (is_vector())
     {
-        SUSA_ASSERT(sizet_objects > sizet_begin && sizet_objects < sizet_end);
+        SUSA_ASSERT(sizet_objects > sizet_begin && sizet_objects > sizet_end);
         if (sizet_begin > sizet_objects || sizet_end > sizet_objects) return mat_ret;
 
         if (sizet_rows == 1) mat_ret = matrix <T, Allocator> (1,sz_width);
         else if (sizet_cols == 1) mat_ret = matrix <T, Allocator> (sz_width,1);
 
         T*     _r_matrix = &_matrix[sizet_begin];
-        for (size_t sizet_i = 0; sizet_i < sizet_end; sizet_i++)
+        for (size_t sizet_i = 0; sizet_i < sz_width; sizet_i++)
         {
             mat_ret(sizet_i) = _r_matrix[sizet_i];
         }
@@ -1310,7 +1310,7 @@ template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Alloc
     return *this;
 }
 
-template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Allocator>::operator=( std::string str_string )
+template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Allocator>::operator=(const std::string& str_string )
 {
     parser(str_string);
     return *this;
