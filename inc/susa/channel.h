@@ -105,6 +105,7 @@ template <class T> class channel
      *
      * @param mat_arg the encoded signal vector
      * @param dbl_ebn0 the signal to noise ratio Eb/N0
+     * @return Log Likelihood Ratio (LLR) vector
      */
     matrix <T> decode_bcjr(const matrix <T> &mat_arg, T dbl_ebn0);
 
@@ -310,7 +311,6 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     }
 
 
-
     // Trace Back the Trellis (decoding)
     unsigned int uint_curr_state = uint_init_state;
     unsigned int uint_curr_input;
@@ -338,16 +338,13 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     // It detects the initial and final states.
 
     T dbl_metric = 0;
-    unsigned int uint_l = mat_taps.size() - 1;
-    unsigned int uint_num_stages = mat_arg.size() - 2 * uint_l;
-    unsigned int uint_num_states = uint_num_states_mem;
+    size_t sz_length = mat_arg.size();
+    size_t uint_l = mat_taps.size() - 1;
+    size_t uint_num_stages = sz_length - 2 * uint_l;
+    size_t uint_num_states = uint_num_states_mem;
 
-    matrix <T> mat_new_arg = mat_arg.mid(uint_l, mat_arg.size() - uint_l - 1);
+    matrix <T> mat_new_arg = mat_arg.mid(uint_l, sz_length - uint_l - 1);
 
-
-
-    ////matrix <T> mat_metric(uint_num_states, uint_num_stages + 1,std::numeric_limits<T>::max());
-    ////for (unsigned int uint_i = 0; uint_i < uint_num_states; uint_i++) mat_metric(uint_i, 0) = 0;
     matrix <T> mat_metric_past(uint_num_states, 1);
     matrix <T> mat_metric_next(uint_num_states, 1,std::numeric_limits<T>::max());
 
@@ -370,10 +367,12 @@ template <class T> matrix <T> channel <T>::decode_mlse(const matrix <T> &mat_arg
     T dbl_next_output;
     unsigned int uint_next_state;
 
-    for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++) {
-        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++) {
-            for (unsigned int uint_pam_index = 0; uint_pam_index < uint_num_pam; uint_pam_index++) {
-
+    for (unsigned int uint_stage = 0; uint_stage < uint_num_stages; uint_stage++)
+    {
+        for (unsigned int uint_state = 0; uint_state < uint_num_states; uint_state++)
+        {
+            for (unsigned int uint_pam_index = 0; uint_pam_index < uint_num_pam; uint_pam_index++)
+            {
                 dbl_next_output = this->next_output(uint_state,uint_pam_index);
                 uint_next_state = this->next_state(uint_state,uint_pam_index);
 

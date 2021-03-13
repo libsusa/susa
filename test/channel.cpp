@@ -25,42 +25,18 @@
 
 int main(void)
 {
-
     // ignore the tail of the bits
     const unsigned len = 15;
 
-    susa::matrix<double> mat_bits(17,1);
-
     // the actual transmitted bits
-    mat_bits(0) = -1;
-    mat_bits(1) = -1;
-    mat_bits(2) = -1;
-    mat_bits(3) = -1;
-    mat_bits(4) = -1;
-    mat_bits(5) = 1;
-    mat_bits(6) = -1;
-    mat_bits(7) = 1;
-    mat_bits(8) = -1;
-    mat_bits(9) = 1;
-    mat_bits(10) = 1;
-    mat_bits(11) = -1;
-    mat_bits(12) = 1;
-    mat_bits(13) = -1;
-    mat_bits(14) = -1;
-    mat_bits(15) = 1;
-    mat_bits(16) = 1;
+    susa::matrix<double> mat_bits("-1 -1 -1 -1 1 1 -1 1 -1 1 1 -1 1 -1 -1 1 -1 1");
+    mat_bits.resize(18,1);
 
     // pulse amplitude (pam) vector
-    susa::matrix<double> mat_pam(2, 1);
-    mat_pam(0) = -1;
-    mat_pam(1) = 1;
+    susa::matrix<double> mat_pam("-1 1");
 
     // channel taps
-    susa::matrix<double> mat_taps(1, 4);
-    mat_taps(0) = 1;
-    mat_taps(1) = -0.9;
-    mat_taps(2) = 0.5;
-    mat_taps(3) = .4;
+    susa::matrix<double> mat_taps("1 -0.9 0.5 0.4");
 
     susa::channel<double> ch(mat_taps, mat_pam);
 
@@ -74,12 +50,11 @@ int main(void)
     {
         mat_decoded_bits(uint_i) = mat_decoded(uint_i) > 1 ? 1 : -1;
     }
-    
-    //std::cout << "\ncoded : \n" << mat_coded;
-    //std::cout << "\nuncoded : \n" << mat_bits.left(len);
-    //std::cout << "\ndecoded : \n" << mat_decoded_bits.left(len);
+
+    susa::matrix <double> mat_decoded_mlse = ch.decode_mlse(mat_coded);
 
     SUSA_TEST_EQ(mat_bits.left(len), mat_decoded_bits.left(len), "BCJR channel equalizer.");
+    SUSA_TEST_EQ(mat_bits.left(len), mat_decoded_mlse.left(len), "MLSE (Viterbi) channel equalizer.");
     SUSA_TEST_PRINT_STATS();
 
     return (uint_failed);
