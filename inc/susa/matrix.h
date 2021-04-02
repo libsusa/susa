@@ -31,7 +31,14 @@
 #ifndef SUSA_MATRIX_H
 #define SUSA_MATRIX_H
 
-#define MAX_STR_LEN     4096
+
+// refer to "Efficient Processing of Two-Dimensional Arrays with C or C++"
+// by David I. Donato
+// https://pubs.usgs.gov/tm/07/e01/tm7e1.pdf
+// for comparison of different memory addressing techniques
+#define get_lindex(R, C)      R + C * sizet_rows
+
+#define MAX_STR_LEN           4096
 
 #include <type_traits>
 
@@ -100,9 +107,6 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
     // The string initialization can be done using a constructor method
     // and an overloaded assignment operator (=) method
     bool    parser(std::string str_string);
-    
-    //! compute the internal linear index from row and column indices
-    size_t  get_lindex(size_t sizet_row, size_t sizet_col) const;
 
     bool    allocate(size_t sz_objects);
 
@@ -538,12 +542,6 @@ template <typename T, typename Allocator> T matrix <T, Allocator>::get( size_t s
   return this->_matrix[sizet_elem];
 }
 
-template <typename T, typename Allocator> inline size_t matrix <T, Allocator>::get_lindex(size_t sizet_row, size_t sizet_col) const
-{
-    return (sizet_row + sizet_col * sizet_rows);
-}
-
-
 template <typename T, typename Allocator> size_t inline matrix <T, Allocator>::no_cols() const
 {
     return sizet_cols;
@@ -699,12 +697,9 @@ matrix <T, Allocator> matrix <T, Allocator>::shrink(size_t sizet_elim_row, size_
     size_t sizet_new_col;
     size_t sizet_new_row;
 
-    //TODO: it should be verified; this condition may be incorrect
-    SUSA_ASSERT_MESSAGE(sizet_cols > 1 && sizet_rows > 1
-      && sizet_elim_row >= 0 && sizet_elim_col >= 0,
-      "the input arguments error.");
+    SUSA_ASSERT_MESSAGE(sizet_cols > 1 && sizet_rows > 1, "the input arguments error.");
 
-    if (sizet_cols > 1 && sizet_rows > 1 && sizet_elim_row >= 0 && sizet_elim_col >= 0)
+    if (sizet_cols > 1 && sizet_rows > 1)
     {
         mat_ret = matrix <T, Allocator> (sizet_rows - 1,sizet_cols - 1);
     }
