@@ -127,6 +127,16 @@ int main(void)
     SUSA_TEST_EQ(susa::rank(mat_a), 2U, "full rank of a square matrix");
     }
 
+    {
+    susa::matrix<int> mat_a("[1 -2 4; -5 2 0; 1 0 3]");
+    SUSA_TEST_EQ(susa::det(mat_a), -32, "determinant a square matrix");
+    }
+
+    {
+    susa::matrix<int> mat_a("5, 2, 1, 4, 6;9, 4, 2, 5, 2; 11, 5, 7, 3, 9; 5, 6, 6, 7, 2;7, 5, 9, 3, 3");
+    SUSA_TEST_EQ(susa::det(mat_a), -2004, "determinant a square matrix");
+    }
+
 
     SUSA_TEST_PRINT_STATS();
 
