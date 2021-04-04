@@ -25,23 +25,26 @@
 
 int main(void)
 {
-    susa::matrix <float> mat_m("[0 1 1; 2 3 2; 1 3 2; 4 2 2]");
+    susa::matrix <int> mat_m("[0 1 1; 2 3 2; 1 3 2; 4 2 2]");
     auto mat_left = mat_m.left(3);
     SUSA_TEST_EQ(mat_m, mat_left, "full matrix left");
 
     auto mat_right = mat_m.right(3);
     SUSA_TEST_EQ(mat_m, mat_right, "full matrix right");
 
-    susa::matrix <float> mat_l("[0 1 ; 2 3 ; 1 3 ; 4 2 ]");
+    susa::matrix <int> mat_l("[0 1 ; 2 3 ; 1 3 ; 4 2 ]");
     mat_left = mat_m.left(2);
     SUSA_TEST_EQ(mat_l, mat_left, "matrix left");
 
-    susa::matrix <float> mat_r("[1 1;3 2;3 2;2 2]");
+    susa::matrix <int> mat_r("[1 1;3 2;3 2;2 2]");
     mat_right = mat_m.right(2);
     SUSA_TEST_EQ(mat_r, mat_right, "matrix right");
 
     auto mat_mid = mat_m.mid(1,2);
     SUSA_TEST_EQ(mat_mid, mat_right, "matrix mid");
+
+    susa::matrix <int> mat_a = "[0 1 1; 2 3 2; 1 3 2; 4 2 2]";
+    SUSA_TEST_EQ(mat_a, mat_m, "literal string matrix parser");
 
     SUSA_TEST_PRINT_STATS();
 

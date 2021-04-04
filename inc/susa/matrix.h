@@ -163,6 +163,13 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
      */
     matrix(std::string str_string);
 
+    /**
+     * @brief Constructor
+     *
+     * @param c_string literal string representation of the matrix
+     */
+    matrix(const char char_string[]);
+
     //! Returns the value of a specific (row, column)
     T get(size_t sizet_row, size_t sizet_col) const;
 
@@ -285,7 +292,7 @@ template <typename T, typename Allocator = std::allocator <T>> class matrix
     matrix <T, Allocator>& operator=( const std::string& str_string );
 
     //! Element wise Assignment operator
-    matrix <T, Allocator>& operator=( const char* char_string );
+    matrix <T, Allocator>& operator=( const char char_string[] );
 
     //! Element wise Subtraction operator
     friend matrix <T, Allocator> operator-<>( const matrix <T, Allocator> &mat_argl, T T_arg);
@@ -505,7 +512,8 @@ matrix <T, Allocator>::matrix(matrix<T, Allocator>&& mat_arg) noexcept
 }
 
 
-template <typename T, typename Allocator> matrix <T, Allocator>::matrix(std::string str_string)
+template <typename T, typename Allocator>
+matrix <T, Allocator>::matrix(std::string str_string)
 : sizet_rows(0)
 , sizet_cols(0)
 , sizet_objects(0)
@@ -514,6 +522,18 @@ template <typename T, typename Allocator> matrix <T, Allocator>::matrix(std::str
 , _matrix(nullptr)
 {
   parser(str_string);
+}
+
+template <typename T, typename Allocator>
+matrix <T, Allocator>::matrix(const char char_string[])
+: sizet_rows(0)
+, sizet_cols(0)
+, sizet_objects(0)
+, T_default(new T)
+, alloc()
+, _matrix(nullptr)
+{
+  parser(std::string(char_string));
 }
 
 template <typename T, typename Allocator> matrix <T, Allocator>::~matrix() noexcept
@@ -1311,7 +1331,7 @@ template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Alloc
     return *this;
 }
 
-template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Allocator>::operator=( const char* char_string )
+template <typename T, typename Allocator> matrix<T, Allocator>& matrix <T, Allocator>::operator=( const char char_string[] )
 {
     parser(std::string(char_string));
     return *this;
