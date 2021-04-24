@@ -90,6 +90,7 @@ const double PI = 3.1415926535897932384626433;
 #include "susa/search.h"
 #include "susa/signal.h"
 #include "susa/mlp.h"
+#include "susa/arithmetics.h"
 #include "susa/debug.h"
 
 #endif // SUSA_H
