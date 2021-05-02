@@ -8,7 +8,7 @@ target_link_libraries (base susa)
 
 add_test (NAME linalg COMMAND linalg)
 add_executable (linalg linalg.cpp)
-target_link_libraries (linalg susa)
+target_link_libraries (linalg susa ${CMAKE_THREAD_LIBS_INIT})
 
 add_test (NAME signal COMMAND signal)
 add_executable (signal signal.cpp)
@@ -33,3 +33,7 @@ target_link_libraries (fft susa)
 add_test (NAME matrix COMMAND matrix)
 add_executable (matrix matrix.cpp)
 target_link_libraries (matrix susa)
+
+add_test (NAME arithmetics COMMAND arithmetics)
+add_executable (arithmetics arithmetics.cpp)
+target_link_libraries (arithmetics susa)
