@@ -38,7 +38,8 @@ namespace susa {
  * @return returns minimum value indices in the input matrix
  * @ingroup Math
  */
-template <typename T, typename Allocator> matrix <size_t> min(const matrix <T, Allocator> &mat_arg);
+template <typename T, typename Allocator> matrix <size_t>
+min(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Maximum
@@ -47,7 +48,8 @@ template <typename T, typename Allocator> matrix <size_t> min(const matrix <T, A
  * @return Returns maximum value in the input matrix
  * @ingroup Math
  */
-template <typename T, typename Allocator> matrix <size_t> max(const matrix <T, Allocator> &mat_arg);
+template <typename T, typename Allocator> matrix <size_t>
+max(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Differential
@@ -56,7 +58,8 @@ template <typename T, typename Allocator> matrix <size_t> max(const matrix <T, A
  * @return returns discrete differential of the input vector
  * @ingroup Math
  */
-template <typename T, typename Allocator> std::vector <T> diff(const std::vector <T> &vec_arg);
+template <typename T, typename Allocator> std::vector <T>
+diff(const std::vector <T> &vec_arg);
 
 /**
  * @brief Sum
@@ -65,7 +68,8 @@ template <typename T, typename Allocator> std::vector <T> diff(const std::vector
  * @return Returns sum of values in the input matrix
  * @ingroup Math
  */
-template <typename T, typename Allocator> matrix <T, Allocator> sum(const matrix <T, Allocator> &mat_arg);
+template <typename T, typename Allocator> matrix <T, Allocator>
+sum(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Sum
@@ -83,7 +87,8 @@ template <typename T> T sum(const std::vector <T> &vec_arg);
  * @return Returns mean of values in the input vector
  * @ingroup Math
  */
-template <typename T, typename Allocator> matrix <T, Allocator> mean(const matrix <T, Allocator> &mat_arg);
+template <typename T, typename Allocator> matrix <T, Allocator>
+mean(const matrix <T, Allocator> &mat_arg);
 
 /**
  * @brief Norm
@@ -133,7 +138,8 @@ matrix <T, Allocator<T>> mag(const matrix <std::complex<T>, Allocator<std::compl
  * @ingroup Math
  */
 template <typename T, template <typename> typename Allocator>
-matrix <std::complex <T>, Allocator <std::complex <T>>> to_complex(const matrix <T, Allocator<T>> &mat_arg);
+matrix <std::complex <T>, Allocator <std::complex <T>>>
+to_complex(const matrix <T, Allocator<T>> &mat_arg);
 
 /**
  * @brief Absolute
@@ -163,7 +169,8 @@ std::vector <T> abs(const std::vector <T> &vec_arg);
  * @ingroup Math
  */
 template <typename T, typename Allocator>
-matrix <std::complex <T>, Allocator> conj(const matrix <std::complex <T>, Allocator> &mat_arg);
+matrix <std::complex <T>, Allocator>
+conj(const matrix <std::complex <T>, Allocator> &mat_arg);
 
 /**
  * @brief Sign
@@ -192,22 +199,23 @@ int8_t sign(T T_arg);
  * @return Returns natural logarithm of input
  * @ingroup Math
  */
-template <typename T, typename Allocator> matrix <T, Allocator> log(const matrix <T, Allocator> &mat_arg);
+template <typename T, typename Allocator> matrix <T, Allocator>
+log(const matrix <T, Allocator> &mat_arg);
 
 /**
- * @brief Pow
+ * @brief pow
  *
- * @param uint_b base argument
- * @param uint_p power argument
+ * @param uint_b unsigned integer base argument
+ * @param uint_p unsigned integer power argument
  * @ingroup Math
  */
 unsigned int pow(unsigned int uint_b, unsigned int uint_p);
 
 /**
- * @brief Pow
+ * @brief pow
  *
- * @param uint_b base argument
- * @param uint_p power argument
+ * @param int_b integer base argument
+ * @param uint_p unsigned integer power argument
  * @ingroup Math
  */
 int pow(int int_b, unsigned int uint_p);
@@ -219,7 +227,24 @@ int pow(int int_b, unsigned int uint_p);
  * @ingroup Math
  */
 template <typename T, typename std::enable_if_t<std::is_unsigned<T>::value,T>* = nullptr>
-T log2(T int_arg);
+T log2(T uint_arg);
+
+/**
+ * @brief log2u
+ *
+ * @param uint_arg 32-bit unsigned integer input argument
+ * @ingroup Math
+ */
+uint32_t log2u(uint32_t uint_arg);
+
+/**
+ * @brief log2ull
+ *
+ * @param uint_arg 64-bit unsigned integer input argument
+ * @ingroup Math
+ */
+uint64_t log2ull(uint64_t uint_arg);
+
 
 /**
  * @brief Normal Cumulative Distribution Function (CDF)
@@ -272,11 +297,11 @@ matrix <double> round(const matrix <double> &mat_arg, int int_decimal = -1);
 
 
 template <typename T, typename std::enable_if_t<std::is_unsigned<T>::value,T>*>
-T log2(T int_arg)
+T log2(T uint_arg)
 {
     T ret(0);
 
-    while ((int_arg >> ret) != 0)
+    while ((uint_arg >> ret) != 0)
     {
         ret++;
     }

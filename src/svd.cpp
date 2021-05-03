@@ -40,9 +40,9 @@ static double _susa_svd_pythag( double a, double b )
     double bat = bt / at;
     double abt = at / bt;
     if( at > bt )
-        return at * sqrt( 1.0 + bat * bat );
+        return at * std::sqrt( 1.0 + bat * bat );
     else if( bt > 0.0 )
-        return bt * sqrt( 1.0 + abt * abt );
+        return bt * std::sqrt( 1.0 + abt * abt );
     else return 0.0;
 }
 
@@ -89,7 +89,7 @@ int svd(const matrix <float> &mat_arg_a,
                     s += ((double)mat_arg_u(k,i) * (double)mat_arg_u(k,i));
                 }
                 f = (double)mat_arg_u(i,i);
-                g = -SIGN(sqrt(s), f);
+                g = -SIGN(std::sqrt(s), f);
                 h = f * g - s;
                 mat_arg_u(i,i) = (float)(f - g);
                 if (i != n - 1)
@@ -123,7 +123,7 @@ int svd(const matrix <float> &mat_arg_a,
                     s += ((double)mat_arg_u(i,k) * (double)mat_arg_u(i,k));
                 }
                 f = (double)mat_arg_u(i,l);
-                g = -SIGN(sqrt(s), f);
+                g = -SIGN(std::sqrt(s), f);
                 h = f * g - s;
                 mat_arg_u(i,l) = (float)(f - g);
                 for (k = l; k < n; k++)

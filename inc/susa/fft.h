@@ -46,7 +46,7 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
         using value_allocator = typename get_allocator<T, Allocator>::type;
         using complex_allocator = typename get_allocator<std::complex<T>, Allocator>::type;
     public:
-  
+
     /**
     * @brief Fast Fourier Transform (FFT) using the radix-2 algorithm
     *
@@ -106,9 +106,9 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
 
     matrix <std::complex<T>, complex_allocator> vector_radix2(const matrix <T, Allocator>& mat_arg)
     {
-        size_t          size        = mat_arg.size();
-        SUSA_ASSERT(is_power_of_two(size));
-        size_t          sz_stage    = susa::log2(size);
+        size_t          sz_size     = mat_arg.size();
+        SUSA_ASSERT(is_power_of_two(sz_size));
+        size_t          sz_stage    = susa::log2ull(sz_size);
         matrix <std::complex<T>, complex_allocator> mat_brev = convert_to_complex(mat_arg);
 
         bit_reverse(mat_brev);
@@ -117,7 +117,7 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
         {
             size_t m = std::pow(2,stage);
             std::complex<T> w_m = std::exp(std::complex<T>(0,(T)-2 * PI / m));
-            for (size_t k = 0; k < size; k += m)
+            for (size_t k = 0; k < sz_size; k += m)
             {
                 std::complex<T> w(1,0);
                 for (size_t j = 0; j < m/2; j++)
@@ -153,7 +153,7 @@ class fft <T, Allocator, typename std::enable_if_t<std::is_floating_point<T>::va
     void bit_reverse(matrix <std::complex<T>, complex_allocator>& mat_arg)
     {
         size_t              sz_size     = mat_arg.size();
-        size_t              n_bits      = susa::log2(sz_size);
+        size_t              n_bits      = susa::log2ull(sz_size);
         std::complex<T>     U_swap      = 0;
         size_t              sz_brev;
 

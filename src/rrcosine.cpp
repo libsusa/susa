@@ -38,7 +38,7 @@ rrcosine::rrcosine(unsigned dbl_l, double dbl_alpha, int int_ord)
     {
         for (int m=-(int_ord - 1)/2; m <= (int_ord - 1)/2 ; m++)
         {
-            cmat_g_T(i) += sqrt(xrc(dbl_l * m / int_ord, dbl_alpha)) * 
+            cmat_g_T(i) += std::sqrt(xrc(dbl_l * m / int_ord, dbl_alpha)) *
                             exp(std::complex<double>(0, 2 * PI * m * (i - (int_ord - 1)/2)/int_ord));
         }
     }
@@ -52,7 +52,7 @@ rrcosine::rrcosine(unsigned dbl_l, double dbl_alpha, int int_ord)
 
     for (unsigned int i=0; i<mat_g_T.size(); i++)
     {
-        mat_g_T(i) = mat_g_T(i) / sqrt(rc_norm);
+        mat_g_T(i) = mat_g_T(i) / std::sqrt(rc_norm);
     }
 }
 

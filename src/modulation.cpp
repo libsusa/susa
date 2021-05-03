@@ -43,8 +43,8 @@ matrix <int8_t> bpsk(const matrix <uint8_t> &mat_arg)
 qam::qam(unsigned int uint_m)
 : uint_m(uint_m)
 {
-    uint_bps                = log2(uint_m);
-    double          dbl_p   = sqrt(uint_m);
+    uint_bps                = log2u(uint_m);
+    double          dbl_p   = std::sqrt(uint_m);
     unsigned int    uint_l  = (unsigned int)(uint_m/dbl_p);
 
     // Constellation generation
