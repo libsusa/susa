@@ -29,7 +29,6 @@ endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 include_directories (inc)
 set (SRC_FILES src/rng.cpp
                src/mt.cpp
-               src/sets.cpp
                src/base.cpp
                src/ccode.cpp
                src/matrix.cpp

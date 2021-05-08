@@ -77,7 +77,8 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
  * @return The index of the elements that are equal to T_arg
  * @ingroup Search
  */
-template <class T> susa::bitset find(const matrix <T> &mat_arg, T &T_arg);
+template <typename T, typename Allocator> susa::bitset<Allocator>
+find(const matrix <T, Allocator>& mat_arg, T& T_arg);
 
 /**
  * @brief Dijkstra finds the shortest path
@@ -232,7 +233,8 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
 }
 
 
-template <class T> susa::bitset find(const matrix <T> &mat_arg, T &T_arg)
+template <typename T, typename Allocator>
+susa::bitset<Allocator> find(const matrix <T, Allocator>& mat_arg, T& T_arg)
 {
 
     //TODO support matrices
