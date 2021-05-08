@@ -18,6 +18,7 @@
 /**
  * @file mlp.h
  * @brief Multi-Layer Perceptron (MLP) Neural Network (declaration and definition).
+ *
  * @author Behrooz Kamary
  */
 
@@ -26,8 +27,10 @@
 
 namespace susa {
 
-template <class T> class mlp {
-    
+template <typename T>
+class mlp
+{
+
 };
 
 

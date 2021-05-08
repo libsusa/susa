@@ -37,3 +37,11 @@ target_link_libraries (matrix susa)
 add_test (NAME arithmetics COMMAND arithmetics)
 add_executable (arithmetics arithmetics.cpp)
 target_link_libraries (arithmetics susa)
+
+add_test (NAME slice COMMAND slice)
+add_executable (slice slice.cpp)
+target_link_libraries (slice susa)
+
+add_test (NAME sets COMMAND sets)
+add_executable (sets sets.cpp)
+target_link_libraries (sets susa)

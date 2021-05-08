@@ -39,10 +39,10 @@
 namespace susa
 {
   /**
-   * @brief The <i>array</i> class.
-   * An array is a multidimensional container that should be used
+   * @brief <i>array</i> type.
+   * An array is a multidimensional container type that should be used
    * to represent three or more dimensions.
-   * 
+   *
    * @ingroup TYPES
    *
    */
@@ -179,7 +179,7 @@ namespace susa
       _matrix       = alloc.allocate(uint_total);
       uint_total    = length;
     }
-  
+
     std::memset(_matrix, 0x00, sizeof(T) * length);
     std::memcpy(_matrix, data, sizeof(T) * length);
   }
@@ -197,7 +197,7 @@ namespace susa
 
     T_default          = arg.T_default;
     _matrix         = arg._matrix;
-  
+
     arg.T_default      = nullptr;
     arg._matrix     = nullptr;
     arg.uint_total  = 0;
@@ -334,7 +334,7 @@ namespace susa
       uint_elem += dim_size * uint_factor;
       uint_dim_count++;
     }
-    
+
     SUSA_ASSERT_MESSAGE(uint_elem < uint_total, "the element index is out of range.");
 
     return uint_elem;

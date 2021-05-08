@@ -16,8 +16,9 @@
  */
 
 /**
- * @file ccode.cpp
+ * @file mlp.cpp
  * @brief onvolutional ecoder/decoder implementation.
+ *
  * @author Behrooz Kamary
  */
 

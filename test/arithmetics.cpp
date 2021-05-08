@@ -22,6 +22,7 @@
  */
 
 #include "test.h"
+#include <susa/fixed_point.h>
 #include <susa/arithmetics.h>
 
 int main(void)
@@ -54,6 +55,20 @@ int main(void)
     double dbl_div = dbla / dblb;
     auto fp_div = fpnuma / fpnumb;
     SUSA_TEST_EQ_DOUBLE(dbl_div, (double)fp_div, "division");
+
+    {
+    unsigned uint_a = 432;
+    unsigned uint_b = 832;
+    auto     uint_r = susa::intmul(uint_a, uint_b);
+    SUSA_TEST_EQ(std::get<0>(uint_r) + (std::get<1>(uint_r) << (std::numeric_limits<unsigned>::digits / 2)), 359424, "unsigned integer multiplication");
+    }
+
+    {
+    unsigned uint_a = 65000;
+    unsigned uint_b = 64000;
+    auto     uint_r = susa::intmul(uint_a, uint_b);
+    SUSA_TEST_EQ(std::get<0>(uint_r) + (std::get<1>(uint_r) << (std::numeric_limits<unsigned>::digits / 2)), 416e7, "unsigned integer multiplication");
+    }
 
     SUSA_TEST_PRINT_STATS();
 

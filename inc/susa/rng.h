@@ -31,7 +31,7 @@
 namespace susa {
 
 /**
-* @brief Random Number Generator (RNG) class.
+* @brief Random Number Generator (RNG).
 *
 *
 * This implementation of "Mersenne Twister" generates uniformly
@@ -44,6 +44,7 @@ namespace susa {
 * (t, c) = (15, 0xEFC60000)<br>
 * l = 18<br>
 *
+* @ingroup RNG
 */
 class rng {
 
@@ -129,7 +130,7 @@ class rng {
 
     /**
      * @brief Bernoulli random samples
-     * 
+     *
      * @param size_num number of samples i.e. vector size
      * @return a column vector of type susa::matrix<int8_t>
      */
@@ -161,7 +162,7 @@ class rng {
         MASK_LOWER = (1ull << R) - 1,
         MASK_UPPER = (1ull << R)
     };
-  
+
     // Create a length 624 array to store the state of the generator
     uint32_t MT[N];
     uint16_t uint_index;
