@@ -28,12 +28,13 @@
 int main(void)
 {
 
+    {
     double dbla = -457.103;
-    susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
+    susa::fixed_point <int64_t, 40,30> fpnuma(dbla);
     SUSA_TEST_EQ_DOUBLE(dbla, (double)fpnuma, "coversion to/from a floating point");
 
     double dblb = 74.166;
-    susa::fixed_point <int64_t, 20,30> fpnumb(dblb);
+    susa::fixed_point <int64_t, 40,30> fpnumb(dblb);
     SUSA_TEST_EQ_DOUBLE(dblb, (double)fpnumb, "coversion to/from a floating point");
 
 
@@ -55,6 +56,61 @@ int main(void)
     double dbl_div = dbla / dblb;
     auto fp_div = fpnuma / fpnumb;
     SUSA_TEST_EQ_DOUBLE(dbl_div, (double)fp_div, "division");
+
+    double dblc = 74.166;
+    susa::fixed_point <int64_t, 40,30> fpnumc(dblc);
+
+    SUSA_TEST_EQ((fpnuma > fpnumb), false, "less than operator for two floating points");
+    SUSA_TEST_EQ((fpnuma >= fpnumb), false, "less than or equal operator for two floating points");
+    SUSA_TEST_EQ((fpnuma < fpnumb), true, "less than operator for two floating points");
+    SUSA_TEST_EQ((fpnuma <= fpnumb), true, "less than or equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc == fpnumb), true, "equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc != fpnumb), false, "not equal operator for two floating points");
+    SUSA_TEST_EQ((fpnuma != fpnumb), true, "not equal operator for two floating points");
+
+    }
+
+    {
+    double dbla = -457.103;
+    susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
+    SUSA_TEST_EQ_DOUBLE(dbla, (double)fpnuma, "coversion to/from a floating point");
+
+    double dblb = 74.166;
+    susa::fixed_point <int64_t, 20,30> fpnumb(dblb);
+    SUSA_TEST_EQ_DOUBLE(dblb, (double)fpnumb, "coversion to/from a floating point");
+
+    double dblc = 74.166;
+    susa::fixed_point <int64_t, 20,30> fpnumc(dblc);
+
+    SUSA_TEST_EQ((fpnuma > fpnumb), false, "less than operator for two floating points");
+    SUSA_TEST_EQ((fpnuma >= fpnumb), false, "less than or equal operator for two floating points");
+    SUSA_TEST_EQ((fpnuma < fpnumb), true, "less than operator for two floating points");
+    SUSA_TEST_EQ((fpnuma <= fpnumb), true, "less than or equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc == fpnumb), true, "equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc != fpnumb), false, "not equal operator for two floating points");
+    SUSA_TEST_EQ((fpnuma != fpnumb), true, "not equal operator for two floating points");
+    }
+
+    {
+    double dbla = -457.103;
+    susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
+    SUSA_TEST_EQ_DOUBLE(dbla, (double)fpnuma, "coversion to/from a floating point");
+
+    double dblb = -74.166;
+    susa::fixed_point <int64_t, 20,30> fpnumb(dblb);
+    SUSA_TEST_EQ_DOUBLE(dblb, (double)fpnumb, "coversion to/from a floating point");
+
+    double dblc = 74.166;
+    susa::fixed_point <int64_t, 20,30> fpnumc(dblc);
+
+    SUSA_TEST_EQ((fpnuma > fpnumb), false, "less than operator for two floating points");
+    SUSA_TEST_EQ((fpnuma >= fpnumb), false, "less than or equal operator for two floating points");
+    SUSA_TEST_EQ((fpnuma < fpnumb), true, "less than operator for two floating points");
+    SUSA_TEST_EQ((fpnuma <= fpnumb), true, "less than or equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc == fpnumb), true, "equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc != fpnumb), false, "not equal operator for two floating points");
+    SUSA_TEST_EQ((fpnuma != fpnumb), true, "not equal operator for two floating points");
+    }
 
     {
     unsigned uint_a = 432;

@@ -28,8 +28,185 @@
 #include <cstdint>
 #include <type_traits>
 
-
 namespace susa {
+
+template <typename B, unsigned char I, unsigned char F, bool Enable = ((I+F) > std::numeric_limits<B>::digits)> class fixed_point;
+
+/**
+ * @class fixed_point
+ * @brief <i>fixed-point</i> type represents a fixed-point number that is defined by its base template B,
+ * the number of integer bits I and the number of fraction bits F. I and F can take values up to the number of bits
+ * in the base type. F can not be more than half of the number of bits in <b>uintmax_t</b>.
+ *
+ * this is the light <i>fixed_point</i> implementation where the number of bits in base type B is greater
+ * than the number of required bits for integeral and fractional parts (I + F).
+ *
+ * @ingroup TYPES
+ *
+ */
+template <typename B, unsigned char I, unsigned char F>
+class fixed_point <B,I,F, false>
+{
+
+  using UB = typename std::make_unsigned<B>::type;
+  const unsigned NB = std::numeric_limits<UB>::digits;
+
+  UB      integer;
+  double  dbl_orig;
+
+  UB      factor;
+  UB      mask_int;
+  UB      mask_frac;
+  bool    overflow;
+  bool    negative;
+
+public:
+  fixed_point();
+  fixed_point(double dbl_arg);
+  fixed_point(UB arg_integer, UB arg_fraction, bool negative = false);
+  fixed_point(const fixed_point& fp_arg);
+
+  operator double() const;
+  operator float() const;
+
+  friend bool operator!=(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
+  {
+    return fp_lhs.integer != fp_rhs.integer;
+  }
+
+  friend bool operator==(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
+  {
+    return fp_lhs.integer == fp_rhs.integer;
+  }
+
+  friend bool operator>(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
+  {
+    if (fp_lhs.integer > fp_rhs.integer) return !fp_lhs.negative;
+    else if (fp_lhs.integer < fp_rhs.integer) return fp_lhs.negative;
+
+    return !fp_lhs.negative;
+  }
+
+  friend bool operator<(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
+  {
+    if (fp_lhs.integer < fp_rhs.integer) return !fp_lhs.negative;
+    else if (fp_lhs.integer > fp_rhs.integer) return fp_lhs.negative;
+
+    return fp_lhs.negative;
+  }
+
+  friend bool operator>=(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
+  {
+    if (fp_lhs.integer > fp_rhs.integer) return !fp_lhs.negative;
+    else if (fp_lhs.integer < fp_rhs.integer) return fp_lhs.negative;
+
+    return !fp_lhs.negative;
+  }
+
+  friend bool operator<=(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
+  {
+    if (fp_lhs.integer < fp_rhs.integer) return !fp_lhs.negative;
+    else if (fp_lhs.integer > fp_rhs.integer) return fp_lhs.negative;
+
+    return fp_lhs.negative;
+  }
+
+  //! returns the sign of fixed-point integer
+  bool is_negative() const {return negative;}
+
+  //! returns true if the latest arithmetic operation has overflowed
+  bool is_overflow() const {return overflow;}
+};
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F, false>::fixed_point()
+: integer (0)
+, dbl_orig(0)
+, factor(1ull << F)
+, mask_int (((1ull << I) - 1) << F)
+, mask_frac ((1ull << F) - 1)
+, overflow (false)
+, negative (false)
+{
+  static_assert(std::is_integral<B>::value);
+
+  // required for all operations
+  static_assert(std::numeric_limits<UB>::digits > (I + F));
+
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F, false>::fixed_point(const fixed_point& fp_arg)
+{
+  static_assert(std::is_integral<B>::value);
+
+  // required for all operations
+  static_assert(std::numeric_limits<UB>::digits > (I + F));
+
+  integer     = fp_arg.integer;
+  dbl_orig    = fp_arg.dbl_orig;
+  negative    = fp_arg.negative;
+  factor      = fp_arg.factor;
+  mask_frac   = fp_arg.mask_frac;
+  mask_int    = fp_arg.mask_int;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F, false>::fixed_point(UB arg_integer, UB arg_fraction, bool negative)
+: integer (arg_integer)
+, factor(1ull << F)
+, mask_int (((1ull << I) - 1) << F)
+, mask_frac ((1ull << F) - 1)
+, overflow (false)
+, negative (negative)
+{
+  static_assert(std::is_integral<B>::value);
+
+  // required for all operations
+  static_assert(std::numeric_limits<UB>::digits > (I + F));
+
+  dbl_orig = (double)*this;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F, false>::fixed_point(double dbl_arg)
+: dbl_orig(dbl_arg)
+, factor(1ull << F)
+, mask_int (((1ull << I) - 1) << F)
+, mask_frac ((1ull << F) - 1)
+, overflow (false)
+{
+  static_assert(std::is_integral<B>::value);
+
+  // required for all operations
+  static_assert(std::numeric_limits<UB>::digits > (I + F));
+
+  if (dbl_arg < 0)
+  {
+    negative = true;
+    dbl_arg *= -1;
+  }
+  else
+  {
+    negative = false;
+  }
+  integer             = static_cast <UB> (dbl_arg > 0 ? std::floor(dbl_arg) : std::ceil(dbl_arg));
+  double  remainder   = dbl_arg - integer;
+  integer           <<= F;
+  integer            += (UB)(std::round(remainder * factor)) & mask_frac;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F, false>::operator double() const
+{
+  return (negative ? -1.0 : 1.0) * (((integer & mask_int) >> F) + (double)(integer & mask_frac) / factor);
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F, false>::operator float() const
+{
+  return (negative ? -1.0 : 1.0) * (((integer & mask_int) >> F) + (float)(integer & mask_frac) / factor);
+}
 
 /**
  * @class fixed_point
@@ -41,7 +218,7 @@ namespace susa {
  *
  */
 template <typename B, unsigned char I, unsigned char F>
-class fixed_point
+class fixed_point <B,I,F, true>
 {
 
 private:
@@ -64,7 +241,7 @@ public:
 
   fixed_point();
   fixed_point(double dbl_arg);
-  fixed_point(UB arg_integer, UB arg_fraction);
+  fixed_point(UB arg_integer, UB arg_fraction, bool negative = false);
   fixed_point(const fixed_point& fp_arg);
 
   operator double() const;
@@ -104,11 +281,11 @@ public:
 
     if (F > amount)
     {
-        integer |= (fraction >> (F - amount));
+      integer |= (fraction >> (F - amount));
     }
     else
     {
-        integer = (fraction << (amount - F));
+      integer = (fraction << (amount - F));
     }
 
     fraction <<= amount;
@@ -118,17 +295,34 @@ public:
     return *this;
   }
 
+  // prefix increment
   fixed_point& operator++()
   {
     integer++;
     return *this;
   }
 
+  // postfix increment
   fixed_point operator++(int)
   {
     fixed_point ret(*this);
     ++(*this);
     return ret;
+  }
+
+  // prefix decrement
+  fixed_point& operator--()
+  {
+      // actual decrement takes place here
+      return *this; // return new value by reference
+  }
+
+  // postfix decrement
+  fixed_point operator--(int)
+  {
+      fixed_point old = *this;
+      operator--();
+      return old;
   }
 
   fixed_point& operator=(const fixed_point& fp_rhs)
@@ -277,7 +471,7 @@ public:
 };
 
 template <typename B, unsigned char I, unsigned char F>
-fixed_point<B, I, F>::fixed_point()
+fixed_point<B, I, F, true>::fixed_point()
 : integer (0)
 , fraction (0)
 , dbl_orig(0)
@@ -298,7 +492,7 @@ fixed_point<B, I, F>::fixed_point()
 }
 
 template <typename B, unsigned char I, unsigned char F>
-fixed_point<B, I, F>::fixed_point(const fixed_point& fp_arg)
+fixed_point<B, I, F, true>::fixed_point(const fixed_point& fp_arg)
 {
   static_assert(std::is_integral<B>::value);
 
@@ -319,14 +513,14 @@ fixed_point<B, I, F>::fixed_point(const fixed_point& fp_arg)
 }
 
 template <typename B, unsigned char I, unsigned char F>
-fixed_point<B, I, F>::fixed_point(UB arg_integer, UB arg_fraction)
+fixed_point<B, I, F, true>::fixed_point(UB arg_integer, UB arg_fraction, bool negative)
 : integer (arg_integer)
 , fraction (arg_fraction)
 , factor(1ull << F)
 , mask_int ((1ull << I) - 1)
 , mask_frac ((1ull << F) - 1)
 , overflow (false)
-, negative (false)
+, negative (negative)
 {
   static_assert(std::is_integral<B>::value);
 
@@ -341,7 +535,7 @@ fixed_point<B, I, F>::fixed_point(UB arg_integer, UB arg_fraction)
 }
 
 template <typename B, unsigned char I, unsigned char F>
-fixed_point<B, I, F>::fixed_point(double dbl_arg)
+fixed_point<B, I, F, true>::fixed_point(double dbl_arg)
 : dbl_orig(dbl_arg)
 , factor(1ull << F)
 , mask_int ((1ull << I) - 1)
@@ -372,13 +566,13 @@ fixed_point<B, I, F>::fixed_point(double dbl_arg)
 }
 
 template <typename B, unsigned char I, unsigned char F>
-fixed_point<B, I, F>::operator double() const
+fixed_point<B, I, F, true>::operator double() const
 {
   return (negative ? -1.0 : 1.0) * (integer + (double)fraction / factor);
 }
 
 template <typename B, unsigned char I, unsigned char F>
-fixed_point<B, I, F>::operator float() const
+fixed_point<B, I, F, true>::operator float() const
 {
   return (negative ? -1.0 : 1.0) * (integer + (float)fraction / factor);
 }
