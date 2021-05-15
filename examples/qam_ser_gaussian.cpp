@@ -59,11 +59,11 @@ int main(void) {
         double dbl_noise_db     = dbl_min_noise_db + uint_noise_step * (dbl_max_noise_db - dbl_min_noise_db)/(uint_num_steps - 1);
         double dbl_noise_dev    = mapper.get_noise_deviation(dbl_noise_db);
         double dbl_ser          = 1.5 * std::erfc(std::sqrt(0.1 * std::pow(10, ( dbl_noise_db/10 )) * 4 ));
-        
+
         /* Uniform symbol generation */
         for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++)
             cmat_symbols(uint_i) = mapper.get_constellation()(_rng.rand_mask(0xF));
-        
+
         /* AWGN channel generation */
         for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++)
             cmat_noise(uint_i) = dbl_noise_dev * std::complex<double>(_rng.randn(), _rng.randn());
@@ -74,7 +74,7 @@ int main(void) {
 
         /* Demodulate the noisy symbols */
         for (unsigned int uint_i = 0; uint_i < uint_n; uint_i++)
-            if (mapper.demodulate_symbol(cmat_noisy_symbols(uint_i)) != cmat_symbols(uint_i))
+            if (mapper.demod_sym(cmat_noisy_symbols(uint_i)) != cmat_symbols(uint_i))
                 mat_num_errors(uint_noise_step)++;
 
         double dbl_ser_emp = (double) mat_num_errors(uint_noise_step)/uint_n;

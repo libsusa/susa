@@ -153,7 +153,7 @@ fixed_point<B, I, F, false>::fixed_point(const fixed_point& fp_arg)
 
 template <typename B, unsigned char I, unsigned char F>
 fixed_point<B, I, F, false>::fixed_point(UB arg_integer, UB arg_fraction, bool negative)
-: integer (arg_integer)
+: integer(0)
 , factor(1ull << F)
 , mask_int (((1ull << I) - 1) << F)
 , mask_frac ((1ull << F) - 1)
@@ -165,6 +165,8 @@ fixed_point<B, I, F, false>::fixed_point(UB arg_integer, UB arg_fraction, bool n
   // required for all operations
   static_assert(std::numeric_limits<UB>::digits > (I + F));
 
+  integer |= ((arg_integer << F) & mask_int);
+  integer |= (arg_fraction & mask_frac);
   dbl_orig = (double)*this;
 }
 

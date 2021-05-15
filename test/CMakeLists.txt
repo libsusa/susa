@@ -45,3 +45,7 @@ target_link_libraries (slice susa)
 add_test (NAME sets COMMAND sets)
 add_executable (sets sets.cpp)
 target_link_libraries (sets susa)
+
+add_test (NAME modulation COMMAND modulation)
+add_executable (modulation modulation.cpp)
+target_link_libraries (modulation susa)

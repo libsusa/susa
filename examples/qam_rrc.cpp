@@ -80,7 +80,7 @@ int main(void)
 
 		/* Estimate Symbol Error Rate (SER) */
 		for (size_t j = 0; j < uintN; j++)
-			if (mapper.demodulate_symbol(cmat_noisy_d_symbols(j)) != cmat_t_symbols(j))
+			if (mapper.demod_sym(cmat_noisy_d_symbols(j)) != cmat_t_symbols(j))
 				dSER[int_cnt]++;
 
 		cout << " i = " << int_cnt << "\t   N0/2 = " << dDev << "   -    SER = " << dSER[int_cnt] / uintN << "\t  t = " << (clock() / CLOCKS_PER_SEC) << " Sec" << endl;
