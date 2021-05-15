@@ -25,18 +25,27 @@
 
 int main(void)
 {
-    susa::matrix <int, susa::allocator_log<int>> mat_m("[0 1 1;"
-                                                        "2 3 2;"
-                                                        "1 3 2;"
-                                                        "4 2 2]");
-    susa::matrix <int, susa::allocator_log<int>> mat_dagger("[0 1;"
-                                                             "2 2;"
-                                                             "4 2]");
-    susa::slice <int, susa::allocator_log<int>> slc_m(mat_m, 2, 1, susa::slice_t::DAGGER);
-    SUSA_TEST_EQ(mat_dagger, slc_m, "matrix and slice equality");
+  susa::matrix <int, susa::allocator_log<int>> mat_m("[0 1 1;"
+                                                      "2 3 2;"
+                                                      "1 3 2;"
+                                                      "4 2 2]");
+  {
+  susa::matrix <int, susa::allocator_log<int>> mat_dagger("[0 1;"
+                                                           "2 2;"
+                                                           "4 2]");
+  susa::slice <int, susa::slice_en::DAGGER, susa::allocator_log<int>> slc_m(mat_m, 2, 1);
+  SUSA_TEST_EQ(mat_dagger, slc_m, "matrix and slice equality");
+  }
 
+  {
+  susa::matrix <int, susa::allocator_log<int>> mat_dagger("[0 1;"
+                                                           "2 3;"
+                                                           "1 3]");
+  susa::slice <int, susa::slice_en::DAGGER, susa::allocator_log<int>> slc_m(mat_m, 3, 2);
+  SUSA_TEST_EQ(mat_dagger, slc_m, "matrix and slice equality");
+  }
 
-    SUSA_TEST_PRINT_STATS();
+  SUSA_TEST_PRINT_STATS();
 
-    return (uint_failed);
+  return (uint_failed);
 }

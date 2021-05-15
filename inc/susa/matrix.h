@@ -78,7 +78,6 @@ template <typename T, typename Allocator> std::istream &operator>>(std::istream 
 template <typename T, typename Allocator> matrix <T, Allocator> matmul(const matrix <T, Allocator> &mat_argl,const matrix <T, Allocator> &mat_argr);
 template <typename T, typename Allocator> matrix <T, Allocator> transpose(const matrix <T, Allocator> &mat_arg);
 
-template <typename T, typename Allocator> class slice;
 
 /**
  * @class matrix
@@ -380,8 +379,6 @@ class matrix
     // They are defined in 'linalg.h'
     friend matrix <T, Allocator> matmul <> (const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr);
     friend matrix <T, Allocator> transpose <> (const matrix <T, Allocator> &mat_arg);
-    friend class slice <T, Allocator>;
-
 
     friend bool operator!=( const susa::matrix <T, Allocator> &mat_argl, const susa::matrix <T, Allocator> &mat_argr)
     {

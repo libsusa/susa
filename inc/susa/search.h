@@ -71,8 +71,8 @@ template <class T> matrix <unsigned int> select_most(const matrix <T> &mat_arg, 
 
 /**
  * @brief Finds the first occurence of an element in a matrix
- * @param  mat_arg
- * @param  T_arg
+ * @param mat_arg
+ * @param T_arg
  *
  * @return The index of the elements that are equal to T_arg
  * @ingroup Search
@@ -82,8 +82,8 @@ find(const matrix <T, Allocator>& mat_arg, T& T_arg);
 
 /**
  * @brief Dijkstra finds the shortest path
- * @param  mat_graph   The input path weights' matrix i.e. graph edges
- * @param  uint_source The starting vertex in the graph
+ * @param mat_graph   The input path weights' matrix i.e. graph edges
+ * @param uint_source The starting vertex in the graph
  *
  * @return The path cost for all vertices of the graph
  * @ingroup Search
