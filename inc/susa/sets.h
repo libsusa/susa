@@ -41,7 +41,7 @@ namespace susa
 * @ingroup TYPES
 *
 */
-template <typename Allocator = std::allocator<uintmax_t>>
+template <typename T = uintmax_t, typename Allocator = std::allocator<T>>
 class bitset
 {
 
@@ -53,13 +53,15 @@ class bitset
     //! constructor
     bitset(const bitset& bset_arg);
 
+    bitset() = delete;
+
     //! destructor
     ~bitset();
 
     /**
      * @brief set a single bit at the specified index
      *
-     * @param index the bit index
+     * @param index the bit index to be set
      */
     void set(size_t index);
 
@@ -69,7 +71,7 @@ class bitset
 
     void push(size_t index);
 
-    bool exists(size_t index);
+    bool exists(size_t index) const;
 
     void set();
 
@@ -77,44 +79,83 @@ class bitset
 
     bool any();
 
-    bitset& operator=(const bitset& bset_arg);
+    size_t size() const {return sz_size;}
+
+    bitset&       operator=(const bitset& bset_arg);
+    bool&         operator ()(size_t index);
+    bool          operator ()(size_t index) const;
+
+    friend bool   operator==(const bitset& bset_left, const bitset& bset_right)
+    {
+      if (bset_left.size() != bset_right.size()) return false;
+      for (size_t index = 0; index < bset_left.nblocks; index++)
+      {
+        if (bset_left._matrix[index] != bset_right._matrix[index]) return false;
+      }
+      return true;
+    }
+
+  friend std::ostream &operator<<(std::ostream& out_stream, const bitset& bset_arg)
+  {
+    out_stream << "[ ";
+    for (size_t index = 0; index < bset_arg.sz_size; index++)
+    {
+      out_stream << (bset_arg.exists(index) ? 1 : 0) << " ";
+    }
+    out_stream << "]";
+
+    return out_stream;
+  }
 
   private:
 
+    bool allocate(size_t sz_blocks);
+
     Allocator   alloc;
-    size_t      uint_set_size;
+    size_t      sz_size;
     unsigned    nbits;
     size_t      nblocks;
-    uintmax_t*  _matrix;
+    T*          _matrix;
 
 };
 
-template <typename Allocator>
-bitset<Allocator>::bitset(size_t sizet_size)
+template <typename T, typename Allocator>
+bitset<T, Allocator>::bitset(size_t sizet_size)
 : alloc()
-, uint_set_size(sizet_size)
+, sz_size(sizet_size)
 {
 
-  nbits    = std::numeric_limits<uintmax_t>::digits;
-  nblocks  = uint_set_size / nbits;
-  nblocks += (uint_set_size % nbits) ? 1 : 0;
+  static_assert(std::is_unsigned<T>::value);
 
+  nbits    = std::numeric_limits<T>::digits;
+  nblocks  = sz_size / nbits;
+  nblocks += (sz_size % nbits) ? 1 : 0;
+
+  SUSA_ASSERT_MESSAGE(allocate(nblocks), "memory allocation failed.");
+
+  reset();
+}
+
+template <typename T, typename Allocator>
+bool bitset<T, Allocator>::allocate(size_t sz_blocks)
+{
   try
   {
-    _matrix = alloc.allocate(nblocks);
+    _matrix = alloc.allocate(sz_blocks);
   }
   catch(const std::bad_alloc& e)
   {
     _matrix = nullptr;
     nblocks = 0;
     SUSA_LOG_ERR("memory allocation failed");
+    return false;
   }
 
-  reset();
+  return true;
 }
 
-template <typename Allocator>
-bitset<Allocator>::~bitset()
+template <typename T, typename Allocator>
+bitset<T, Allocator>::~bitset()
 {
   if (_matrix != nullptr)
   {
@@ -122,19 +163,20 @@ bitset<Allocator>::~bitset()
   }
 }
 
-template <typename Allocator>
-bitset<Allocator>::bitset(const bitset& bset_arg)
+template <typename T, typename Allocator>
+bitset<T, Allocator>::bitset(const bitset& bset_arg)
 {
-  nblocks = bset_arg.nblocks;
-
-  if (alloc.allocate(nblocks))
+  nblocks         = bset_arg.nblocks;
+  nbits           = bset_arg.nbits;
+  sz_size         = bset_arg.sz_size;
+  if (allocate(nblocks))
   {
-    std::memcpy(_matrix, bset_arg._matrix, nblocks * sizeof(uintmax_t));
+    std::memcpy(_matrix, bset_arg._matrix, nblocks * sizeof(T));
   }
 }
 
-template <typename Allocator>
-bitset<Allocator>& bitset<Allocator>::operator=(const bitset<Allocator>& bset_arg)
+template <typename T, typename Allocator>
+bitset<T, Allocator>& bitset<T, Allocator>::operator=(const bitset<T, Allocator>& bset_arg)
 {
   if (_matrix != nullptr && nblocks != 0)
   {
@@ -143,7 +185,7 @@ bitset<Allocator>& bitset<Allocator>::operator=(const bitset<Allocator>& bset_ar
     nblocks = 0;
   }
 
-  if (alloc.allocate(bset_arg.nblocks))
+  if (allocate(bset_arg.nblocks))
   {
     nblocks = bset_arg.nblocks;
     std::memcpy(_matrix, bset_arg._matrix, nblocks * sizeof(uintmax_t));
@@ -152,34 +194,36 @@ bitset<Allocator>& bitset<Allocator>::operator=(const bitset<Allocator>& bset_ar
   return *this;
 }
 
-template <typename Allocator>
-void bitset<Allocator>::set(size_t index)
+template <typename T, typename Allocator>
+void bitset<T, Allocator>::set(size_t index)
 {
-  if (index >= uint_set_size) return;
+  SUSA_ASSERT_MESSAGE(index < sz_size, "index out of range");
+  if (index >= sz_size) return;
 
   unsigned int byte = index / nbits;
   unsigned int bit  = index % nbits;
 
-  if (byte > nblocks) return;
   _matrix[byte] |= (0x01 << bit);
 }
 
-template <typename Allocator>
-void bitset<Allocator>::reset(size_t index)
+template <typename T, typename Allocator>
+void bitset<T, Allocator>::reset(size_t index)
 {
+  SUSA_ASSERT_MESSAGE(index < sz_size, "index out of range");
+  if (index >= sz_size) return;
+
   if (exists(index))
   {
     unsigned int byte = index / nbits;
     unsigned int bit  = index % nbits;
-    if (byte > nblocks) return;
     _matrix[byte] ^= (0x01 << bit);
   }
 }
 
-template <typename Allocator>
-size_t bitset<Allocator>::pop()
+template <typename T, typename Allocator>
+size_t bitset<T, Allocator>::pop()
 {
-  for (unsigned int uint_index = 0; uint_index < uint_set_size; uint_index++)
+  for (unsigned int uint_index = 0; uint_index < sz_size; uint_index++)
   {
     if (exists(uint_index))
     {
@@ -188,28 +232,29 @@ size_t bitset<Allocator>::pop()
     }
   }
 
-  return uint_set_size;
+  return sz_size;
 }
 
-template <typename Allocator>
-void bitset<Allocator>::push(size_t index)
+template <typename T, typename Allocator>
+void bitset<T, Allocator>::push(size_t index)
 {
   set(index);
 }
 
-template <typename Allocator>
-bool bitset<Allocator>::exists(size_t index)
+template <typename T, typename Allocator>
+bool bitset<T, Allocator>::exists(size_t index) const
 {
-  if (index >= uint_set_size) return false;
+  SUSA_ASSERT_MESSAGE(index < sz_size, "index out of range");
+  if (index >= sz_size) return false;
+
   unsigned int byte = index / nbits;
   unsigned int bit  = index % nbits;
 
-  if (byte > nblocks) return false;
-  return ((_matrix[byte] >> bit) & 0x01);
+  return ((_matrix[byte] & (0x01 << bit)) > 0);
 }
 
-template <typename Allocator>
-void bitset<Allocator>::set()
+template <typename T, typename Allocator>
+void bitset<T, Allocator>::set()
 {
   for (unsigned int index = 0; index < nblocks; index++)
   {
@@ -219,18 +264,24 @@ void bitset<Allocator>::set()
   }
 }
 
-template <typename Allocator>
-void bitset<Allocator>::reset()
+template <typename T, typename Allocator>
+void bitset<T, Allocator>::reset()
 {
-  for (size_t indx = 0; indx < nblocks; indx++) this->_matrix[indx] = 0x00;
+  for (size_t indx = 0; indx < nblocks; indx++) _matrix[indx] = 0x00;
 }
 
-template <typename Allocator>
-bool bitset<Allocator>::any()
+template <typename T, typename Allocator>
+bool bitset<T, Allocator>::any()
 {
   unsigned char empty = 0x00;
-  for (size_t indx = 0; indx < nblocks; indx++) empty |= this->_matrix[indx];
+  for (size_t indx = 0; indx < nblocks; indx++) empty |= _matrix[indx];
   return (empty != 0);
+}
+
+template <typename T, typename Allocator>
+bool bitset<T, Allocator>::operator()(size_t index) const
+{
+  return exists(index);
 }
 
 }       // NAMESPACE SUSA

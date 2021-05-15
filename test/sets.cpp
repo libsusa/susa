@@ -29,7 +29,7 @@ int main(void)
 
   susa::bitset<> bset(10);
   bset.set(6);
-  SUSA_TEST_EQ(bset.exists(6), true, "bitset exists");
+  SUSA_TEST_EQ(bset.exists(6), true,  "bitset exists");
   SUSA_TEST_EQ(bset.exists(5), false, "bitset exists");
   SUSA_TEST_EQ(bset.exists(7), false, "bitset exists");
 
