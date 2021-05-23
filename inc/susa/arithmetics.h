@@ -28,7 +28,9 @@
 
 #include <limits>
 #include <cstdint>
+#include <cmath>
 #include <type_traits>
+#include <susa/fixed_point.h>
 
 namespace susa {
 
@@ -73,6 +75,190 @@ constexpr T gcd(T arg_a, T arg_b)
     return arg_a;
 }
 
+/**
+ * @brief square root of an unsigned integer
+ *
+ * @ingroup ARITHMETICS
+ *
+ */
+template <typename T>
+constexpr T isqrt(T T_arg)
+{
+
+  static_assert(std::is_unsigned<T>::value);
+
+	T ret = T_arg >> 1;
+	if (!ret) return T_arg;
+
+  T interim = ( ret + T_arg / ret ) >> 1;
+  while (interim < ret)
+  {
+    ret = interim;
+    interim = (ret + T_arg / ret) >> 1;
+  }
+
+  return ret;
+}
+
+/**
+ * @brief Euler's number exponent function
+ *
+ * @ingroup ARITHMETICS
+ *
+ */
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B,I,F> texp(fixed_point<B,I,F> fp_arg, unsigned int uint_tail = 10)
+{
+
+  fixed_point<B,I,F> ret(1.0f);
+
+  for (unsigned i = uint_tail - 1; i > 0; i--)
+  {
+    ret = fp_arg * ret / i + 1u;
+  }
+
+  return ret;
+}
+
+/**
+ * @brief fast floor function
+ *
+ * @ingroup ARITHMETICS
+ *
+ */
+template<typename T>
+constexpr T ffloor(T T_arg)
+{
+  static_assert(std::is_floating_point<T>::value);
+
+  if (T_arg < 0) return ((int)(T_arg - 1));
+  return (int)(T_arg);
+}
+
+/**
+ * @brief fast cosine function
+ *
+ * @ingroup ARITHMETICS
+ *
+ */
+template<typename T>
+T fcos(T T_arg)
+{
+  static_assert(std::is_floating_point<T>::value);
+
+  constexpr T tp = 1./(2.*M_PI);
+
+  T_arg *= tp;
+  T_arg -= T(.25) + ffloor(T_arg + T(.25));
+  T_arg *= T(16.) * (std::abs(T_arg) - T(.5));
+
+  // extra precision
+  T_arg += T(.225) * T_arg * (std::abs(T_arg) - T(1.));
+
+  return T_arg;
+}
+
+/**
+ * @brief fast sine function
+ *
+ * @ingroup ARITHMETICS
+ *
+ */
+template<typename T>
+T fsin(T T_arg)
+{
+  return fcos(T_arg - M_PI_2);
+}
+
+/**
+ * @brief CORDIC algorithm for calculating trigonometric functions
+ *
+ * @ingroup ARITHMETICS
+ */
+template <typename T, unsigned R = 128>
+class cordic
+{
+
+private:
+  std::vector<T>  vec_theta;
+  std::vector<T>  vec_atan;
+  std::vector<T>  vec_kval;
+  double          dbl_k;
+
+public:
+  cordic()
+  : vec_theta(R)
+  , vec_atan(R)
+  , vec_kval(R)
+  , dbl_k(1.0)
+  {
+    // n.b. R <= F when T is susa::fixed_point<>
+    for (unsigned uint_index = 0; uint_index < R; uint_index++)
+    {
+      dbl_k *= std::sqrt(1.0f / (1 + std::pow(2.0, -2.0 * uint_index)));
+      vec_theta[uint_index] = (double)std::pow(2.0, -(double)uint_index);
+      vec_atan[uint_index]  = (double)std::atan((double)vec_theta[uint_index]);
+      vec_kval[uint_index]  = (double)dbl_k;
+    }
+  }
+
+  /**
+   * @brief sine
+   */
+  T sin(const T& T_arg)
+  {
+    auto vec_result = calculate(T_arg);
+    return vec_result[0];
+  }
+
+  /**
+   * @brief cosine
+   */
+  T cos(const T& T_arg)
+  {
+    auto vec_result = calculate(T_arg);
+    return vec_result[1];
+  }
+
+  /**
+   * @brief the natural exponential funtion
+   *
+   * @param T_arg imaginary number in the form jT_arg
+   */
+  std::complex<T> expj(const T& T_arg)
+  {
+    auto vec_result = calculate(T_arg);
+    return std::complex<T>(vec_result[1], vec_result[0]);
+  }
+
+private:
+  std::vector<T> calculate(const T& T_arg)
+  {
+    std::vector<T> vec_result(3);
+
+    T T_beta(T_arg);
+    T T_sin(0.0);
+    T T_cos(1.0);
+    T T_sin_prev, T_cos_prev;
+    int sgn = 1;
+    for (unsigned i = 0; i < R; i++)
+    {
+      if ( T_beta < 0) sgn = -1;
+      else sgn = 1;
+
+      T_sin_prev  = T_sin;
+      T_cos_prev  = T_cos;
+      T_sin       = sgn * T_cos_prev * vec_theta[i] + T_sin_prev;
+      T_cos       = T_cos_prev - sgn * T_sin_prev * vec_theta[i];
+      T_beta      = T_beta - sgn * vec_atan[i];
+    }
+    vec_result[0] = dbl_k * T_sin;
+    vec_result[1] = dbl_k * T_cos;
+    vec_result[2] = 0;
+
+    return vec_result;
+  }
+};
 
 /**
  * @brief mapping an integeral matrix from one domain i.e. range to another.
