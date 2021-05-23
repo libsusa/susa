@@ -29,10 +29,10 @@ int main(void)
     susa::matrix <float> result = susa::mean(mat_m);
     auto s = susa::matrix<float> ("1.7500 2.2500 1.7500");
     SUSA_TEST_EQ(result, susa::matrix<float> ("1.7500 2.2500 1.7500"), "mean of a matrix");
-    
+
     SUSA_TEST_EQ(susa::round(42.163574), 42.0, "Round a double with no decimals.");
     SUSA_TEST_EQ(susa::round(42.163574, 2), 42.16, "Round a double with two decimals.");
-    SUSA_TEST_EQ_DOUBLE(susa::normcdf(0.5), 0.6915, "Normal Cumulative Distribution Function.");
+    SUSA_TEST_EQ_DOUBLE4(susa::normcdf(0.5), 0.6915, "Normal Cumulative Distribution Function.");
     SUSA_TEST_EQ(susa::round(susa::normcdf(0.5), 4), 0.6915, "Normal Cumulative Distribution Function.");
 
     susa::rng mt_rng(35748);

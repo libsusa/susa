@@ -31,7 +31,7 @@ int main(void)
     susa::matrix <double, susa::allocator_log<double>>   mat_input("[4.,3.,2.,1.,0.,1.,2.,3.]");
     auto mat_output = fourier.radix2(mat_input);
     auto sum = std::abs(susa::sum(mat_output)(0));
-    SUSA_TEST_EQ_DOUBLE(sum, 32.0, "fast fourier transform (FFT) with Radix-2 (symetric reals)");
+    SUSA_TEST_EQ_DOUBLE4(sum, 32.0, "fast fourier transform (FFT) with Radix-2 (symetric reals)");
 }
 
 {

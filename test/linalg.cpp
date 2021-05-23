@@ -105,7 +105,7 @@ int main(void)
                                      "0.5555555555555556 0.5471698113207547 0.48333333333333334 4.3999999999999995");
 
     susa::matrix <float>      mat_err_sum = susa::sum(susa::sum(mat_lu - solver.get_lu()));
-    SUSA_TEST_EQ_DOUBLE(mat_err_sum(0), 0, "compute LUP decomposition");
+    SUSA_TEST_EQ_DOUBLE4(mat_err_sum(0), 0, "compute LUP decomposition");
     }
 
     {
@@ -114,7 +114,7 @@ int main(void)
     susa::matrix <float>      mat_exp("0.8824 -0.1176 0.1961;0.1765 0.1765 0.0392;0.0588 0.0588 -0.0980");
 
     susa::matrix <float>      mat_err_sum = susa::sum(susa::sum(mat_exp - mat_res));
-    SUSA_TEST_EQ_DOUBLE(mat_err_sum(0), 0, "inverse of a square matrix");
+    SUSA_TEST_EQ_DOUBLE4(mat_err_sum(0), 0, "inverse of a square matrix");
     }
 
     {
