@@ -132,9 +132,9 @@ uint8_t ccode::next_output(bool b_input)
     {
         for (uint32_t j=0; j<uint_n; j++) uintTmp |=  ((count_1bits((uint_current_state & (~(1<<uint_m))) & uint_gen[j]) % 2) << j);
     }
-    
+
     next_state(b_input);
-    
+
     return uintTmp;
 }
 
@@ -216,7 +216,7 @@ matrix <double> ccode::decode_bcjr(const matrix <double> &mat_arg, double dbl_eb
                 dbl_arg += mat_arg(uint_n * uint_stage + uint_i) * (((this->next_output(uint_state,false) >> uint_i) & 0x1) == 0 ? -1 : 1);
             }
 
-            mat_gamma(uint_state, uint_next_zero) = c_k * exp(0.5 * l_c * dbl_arg);
+            mat_gamma(uint_state, uint_next_zero) = c_k * std::exp(0.5 * l_c * dbl_arg);
 
             dbl_arg = 0;
             for (uint32_t uint_i = 0; uint_i < uint_n; uint_i++)
@@ -224,7 +224,7 @@ matrix <double> ccode::decode_bcjr(const matrix <double> &mat_arg, double dbl_eb
                 dbl_arg += mat_arg(uint_n * uint_stage + uint_i) * (((this->next_output(uint_state,true) >> uint_i) & 0x1) == 0 ? -1 : 1);
             }
 
-            mat_gamma(uint_state, uint_next_one) = c_k * exp(0.5 * l_c * dbl_arg);
+            mat_gamma(uint_state, uint_next_one) = c_k * std::exp(0.5 * l_c * dbl_arg);
         }
 
         vec_gamma[uint_stage] = mat_gamma;
