@@ -24,18 +24,8 @@ To build Susa you need to have a C++17 compiler, Make and [CMake](https://cmake.
 
 ```
 mkdir build
-cd build
-cmake ..
-make
-```
-
-or
-
-```
-mkdir build
-cd build
-cmake ..
-cmake --build . --config Debug
+cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug
+cmake --build build/Debug -j
 ```
 
 ### Test
