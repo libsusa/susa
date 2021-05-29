@@ -48,15 +48,20 @@ template <typename B, unsigned char I, unsigned char F>
 class fixed_point <B,I,F, false>
 {
 
+public:
   using UB = typename std::make_unsigned<B>::type;
-  const unsigned NB = std::numeric_limits<UB>::digits;
+  const unsigned NB   = std::numeric_limits<UB>::digits;
+  const unsigned FH   = F / 2;
+  const unsigned FR   = F % 2;
 
+private:
   UB      integer;
   double  dbl_orig;
 
   UB      factor;
   UB      mask_int;
   UB      mask_frac;
+  UB      mask_tot;
   bool    overflow;
   bool    negative;
 
@@ -69,14 +74,231 @@ public:
   operator double() const;
   operator float() const;
 
+  fixed_point  operator~() const
+  {
+    fixed_point ret(*this);
+    ret.integer  = ~ret.integer;
+    ret.negative = !ret.negative;
+    return ret;
+  }
+
+  fixed_point  operator-() const
+  {
+    fixed_point ret(*this);
+    ret.negative = !negative;
+    return ret;
+  }
+
+  // prefix increment
+  fixed_point& operator++()
+  {
+    integer++;
+    return *this;
+  }
+
+  // postfix increment
+  fixed_point operator++(int)
+  {
+    fixed_point ret(*this);
+    ++(*this);
+    return ret;
+  }
+
+  // prefix decrement
+  fixed_point& operator--()
+  {
+      integer--;
+      return *this;
+  }
+
+  // postfix decrement
+  fixed_point operator--(int)
+  {
+      fixed_point old = *this;
+      operator--();
+      return old;
+  }
+
+  fixed_point& operator=(const fixed_point& fp_arg)
+  {
+    integer     = fp_arg.integer;
+    negative    = fp_arg.negative;
+    dbl_orig    = fp_arg.dbl_orig;
+    factor      = fp_arg.factor;
+    mask_int    = fp_arg.mask_int;
+    mask_frac   = fp_arg.mask_frac;
+    mask_tot    = fp_arg.mask_tot;
+
+    return *this;
+  }
+
+  fixed_point& operator=(double dbl_arg)
+  {
+    dbl_orig = dbl_arg;
+    if (dbl_arg < 0)
+    {
+      negative = true;
+      dbl_arg *= -1;
+    }
+    else
+    {
+      negative = false;
+    }
+
+    integer             = static_cast <UB> (dbl_arg + 0.5);
+    double  remainder   = dbl_arg - integer;
+    integer           <<= F;
+    integer            |= static_cast <UB> (std::round(remainder * factor)) & mask_frac;
+
+    return *this;
+  }
+
+  fixed_point& operator*=(int int_arg)
+  {
+
+    if (int_arg == 1) return *this;
+    else if (int_arg == -1)
+    {
+      negative = !negative;
+      return *this;
+    }
+
+    integer *= std::abs(int_arg);
+    overflow = (integer & ~mask_tot) > 0 ? true : false;
+    if (negative != (int_arg < 0)) negative = true;
+    else negative = false;
+    return *this;
+  }
+
+  fixed_point& operator>>=(unsigned amount)
+  {
+    integer <<= amount;
+    integer &= mask_tot;
+    return *this;
+  }
+
+  fixed_point& operator<<=(unsigned amount)
+  {
+    integer >>= amount;
+    return *this;
+  }
+
+  fixed_point& operator*=(unsigned uint_arg)
+  {
+    integer *= uint_arg;
+    overflow = (integer >> (I + F)) > 0 ? true : false;
+    return *this;
+  }
+
+  fixed_point& operator+=(unsigned uint_arg)
+  {
+    UB operand    = uint_arg;
+    operand     <<= F;
+    integer += operand;
+    overflow = (integer >> (I + F)) > 0 ? true : false;
+    dbl_orig = (double)*this;
+    return *this;
+  }
+
+  fixed_point& operator-=(unsigned uint_arg)
+  {
+    UB operand    = uint_arg;
+    operand     <<= F;
+    if (integer > operand)
+      integer -= operand;
+    else
+    {
+      integer = operand - integer;
+      negative = true;
+    }
+    dbl_orig = (double)*this;
+    return *this;
+  }
+
+  fixed_point& operator/=(unsigned uint_arg)
+  {
+    integer /= uint_arg;
+    dbl_orig = (double)*this;
+    return *this;
+  }
+
+  fixed_point& operator/=(const fixed_point& fp_den)
+  {
+    UB rem = integer;
+    integer = 0;
+    while (rem > fp_den.integer)
+    {
+      rem -= fp_den.integer;
+      integer++;
+    }
+
+    for (unsigned f = 0; f < F; f++)
+    {
+      rem <<= 1;
+      integer <<= 1;
+
+      while (rem > fp_den.integer)
+      {
+        integer++;
+        rem -= fp_den.integer;
+      }
+    }
+
+    if (negative != fp_den.is_negative()) negative = true;
+    dbl_orig = (double)*this;
+    return *this;
+  }
+
+  fixed_point& operator*=(const fixed_point& fp_rhs)
+  {
+    // avoid loosing precision when multiplying by one
+    if (integer == (1ul << F))
+    {
+      negative  = (negative != fp_rhs.negative);
+      integer   = fp_rhs.integer;
+      dbl_orig = (double)*this;
+      return *this;
+    }
+
+    integer   = (integer >> FH) * (fp_rhs.integer >> FH);
+    integer >>= FR;
+    overflow = (integer & ~mask_tot) > 0 ? true : false;
+    integer &= mask_tot;
+    negative = (negative != fp_rhs.negative);
+    dbl_orig = (double)*this;
+    return *this;
+  }
+
+  fixed_point& operator-=(const fixed_point& fp_rhs)
+  {
+    if (integer > fp_rhs.integer)
+      integer -= fp_rhs.integer;
+    else
+    {
+      integer = fp_rhs.integer - integer;
+      negative = true;
+    }
+    dbl_orig = (double)*this;
+    return *this;
+  }
+
+  fixed_point& operator+=(const fixed_point& fp_rhs)
+  {
+    integer += fp_rhs.integer;
+    overflow = (integer & ~mask_tot) > 0 ? true : false;
+    integer &= mask_tot;
+    dbl_orig = (double)*this;
+    return *this;
+  }
+
   friend bool operator!=(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
   {
-    return fp_lhs.integer != fp_rhs.integer;
+    return ((fp_lhs.integer != fp_rhs.integer) || (fp_lhs.negative != fp_rhs.negative));
   }
 
   friend bool operator==(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
   {
-    return fp_lhs.integer == fp_rhs.integer;
+    return ((fp_lhs.integer == fp_rhs.integer) && (fp_lhs.negative == fp_rhs.negative));
   }
 
   friend bool operator>(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
@@ -89,10 +311,32 @@ public:
 
   friend bool operator<(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
   {
+    if (fp_lhs.negative != fp_rhs.negative)
+    {
+      if (fp_lhs.negative) return true;
+      else return false;
+    }
+
     if (fp_lhs.integer < fp_rhs.integer) return !fp_lhs.negative;
     else if (fp_lhs.integer > fp_rhs.integer) return fp_lhs.negative;
 
     return fp_lhs.negative;
+  }
+
+  friend bool operator<(const fixed_point& fp_lhs, int int_rhs)
+  {
+    unsigned uint_rhs = static_cast<unsigned>(int_rhs);
+
+    if (fp_lhs.negative != (int_rhs < 0))
+    {
+      if (fp_lhs.negative) return true;
+      else return false;
+    }
+
+    if (fp_lhs.integer < uint_rhs) return !fp_lhs.negative;
+    else if (fp_lhs.integer > uint_rhs) return fp_lhs.negative;
+
+    return false;
   }
 
   friend bool operator>=(const fixed_point& fp_lhs, const fixed_point& fp_rhs)
@@ -125,6 +369,7 @@ fixed_point<B, I, F, false>::fixed_point()
 , factor(1ull << F)
 , mask_int (((1ull << I) - 1) << F)
 , mask_frac ((1ull << F) - 1)
+, mask_tot ((1ull << (I + F)) - 1)
 , overflow (false)
 , negative (false)
 {
@@ -149,6 +394,7 @@ fixed_point<B, I, F, false>::fixed_point(const fixed_point& fp_arg)
   factor      = fp_arg.factor;
   mask_frac   = fp_arg.mask_frac;
   mask_int    = fp_arg.mask_int;
+  mask_tot    = fp_arg.mask_tot;
 }
 
 template <typename B, unsigned char I, unsigned char F>
@@ -157,6 +403,7 @@ fixed_point<B, I, F, false>::fixed_point(UB arg_integer, UB arg_fraction, bool n
 , factor(1ull << F)
 , mask_int (((1ull << I) - 1) << F)
 , mask_frac ((1ull << F) - 1)
+, mask_tot ((1ull << (I + F)) - 1)
 , overflow (false)
 , negative (negative)
 {
@@ -176,6 +423,7 @@ fixed_point<B, I, F, false>::fixed_point(double dbl_arg)
 , factor(1ull << F)
 , mask_int (((1ull << I) - 1) << F)
 , mask_frac ((1ull << F) - 1)
+, mask_tot ((1ull << (I + F)) - 1)
 , overflow (false)
 {
   static_assert(std::is_integral<B>::value);
@@ -192,22 +440,23 @@ fixed_point<B, I, F, false>::fixed_point(double dbl_arg)
   {
     negative = false;
   }
-  integer             = static_cast <UB> (dbl_arg > 0 ? std::floor(dbl_arg) : std::ceil(dbl_arg));
+
+  integer             = static_cast <UB> (dbl_arg + 0.5);
   double  remainder   = dbl_arg - integer;
   integer           <<= F;
-  integer            += (UB)(std::round(remainder * factor)) & mask_frac;
+  integer            |= static_cast <UB> (std::round(remainder * factor)) & mask_frac;
 }
 
 template <typename B, unsigned char I, unsigned char F>
 fixed_point<B, I, F, false>::operator double() const
 {
-  return (negative ? -1.0 : 1.0) * (((integer & mask_int) >> F) + (double)(integer & mask_frac) / factor);
+  return (negative ? -1.0 : 1.0) * (((integer) >> F) + (double)(integer & mask_frac) / factor);
 }
 
 template <typename B, unsigned char I, unsigned char F>
 fixed_point<B, I, F, false>::operator float() const
 {
-  return (negative ? -1.0 : 1.0) * (((integer & mask_int) >> F) + (float)(integer & mask_frac) / factor);
+  return (negative ? -1.0 : 1.0) * (((integer) >> F) + (float)(integer & mask_frac) / factor);
 }
 
 /**
@@ -223,11 +472,14 @@ template <typename B, unsigned char I, unsigned char F>
 class fixed_point <B,I,F, true>
 {
 
-private:
+public:
 
   using UB = typename std::make_unsigned<B>::type;
   const unsigned NB = std::numeric_limits<uintmax_t>::digits / 2;
+  const unsigned FH   = F / 2;
+  const unsigned FR   = F % 2;
 
+private:
 
   UB      integer;
   UB      fraction;
@@ -249,9 +501,23 @@ public:
   operator double() const;
   operator float() const;
 
-  bool operator!() const;
-  fixed_point  operator~() const;
-  fixed_point  operator-() const;
+  fixed_point  operator~() const
+  {
+    fixed_point ret(*this);
+    ret.integer  = ~ret.integer;
+    ret.fraction = ~ret.fraction;
+    ret.negative = !ret.negative;
+
+    return ret;
+  }
+
+  fixed_point  operator-() const
+  {
+    fixed_point ret(*this);
+    ret.negative = !negative;
+    return ret;
+  }
+
   fixed_point& operator|=(const fixed_point& fp_rhs);
   fixed_point& operator&=(const fixed_point& fp_rhs);
   fixed_point& operator^=(const fixed_point& fp_rhs);
@@ -301,6 +567,7 @@ public:
   fixed_point& operator++()
   {
     integer++;
+    dbl_orig     = (double)*this;
     return *this;
   }
 
@@ -315,8 +582,9 @@ public:
   // prefix decrement
   fixed_point& operator--()
   {
-      // actual decrement takes place here
-      return *this; // return new value by reference
+      integer--;
+      dbl_orig     = (double)*this;
+      return *this;
   }
 
   // postfix decrement
@@ -336,6 +604,7 @@ public:
     factor      = fp_rhs.factor;
     mask_int    = fp_rhs.mask_int;
     mask_frac   = fp_rhs.mask_frac;
+    overflow    = false;
 
     return *this;
   }
@@ -348,8 +617,9 @@ public:
     fraction    &= mask_frac;
     integer     += r.integer;
     integer     += carry;
-    overflow     = (integer >> I) > 0;
+    overflow     = (integer >> I) > 0 ? true : false;
     integer     &= mask_int;
+    dbl_orig     = (double)*this;
     return *this;
   }
 
@@ -366,22 +636,30 @@ public:
     fraction    &= mask_frac;
     integer     -= r.integer;
     integer     -= carry;
-    overflow     = (integer >> I) > 0;
+    overflow     = (integer >> I) > 0 ? true : false;
     integer     &= mask_int;
+    dbl_orig     = (double)*this;
     return *this;
   }
 
   fixed_point& operator*=(const fixed_point& fp_rhs)
   {
+    if (fp_rhs.integer == 1ul)
+    {
+      negative = (negative != fp_rhs.negative);
+      return *this;
+    }
+
     fixed_point r(fp_rhs);
     uintmax_t intint        = (uintmax_t)integer * r.integer;
     uintmax_t fracint       = (uintmax_t)fraction * r.integer;
     uintmax_t intfrac       = (uintmax_t)integer * r.fraction;
-    uintmax_t fracfrac      = (uintmax_t)fraction * r.fraction;
+    uintmax_t fracfrac      = (uintmax_t)(fraction >> FH) * (r.fraction >> FH);
+    fracfrac              >>= FR;
 
-    integer  = intint + (fracint >> F) + (intfrac >> F) + ((fracfrac >> F) >> F);
-    fraction = (fracint & mask_frac) + (intfrac & mask_frac) +  ((fracfrac >> F) & mask_frac);
-    overflow = (integer >> I) > 0;
+    integer  = intint + (fracint >> F) + (intfrac >> F) + ((fracfrac >> F));
+    fraction = (fracint & mask_frac) + (intfrac & mask_frac) +  ((fracfrac >> 0) & mask_frac);
+    overflow = (integer >> I) > 0 ? true : false;
     integer  &= mask_int;
 
     if (negative != r.is_negative()) negative = true;
@@ -489,8 +767,6 @@ fixed_point<B, I, F, true>::fixed_point()
   static_assert(std::numeric_limits<UB>::digits > I);
   static_assert(std::numeric_limits<UB>::digits > F);
 
-  // required for multiplication
-  static_assert(std::numeric_limits<uintmax_t>::digits > 2 * F);
 }
 
 template <typename B, unsigned char I, unsigned char F>
@@ -502,9 +778,6 @@ fixed_point<B, I, F, true>::fixed_point(const fixed_point& fp_arg)
   static_assert(std::numeric_limits<UB>::digits > I);
   static_assert(std::numeric_limits<UB>::digits > F);
 
-  // required for multiplication
-  static_assert(std::numeric_limits<uintmax_t>::digits > 2 * F);
-
   integer     = fp_arg.integer;
   fraction    = fp_arg.fraction;
   dbl_orig    = fp_arg.dbl_orig;
@@ -512,6 +785,7 @@ fixed_point<B, I, F, true>::fixed_point(const fixed_point& fp_arg)
   factor      = fp_arg.factor;
   mask_frac   = fp_arg.mask_frac;
   mask_int    = fp_arg.mask_int;
+  overflow    = false;
 }
 
 template <typename B, unsigned char I, unsigned char F>
@@ -530,9 +804,6 @@ fixed_point<B, I, F, true>::fixed_point(UB arg_integer, UB arg_fraction, bool ne
   static_assert(std::numeric_limits<UB>::digits > I);
   static_assert(std::numeric_limits<UB>::digits > F);
 
-  // required for multiplication
-  static_assert(std::numeric_limits<uintmax_t>::digits > 2 * F);
-
   dbl_orig = (double)*this;
 }
 
@@ -550,9 +821,6 @@ fixed_point<B, I, F, true>::fixed_point(double dbl_arg)
   static_assert(std::numeric_limits<UB>::digits > I);
   static_assert(std::numeric_limits<UB>::digits > F);
 
-  // required for multiplication
-  static_assert(std::numeric_limits<uintmax_t>::digits > 2 * F);
-
   if (dbl_arg < 0)
   {
     negative = true;
@@ -562,7 +830,8 @@ fixed_point<B, I, F, true>::fixed_point(double dbl_arg)
   {
     negative = false;
   }
-  integer             = static_cast <UB> (dbl_arg > 0 ? std::floor(dbl_arg) : std::ceil(dbl_arg));
+
+  integer             = static_cast <UB> (dbl_arg + 0.5);
   double  remainder   = dbl_arg - integer;
   fraction            = (UB)(std::round(remainder * factor)) & mask_frac;
 }
@@ -615,6 +884,147 @@ operator/(const fixed_point<B, I, F>& fp_lhs, const fixed_point<B, I, F>& fp_rhs
 {
   fixed_point <B, I, F> r(fp_lhs);
   return r /= fp_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator*(const fixed_point<B, I, F>& fp_lhs, double dbl_rhs)
+{
+  fixed_point <B, I, F> r(fp_lhs);
+  return r *= fixed_point <B, I, F> (dbl_rhs);
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator*(double dbl_lhs, const fixed_point<B, I, F>& fp_rhs)
+{
+  fixed_point <B, I, F> r(dbl_lhs);
+  return r *= fp_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator*(const fixed_point<B, I, F>& fp_lhs, float flt_rhs)
+{
+  fixed_point <B, I, F> r(fp_lhs);
+  return r *= fixed_point <B, I, F> (flt_rhs);
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator*(float flt_lhs, const fixed_point<B, I, F>& fp_rhs)
+{
+  fixed_point <B, I, F> r(flt_lhs);
+  return r *= fp_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator/(const fixed_point<B, I, F>& fp_lhs, unsigned uint_rhs)
+{
+  fixed_point <B, I, F> r(fp_lhs);
+  return r /= uint_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator/(unsigned uint_lhs, const fixed_point<B, I, F>& fp_rhs)
+{
+  fixed_point <B, I, F> r(uint_lhs, 0, false);
+  return r /= fp_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator+(const fixed_point<B, I, F>& fp_lhs, unsigned uint_rhs)
+{
+  fixed_point <B, I, F> r(fp_lhs);
+  if (fp_lhs.is_negative())
+    return r -= uint_rhs;
+  else
+    return r += uint_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator+(unsigned uint_lhs, const fixed_point<B, I, F>& fp_rhs)
+{
+  fixed_point <B, I, F> r(uint_lhs, 0, false);
+  if (fp_rhs.is_negative())
+    return r -= fp_rhs;
+  else
+    return r += fp_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator-(const fixed_point<B, I, F>& fp_lhs, unsigned uint_rhs)
+{
+  fixed_point <B, I, F> r(fp_lhs);
+  if (fp_lhs.is_negative())
+    return r += uint_rhs;
+  else
+    return r -= uint_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator-(unsigned uint_lhs, const fixed_point<B, I, F>& fp_rhs)
+{
+  fixed_point <B, I, F> r(uint_lhs, 0, false);
+  if (fp_rhs.is_negative())
+    return r += fp_rhs;
+  else
+    return r -= fp_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator*(const fixed_point<B, I, F>& fp_lhs, int int_rhs)
+{
+  fixed_point <B, I, F> r(fp_lhs);
+  return r *= int_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator*(int int_lhs, const fixed_point<B, I, F>& fp_rhs)
+{
+
+  fixed_point <B, I, F> r(std::abs(int_lhs), 0, (int_lhs > 0) ? false : true);
+  return r *= fp_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator+(const fixed_point<B, I, F>& fp_lhs, double dbl_rhs)
+{
+  fixed_point <B, I, F> r(fp_lhs);
+  return r += fixed_point <B, I, F> (dbl_rhs);
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator+(double dbl_lhs, const fixed_point<B, I, F>& fp_rhs)
+{
+  fixed_point <B, I, F> r(dbl_lhs);
+  return r += fp_rhs;
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator-(const fixed_point<B, I, F>& fp_lhs, double dbl_rhs)
+{
+  fixed_point <B, I, F> r(fp_lhs);
+  return r -= fixed_point <B, I, F> (dbl_rhs);
+}
+
+template <typename B, unsigned char I, unsigned char F>
+fixed_point<B, I, F>
+operator-(double dbl_lhs, const fixed_point<B, I, F>& fp_rhs)
+{
+  fixed_point <B, I, F> r(dbl_lhs);
+  return r -= fp_rhs;
 }
 
 }      // NAMESPACE SUSA

@@ -30,35 +30,35 @@ int main(void)
 
     {
     double dbla = -457.103;
-    susa::fixed_point <int64_t, 40,30> fpnuma(dbla);
-    SUSA_TEST_EQ_DOUBLE(dbla, (double)fpnuma, "coversion to/from a floating point");
+    susa::fixed_point <int64_t, 40,41> fpnuma(dbla);
+    SUSA_TEST_EQ_DOUBLE4(dbla, (double)fpnuma, "coversion to/from a floating point");
 
     double dblb = 74.166;
-    susa::fixed_point <int64_t, 40,30> fpnumb(dblb);
-    SUSA_TEST_EQ_DOUBLE(dblb, (double)fpnumb, "coversion to/from a floating point");
+    susa::fixed_point <int64_t, 40,41> fpnumb(dblb);
+    SUSA_TEST_EQ_DOUBLE4(dblb, (double)fpnumb, "coversion to/from a floating point");
 
 
     double dbl_add = dbla + dblb;
     auto fp_add = fpnuma + fpnumb;
-    SUSA_TEST_EQ_DOUBLE(dbl_add, (double)fp_add, "addition");
+    SUSA_TEST_EQ_DOUBLE4(dbl_add, (double)fp_add, "addition");
 
 
     double dbl_sub = dbla - dblb;
     auto fp_sub = fpnuma - fpnumb;
-    SUSA_TEST_EQ_DOUBLE(dbl_sub, (double)fp_sub, "subtraction");
+    SUSA_TEST_EQ_DOUBLE4(dbl_sub, (double)fp_sub, "subtraction");
 
 
     double dbl_mul = dbla * dblb;
     auto fp_mul = fpnuma * fpnumb;
-    SUSA_TEST_EQ_DOUBLE(dbl_mul, (double)fp_mul, "multiplication");
+    SUSA_TEST_EQ_DOUBLE4(dbl_mul, (double)fp_mul, "multiplication");
 
 
     double dbl_div = dbla / dblb;
     auto fp_div = fpnuma / fpnumb;
-    SUSA_TEST_EQ_DOUBLE(dbl_div, (double)fp_div, "division");
+    SUSA_TEST_EQ_DOUBLE4(dbl_div, (double)fp_div, "division");
 
     double dblc = 74.166;
-    susa::fixed_point <int64_t, 40,30> fpnumc(dblc);
+    susa::fixed_point <int64_t, 40,41> fpnumc(dblc);
 
     SUSA_TEST_EQ((fpnuma > fpnumb), false, "less than operator for two floating points");
     SUSA_TEST_EQ((fpnuma >= fpnumb), false, "less than or equal operator for two floating points");
@@ -73,11 +73,30 @@ int main(void)
     {
     double dbla = -457.103;
     susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
-    SUSA_TEST_EQ_DOUBLE(dbla, (double)fpnuma, "coversion to/from a floating point");
+    SUSA_TEST_EQ_DOUBLE4(dbla, (double)fpnuma, "coversion to/from a floating point");
 
     double dblb = 74.166;
     susa::fixed_point <int64_t, 20,30> fpnumb(dblb);
-    SUSA_TEST_EQ_DOUBLE(dblb, (double)fpnumb, "coversion to/from a floating point");
+    SUSA_TEST_EQ_DOUBLE4(dblb, (double)fpnumb, "coversion to/from a floating point");
+
+    double dbl_add = dbla + dblb;
+    auto fp_add = fpnuma + fpnumb;
+    SUSA_TEST_EQ_DOUBLE4(dbl_add, (double)fp_add, "addition");
+
+
+    double dbl_sub = dbla - dblb;
+    auto fp_sub = fpnuma - fpnumb;
+    SUSA_TEST_EQ_DOUBLE4(dbl_sub, (double)fp_sub, "subtraction");
+
+
+    double dbl_mul = dbla * dblb;
+    auto fp_mul = fpnuma * fpnumb;
+    SUSA_TEST_EQ_DOUBLE2(dbl_mul, (double)fp_mul, "multiplication");
+
+
+    double dbl_div = dbla / dblb;
+    auto fp_div = fpnuma / fpnumb;
+    SUSA_TEST_EQ_DOUBLE4(dbl_div, (double)fp_div, "division");
 
     double dblc = 74.166;
     susa::fixed_point <int64_t, 20,30> fpnumc(dblc);
@@ -94,11 +113,11 @@ int main(void)
     {
     double dbla = -457.103;
     susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
-    SUSA_TEST_EQ_DOUBLE(dbla, (double)fpnuma, "coversion to/from a floating point");
+    SUSA_TEST_EQ_DOUBLE4(dbla, (double)fpnuma, "coversion to/from a floating point");
 
     double dblb = -74.166;
     susa::fixed_point <int64_t, 20,30> fpnumb(dblb);
-    SUSA_TEST_EQ_DOUBLE(dblb, (double)fpnumb, "coversion to/from a floating point");
+    SUSA_TEST_EQ_DOUBLE4(dblb, (double)fpnumb, "coversion to/from a floating point");
 
     double dblc = 74.166;
     susa::fixed_point <int64_t, 20,30> fpnumc(dblc);
@@ -107,9 +126,11 @@ int main(void)
     SUSA_TEST_EQ((fpnuma >= fpnumb), false, "less than or equal operator for two floating points");
     SUSA_TEST_EQ((fpnuma < fpnumb), true, "less than operator for two floating points");
     SUSA_TEST_EQ((fpnuma <= fpnumb), true, "less than or equal operator for two floating points");
-    SUSA_TEST_EQ((fpnumc == fpnumb), true, "equal operator for two floating points");
-    SUSA_TEST_EQ((fpnumc != fpnumb), false, "not equal operator for two floating points");
-    SUSA_TEST_EQ((fpnuma != fpnumb), true, "not equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc == fpnumb), false, "equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc != fpnumb), true, "not equal operator for two floating points");
+    SUSA_TEST_EQ((fpnumc == -fpnumb), true, "negation operator for two floating points");
+    SUSA_TEST_EQ((fpnumc == fpnumb * -1), true, "multiply by minus one on the right-hand side");
+    SUSA_TEST_EQ((fpnumc == -1 * fpnumb), true, "multiply by minus one on the left-hand side");
     }
 
     {
@@ -125,6 +146,29 @@ int main(void)
     auto     uint_r = susa::intmul(uint_a, uint_b);
     SUSA_TEST_EQ(std::get<0>(uint_r) + (std::get<1>(uint_r) << (std::numeric_limits<unsigned>::digits / 2)), 416e7, "unsigned integer multiplication");
     }
+
+    {
+      SUSA_TEST_EQ(susa::ffloor(4.5), 4, "susa fast floor implementation");
+      SUSA_TEST_EQ(susa::ffloor(-4.5), -5, "susa fast floor implementation");
+    }
+
+    {
+      unsigned uint_qube = 8563472;
+      SUSA_TEST_EQ(susa::isqrt(uint_qube), 2926, "susa square root for unsigned integers");
+    }
+
+    {
+      susa::fixed_point<int32_t,10,21> fpnum(1.0);
+      SUSA_TEST_EQ_DOUBLE3((double)susa::texp(fpnum, 20), 2.71828, "susa taylor series e^x for fixed_point type");
+    }
+
+    {
+      susa::cordic<double, 15> c;
+
+      SUSA_TEST_EQ_DOUBLE4(c.sin(M_PI/ 6.0f), 0.5, "CORDIC sine calculation");
+      SUSA_TEST_EQ_DOUBLE4(c.cos(M_PI/ 6.0f), 0.866025, "CORDIC cosine calculation");
+    }
+
 
     SUSA_TEST_PRINT_STATS();
 
