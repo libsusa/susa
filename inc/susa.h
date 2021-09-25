@@ -92,6 +92,8 @@ const double PI = 3.1415926535897932384626433;
 #include "susa/mlp.h"
 #include "susa/arithmetics.h"
 #include "susa/fixed_point.h"
+#include "susa/fixed_point_lp.h"
+#include "susa/fixed_point_hp.h"
 #include "susa/slice.h"
 #include "susa/debug.h"
 

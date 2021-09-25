@@ -248,7 +248,9 @@ private:
 
       T_sin_prev  = T_sin;
       T_cos_prev  = T_cos;
-      T_sin       = sgn * T_cos_prev * vec_theta[i] + T_sin_prev;
+      T_sin       = sgn * T_cos_prev;
+      T_sin      *= vec_theta[i];
+      T_sin      += T_sin_prev;
       T_cos       = T_cos_prev - sgn * T_sin_prev * vec_theta[i];
       T_beta      = T_beta - sgn * vec_atan[i];
     }
