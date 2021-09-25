@@ -29,6 +29,7 @@ int main(void)
 {
 
     {
+    // High Precision Fixed-Point
     double dbla = -457.103;
     susa::fixed_point <int64_t, 40,41> fpnuma(dbla);
     SUSA_TEST_EQ_DOUBLE4(dbla, (double)fpnuma, "coversion to/from a floating point");
@@ -71,6 +72,7 @@ int main(void)
     }
 
     {
+    // Low Precision Fixed-Point
     double dbla = -457.103;
     susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
     SUSA_TEST_EQ_DOUBLE4(dbla, (double)fpnuma, "coversion to/from a floating point");
@@ -111,6 +113,7 @@ int main(void)
     }
 
     {
+    // Low Precision Fixed-Point
     double dbla = -457.103;
     susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
     SUSA_TEST_EQ_DOUBLE4(dbla, (double)fpnuma, "coversion to/from a floating point");
@@ -148,6 +151,18 @@ int main(void)
     }
 
     {
+      double dblnum = 0.5;
+      susa::fixed_point<int64_t,30,33> fpnum(dblnum);
+      SUSA_TEST_EQ_DOUBLE4(dblnum, (double)fpnum, "ctor cast to double");
+      SUSA_TEST_EQ_DOUBLE4(dblnum, (float)fpnum, "ctor cast to float");
+
+      dblnum = -0.6;
+      fpnum = dblnum;
+      SUSA_TEST_EQ_DOUBLE4(dblnum, (double)fpnum, "cast to double");
+      SUSA_TEST_EQ_DOUBLE4(dblnum, (float)fpnum, "cast to float");
+    }
+
+    {
       SUSA_TEST_EQ(susa::ffloor(4.5), 4, "susa fast floor implementation");
       SUSA_TEST_EQ(susa::ffloor(-4.5), -5, "susa fast floor implementation");
     }
@@ -169,6 +184,12 @@ int main(void)
       SUSA_TEST_EQ_DOUBLE4(c.cos(M_PI/ 6.0f), 0.866025, "CORDIC cosine calculation");
     }
 
+    {
+      // Low Precision Fixed-Point
+      susa::cordic<susa::fixed_point<int64_t,30,33>, 15> c;
+      SUSA_TEST_EQ_DOUBLE4((double)c.sin(M_PI/ 6.0f), 0.5, "CORDIC sine calculation (fp)");
+      SUSA_TEST_EQ_DOUBLE4((double)c.cos(M_PI/ 6.0f), 0.866025, "CORDIC cosine calculation (fp)");
+    }
 
     SUSA_TEST_PRINT_STATS();
 

@@ -8,14 +8,15 @@ Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia
  Java based mobile applications. Susa is also a simulation framework for the researchers and engineers who design
  computational systems. It has linear algebra, signal processing and common communications blocks.
 
-The *matrix* and *array* template classes i.e. types are at the heart of Susa. A *vector* is a single column (or a single row) matrix. They are bundled with a constellation of classes and functions.
+The *matrix* and *array* template classes i.e. types are the heart of Susa. A *vector* is a single column (or a single row) matrix. They are bundled with a constellation of classes and functions to process their underlying data.
 
 ### Highlights
- - Algebraic types (template classes): *matrix* and multi-dimensional *array*.
- - Linear algebraic operations and analysis (e.g. Determinant and SVD).
- - Signal processing operations (e.g. FFT, Filter (FIR/IIR), Convolution and Random Number Generators).
- - Convolutional Forward Error Correction (FEC) blocks: encoder, MLSE (Viterbi) and MAP (BCJR) decoders.
- - Channel equalisers: MLSE (Viterbi) and MAP (BCJR).
+ - Algebraic types (template classes): *matrix* and multi-dimensional *array*,
+ - High and low precision fixed-point types,
+ - Linear algebraic operations and analysis (e.g. Determinant and SVD),
+ - Signal processing operations (e.g. FFT, Filter (FIR/IIR), Convolution and Random Number Generators),
+ - Convolutional Forward Error Correction (FEC) blocks: encoder, MLSE (Viterbi) and MAP (BCJR) decoders,
+ - Channel equalisers: MLSE (Viterbi) and MAP (BCJR),
  - Automatic memory management i.e. allocation, deallocation, move and copy.
 
 ## Build, Test and Install
@@ -61,9 +62,9 @@ in November 2008.
 
 Later in early 2009, Susa was used for a bandwidth efficient coding scheme design and simulation, namely,
 [Faster Than Nyquist (FTN)](http://www.eit.lth.se/fileadmin/eit/courses/eit085f/AndersonFasterThanNyquistSignaling.pdf).
-It required preferment equalizers to decode up to some twenty taps (compared to the fading channels with few taps).
+It required performant equalizers to decode up to some twenty taps (compared to the fading channels with few taps).
 The simulation of such systems took a long time between an hour to a few days. This library could simulate
-a FTN system with thirteen taps using a modified BCJR algorithm (a sub-optimal variant that could outperform
+an FTN system with thirteen taps using a modified BCJR algorithm (a sub-optimal variant that could outperform
 the original algorithm) in about an hour whereas a similar script in a commercial computing software took
 at least twelve hours.
 
