@@ -11,9 +11,9 @@ Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia
 The *matrix* and *array* template classes i.e. types are the heart of Susa. A *vector* is a single column (or a single row) matrix. They are bundled with a constellation of classes and functions to process their underlying data.
 
 ### Highlights
- - Algebraic types (template classes): *matrix* and multi-dimensional *array*,
- - High and low precision fixed-point types,
- - Linear algebraic operations and analysis (e.g. Determinant and SVD),
+ - Algebraic types such as *matrix* and multi-dimensional *array* (template classes),
+ - High and low precision Fixed-Point types (template classes),
+ - Linear algebraic operations and analysis (e.g. Solvers, Determinant and SVD),
  - Signal processing operations (e.g. FFT, Filter (FIR/IIR), Convolution and Random Number Generators),
  - Convolutional Forward Error Correction (FEC) blocks: encoder, MLSE (Viterbi) and MAP (BCJR) decoders,
  - Channel equalisers: MLSE (Viterbi) and MAP (BCJR),
@@ -68,7 +68,7 @@ an FTN system with thirteen taps using a modified BCJR algorithm (a sub-optimal 
 the original algorithm) in about an hour whereas a similar script in a commercial computing software took
 at least twelve hours.
 
-[Unearthed tablets from Susa (2000 BC) revealed a rather precise calculation of Pi = 3.125](https://en.wikipedia.org/wiki/Babylonian_mathematics#Geometry) with the fractional part
+[Unearthed tablets from Susa (2000 BC) revealed a rather precise calculation of $\pi = 3.125$](https://en.wikipedia.org/wiki/Babylonian_mathematics#Geometry) with the fractional part
 whereas the other earlier efforts calculated the integer part.
 Since the very first line of code was simply the definition of constant Pi, it has been named Susa.
 
