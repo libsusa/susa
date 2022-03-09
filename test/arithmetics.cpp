@@ -74,11 +74,11 @@ int main(void)
     {
     // Low Precision Fixed-Point
     double dbla = -457.103;
-    susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
+    susa::fixed_point <int64_t, 20, 30> fpnuma(dbla);
     SUSA_TEST_EQ_DOUBLE4(dbla, (double)fpnuma, "coversion to/from a floating point");
 
     double dblb = 74.166;
-    susa::fixed_point <int64_t, 20,30> fpnumb(dblb);
+    susa::fixed_point <int64_t, 20, 30> fpnumb(dblb);
     SUSA_TEST_EQ_DOUBLE4(dblb, (double)fpnumb, "coversion to/from a floating point");
 
     double dbl_add = dbla + dblb;
@@ -101,7 +101,7 @@ int main(void)
     SUSA_TEST_EQ_DOUBLE4(dbl_div, (double)fp_div, "division");
 
     double dblc = 74.166;
-    susa::fixed_point <int64_t, 20,30> fpnumc(dblc);
+    susa::fixed_point <int64_t, 20, 30> fpnumc(dblc);
 
     SUSA_TEST_EQ((fpnuma > fpnumb), false, "less than operator for two floating points");
     SUSA_TEST_EQ((fpnuma >= fpnumb), false, "less than or equal operator for two floating points");
@@ -115,15 +115,15 @@ int main(void)
     {
     // Low Precision Fixed-Point
     double dbla = -457.103;
-    susa::fixed_point <int64_t, 20,30> fpnuma(dbla);
+    susa::fixed_point <int64_t, 20, 30> fpnuma(dbla);
     SUSA_TEST_EQ_DOUBLE4(dbla, (double)fpnuma, "coversion to/from a floating point");
 
     double dblb = -74.166;
-    susa::fixed_point <int64_t, 20,30> fpnumb(dblb);
+    susa::fixed_point <int64_t, 20, 30> fpnumb(dblb);
     SUSA_TEST_EQ_DOUBLE4(dblb, (double)fpnumb, "coversion to/from a floating point");
 
     double dblc = 74.166;
-    susa::fixed_point <int64_t, 20,30> fpnumc(dblc);
+    susa::fixed_point <int64_t, 20, 30> fpnumc(dblc);
 
     SUSA_TEST_EQ((fpnuma > fpnumb), false, "less than operator for two floating points");
     SUSA_TEST_EQ((fpnuma >= fpnumb), false, "less than or equal operator for two floating points");
@@ -152,7 +152,7 @@ int main(void)
 
     {
       double dblnum = 0.5;
-      susa::fixed_point<int64_t,30,33> fpnum(dblnum);
+      susa::fixed_point<int64_t,30, 33> fpnum(dblnum);
       SUSA_TEST_EQ_DOUBLE4(dblnum, (double)fpnum, "ctor cast to double");
       SUSA_TEST_EQ_DOUBLE4(dblnum, (float)fpnum, "ctor cast to float");
 
@@ -169,12 +169,12 @@ int main(void)
 
     {
       unsigned uint_qube = 8563472;
-      SUSA_TEST_EQ(susa::isqrt(uint_qube), 2926, "susa square root for unsigned integers");
+      SUSA_TEST_EQ(susa::uisqrt(uint_qube), 2926, "susa square root for unsigned integers");
     }
 
     {
-      susa::fixed_point<int32_t,10,21> fpnum(1.0);
-      SUSA_TEST_EQ_DOUBLE3((double)susa::texp(fpnum, 20), 2.71828, "susa taylor series e^x for fixed_point type");
+      susa::fixed_point<int32_t, 10, 21> fpnum(1.0);
+      SUSA_TEST_EQ_DOUBLE3((double)susa::texp(fpnum, 20), 2.71828, "susa Taylor series e^x for fixed_point type");
     }
 
     {
@@ -186,7 +186,7 @@ int main(void)
 
     {
       // Low Precision Fixed-Point
-      susa::cordic<susa::fixed_point<int64_t,30,33>, 15> c;
+      susa::cordic<susa::fixed_point<int64_t, 30, 33>, 15> c;
       SUSA_TEST_EQ_DOUBLE4((double)c.sin(M_PI/ 6.0f), 0.5, "CORDIC sine calculation (fp)");
       SUSA_TEST_EQ_DOUBLE4((double)c.cos(M_PI/ 6.0f), 0.866025, "CORDIC cosine calculation (fp)");
     }

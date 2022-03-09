@@ -55,9 +55,9 @@ namespace susa
     array();
 
     /**
-       * @brief Constructor
-       * @param list initialization list
-       */
+     * @brief Constructor
+     * @param list initialization list
+     */
     array(std::initializer_list<size_t> list);
 
     //! Constructor
@@ -77,13 +77,13 @@ namespace susa
     T get(const std::vector<size_t> &list) const;
 
     /**
-       * @brief Clone the data by pointer that may be read from the disk.
-       * The method assumes that you have loaded a compatible binary data
-       * into the memory that has the right format.
-       *
-       * @param data pointer to the data
-       * @param length length of the data
-       */
+     * @brief Clone the data by pointer that may be read from the disk.
+     * The method assumes that you have loaded a compatible binary data
+     * into the memory that has the right format.
+     *
+     * @param data pointer to the data
+     * @param length length of the data
+     */
     void clone(T *data, size_t length);
 
     template <typename... Args>

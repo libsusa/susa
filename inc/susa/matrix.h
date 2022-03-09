@@ -44,6 +44,7 @@
 
 #include <susa/debug.h>
 #include <susa/memory.h>
+#include <utility>
 
 namespace susa
 {
@@ -78,6 +79,61 @@ template <typename T, typename Allocator> std::istream &operator>>(std::istream 
 template <typename T, typename Allocator> matrix <T, Allocator> matmul(const matrix <T, Allocator> &mat_argl,const matrix <T, Allocator> &mat_argr);
 template <typename T, typename Allocator> matrix <T, Allocator> transpose(const matrix <T, Allocator> &mat_arg);
 
+template <typename E>
+class matrix_expression
+{
+
+public:
+
+    double operator()(size_t sz_index) const
+    {
+      return static_cast<E const &>(*this)(sz_index);
+    }
+
+    size_t size() const
+    {
+       return static_cast<E const &>(*this).size();
+    }
+
+    const E& clone(void) const
+    {
+        return *static_cast<const E*>(this);
+    }
+};
+
+template <typename OPR, typename LHS, typename RHS>
+struct bin_op_exp : public matrix_expression<bin_op_exp<OPR, LHS, RHS>>
+{
+    const LHS&  lhs;
+    const RHS&  rhs;
+    OPR         opr;
+
+
+    bin_op_exp(OPR&& functor, const LHS& lhs, const RHS& rhs)
+    : lhs(lhs)
+    , rhs(rhs)
+    , opr(std::forward<OPR>(functor))
+    {}
+
+    auto operator()() const
+    {
+        return opr(lhs, rhs);
+    }
+
+    using result_t = decltype(std::declval<OPR>()(std::declval<const LHS&>(), std::declval<const RHS&>()));
+    operator result_t() const
+    {
+        return this->operator()();
+    }
+};
+
+struct add {
+    template <class T, class U>
+    auto operator()(const T& left, const U& right) const
+    {
+        return left + right;
+    }
+};
 
 /**
  * @class matrix
@@ -95,6 +151,7 @@ template <typename T, typename Allocator> matrix <T, Allocator> transpose(const 
  */
 template <typename T, typename Allocator = std::allocator <T>>
 class matrix
+: public matrix_expression<matrix<T, Allocator>>
 {
   private:
     size_t          sizet_rows;
@@ -1084,6 +1141,10 @@ matrix<T, Allocator>::operator matrix <std::complex <uint8_t> > ()
 template <typename T, typename Allocator>
 matrix<T, Allocator> operator+(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
+  return bin_op_exp(add{}, mat_argl, mat_argr);
+}
+/*
+{
   matrix <T, Allocator> mat_ret(mat_argl.sizet_rows, mat_argl.sizet_cols);
   size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
 
@@ -1101,6 +1162,7 @@ matrix<T, Allocator> operator+(const matrix <T, Allocator> &mat_argl, const matr
 
   return mat_ret;
 }
+*/
 
 template <typename T, typename Allocator>
 matrix<T, Allocator> operator+(const matrix <T, Allocator> &mat_argl, T T_arg)
