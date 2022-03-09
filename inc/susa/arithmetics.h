@@ -55,8 +55,8 @@ enum class endian
 /**
  * @brief Greatest Common Divisor (GCD)
  *
- * @param arg_a
- * @param arg_b
+ * @param arg_a first input integer
+ * @param arg_b second input integer
  *
  * @ingroup ARITHMETICS
  *
@@ -64,6 +64,8 @@ enum class endian
 template <typename T>
 constexpr T gcd(T arg_a, T arg_b)
 {
+    static_assert(std::is_integral<T>::value);
+
     while (arg_a != arg_b)
     {
         if (arg_a > arg_b)
@@ -82,7 +84,7 @@ constexpr T gcd(T arg_a, T arg_b)
  *
  */
 template <typename T>
-constexpr T isqrt(T T_arg)
+constexpr T uisqrt(T T_arg)
 {
 
   static_assert(std::is_unsigned<T>::value);
@@ -265,7 +267,7 @@ private:
 /**
  * @brief mapping an integeral matrix from one domain i.e. range to another.
  *
- * assume having an tegeral vector/matrix of intrinsic type X lying between
+ * assume having an integeral vector/matrix of intrinsic type X lying between
  * <i>arg_x_min</i> and <i>arg_x_max</i> and the target is to scale/map them
  * to another integeral vector/matrix of intrinsic type Y lying between
  * <i>arg_y_min</i> and <i>arg_y_max</i>. <i>scale</i> function does this mapping
@@ -303,6 +305,14 @@ scale(X arg_x_min, X arg_x_max, Y arg_y_min, Y arg_y_max, matrix <X, Allocator<X
   return mat_ret;
 }
 
+/**
+ * @brief augment the integeral multiplication by returning the result into two low and high integers
+ *
+ * @param T_left left-hand side integer
+ * @param T_right right-hand side integer
+ *
+ * @ingroup ARITHMETICS
+ */
 template <typename T>
 std::tuple<T,T> intmul(const T& T_left, const T& T_right)
 {
