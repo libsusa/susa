@@ -87,12 +87,12 @@ public:
 
     double operator()(size_t sz_index) const
     {
-      return static_cast<E const &>(*this)(sz_index);
+      return static_cast<E const&>(*this)(sz_index);
     }
 
     size_t size() const
     {
-       return static_cast<E const &>(*this).size();
+       return static_cast<E const&>(*this).size();
     }
 
     const E& clone(void) const
@@ -102,37 +102,47 @@ public:
 };
 
 template <typename OPR, typename LHS, typename RHS>
-struct bin_op_exp : public matrix_expression<bin_op_exp<OPR, LHS, RHS>>
+struct expr_binary : public matrix_expression<expr_binary<OPR, LHS, RHS>>
 {
-    const LHS&  lhs;
-    const RHS&  rhs;
-    OPR         opr;
+  const LHS&  lhs;
+  const RHS&  rhs;
+  OPR         opr;
 
 
-    bin_op_exp(OPR&& functor, const LHS& lhs, const RHS& rhs)
-    : lhs(lhs)
-    , rhs(rhs)
-    , opr(std::forward<OPR>(functor))
-    {}
+  expr_binary(OPR&& functor, const LHS& lhs, const RHS& rhs)
+  : lhs(lhs)
+  , rhs(rhs)
+  , opr(std::forward<OPR>(functor))
+  {}
 
-    auto operator()() const
-    {
-        return opr(lhs, rhs);
-    }
+  auto operator()() const
+  {
+    return opr(lhs, rhs);
+  }
 
-    using result_t = decltype(std::declval<OPR>()(std::declval<const LHS&>(), std::declval<const RHS&>()));
-    operator result_t() const
-    {
-        return this->operator()();
-    }
+  using result_t = decltype(std::declval<OPR>()(std::declval<const LHS&>(), std::declval<const RHS&>()));
+  operator result_t() const
+  {
+    return this->operator()();
+  }
 };
 
-struct add {
-    template <class T, class U>
-    auto operator()(const T& left, const U& right) const
-    {
-        return left + right;
-    }
+struct expr_add
+{
+  template <class T, class U>
+  auto operator()(const T& left, const U& right) const
+  {
+    return left + right;
+  }
+};
+
+struct expr_sub
+{
+  template <class T, class U>
+  auto operator()(const T& left, const U& right) const
+  {
+    return left + right;
+  }
 };
 
 /**
@@ -1141,7 +1151,7 @@ matrix<T, Allocator>::operator matrix <std::complex <uint8_t> > ()
 template <typename T, typename Allocator>
 matrix<T, Allocator> operator+(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
-  return bin_op_exp(add{}, mat_argl, mat_argr);
+  return expr_binary(expr_add{}, mat_argl, mat_argr);
 }
 /*
 {
