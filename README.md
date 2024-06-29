@@ -1,4 +1,6 @@
-# Susa Open Source Project [![codecov][codecov-badge]][codecov-link]
+# Susa Open Source Project
+
+![example workflow](https://github.com/libsusa/susa/actions/workflows/github-actions.yml/badge.svg) [![codecov][codecov-badge]][codecov-link]
 
 Susa is a mathematics and signal processing C++ [framework](https://en.wikipedia.org/wiki/Software_framework) based on [KISS](https://en.wikipedia.org/wiki/KISS_principle)
  principle. It is stand-alone with a modern architecture. It is designed not to have any dependencies to none standard third
