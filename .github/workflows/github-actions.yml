@@ -1,0 +1,55 @@
+name: Build and Test
+
+on: [push]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache directories
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache
+          key: ${{ runner.os }}-cache
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install lcov
+
+      - name: Create build directory
+        run: mkdir build
+
+      - name: Configure CMake
+        run: |
+          cd build
+          cmake .. -DCODE_COVERAGE=ON -DEXAMPLES=OFF
+
+      - name: Build and test
+        run: |
+          cd build
+          make
+          make test
+
+      - name: Collect code coverage
+        run: |
+          lcov --directory . --capture --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Upload code coverage to Codecov
+        run: |
+          bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+
+      - name: Upload code coverage to GitHub
+        uses: actions/upload-artifact@v2
+        with:
+            name: coverage
+            path: coverage.info
