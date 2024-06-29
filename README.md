@@ -68,7 +68,7 @@ an FTN system with thirteen taps using a modified BCJR algorithm (a sub-optimal 
 the original algorithm) in about an hour whereas a similar script in a commercial computing software took
 at least twelve hours. Non-orthogonal a.k.a. FTN waveforms have been considered for the next generation of radio access networks (6th generation).
 
-[Unearthed tablets from Susa (2000 BC)](https://en.wikipedia.org/wiki/Babylonian_mathematics#Geometry) revealed a rather precise calculation of $\pi = 3.125$ with the fractional part
+[Unearthed tablets from Susa (2000 BC)](https://www.britannica.com/science/pi-mathematics) revealed a rather precise calculation of $\pi = 3.125$ with the fractional part
 whereas the other earlier efforts calculated only the integer part.
 Since the very first line of code was simply the definition of constant Pi, it has been named Susa.
 
