@@ -20,12 +20,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Cache directories
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache
-          key: ${{ runner.os }}-cache
-
       - name: Install dependencies
         run: |
           sudo apt-get update
