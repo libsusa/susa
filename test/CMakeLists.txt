@@ -49,3 +49,7 @@ target_link_libraries (sets susa)
 add_test (NAME modulation COMMAND modulation)
 add_executable (modulation modulation.cpp)
 target_link_libraries (modulation susa)
+
+add_test (NAME mt COMMAND mt)
+add_executable (mt mt.cpp)
+target_link_libraries (mt susa)
