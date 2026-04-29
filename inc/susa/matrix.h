@@ -141,7 +141,7 @@ struct expr_sub
   template <class T, class U>
   auto operator()(const T& left, const U& right) const
   {
-    return left + right;
+    return left - right;
   }
 };
 
@@ -1151,12 +1151,8 @@ matrix<T, Allocator>::operator matrix <std::complex <uint8_t> > ()
 template <typename T, typename Allocator>
 matrix<T, Allocator> operator+(const matrix <T, Allocator> &mat_argl, const matrix <T, Allocator> &mat_argr)
 {
-  return expr_binary(expr_add{}, mat_argl, mat_argr);
-}
-/*
-{
-  matrix <T, Allocator> mat_ret(mat_argl.sizet_rows, mat_argl.sizet_cols);
-  size_t sizet_size = mat_argl.sizet_rows * mat_argl.sizet_cols;
+  matrix <T, Allocator> mat_ret(mat_argl.shape());
+  size_t sizet_size = mat_argl.sizet_objects;
 
   SUSA_ASSERT_MESSAGE((mat_argl.sizet_rows == mat_argr.sizet_rows)
     && (mat_argl.sizet_cols == mat_argr.sizet_cols),
@@ -1172,7 +1168,6 @@ matrix<T, Allocator> operator+(const matrix <T, Allocator> &mat_argl, const matr
 
   return mat_ret;
 }
-*/
 
 template <typename T, typename Allocator>
 matrix<T, Allocator> operator+(const matrix <T, Allocator> &mat_argl, T T_arg)
