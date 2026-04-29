@@ -19,7 +19,7 @@
  * @file mt.cpp
  * @brief The Mersenne Twister pseudorandom number generator (definition).
  *
- * @author Behrooz Kamary
+ * @author Kamary
  */
 
 #include <susa.h>
@@ -28,22 +28,17 @@ namespace susa {
 
 mt::mt()
 {
-    uint_mt = new uint32_t[_MT_N];
     mti = _MT_N + 1;
 }
 
 mt::mt(uint32_t uint_seed)
 {
-    uint_mt = new uint32_t[_MT_N];
     mti = _MT_N + 1;
 
     init_genrand(uint_seed);
 }
 
-mt::~mt()
-{
-    delete [] uint_mt;
-}
+mt::~mt() {}
 
 /* initializes uint_mt[_MT_N] with a seed */
 void mt::init_genrand(uint32_t uint_seed)
@@ -64,9 +59,9 @@ void mt::init_genrand(uint32_t uint_seed)
 /* init_key is the array for initializing keys */
 /* key_length is its length */
 /* slight change for C++, 2004/2/26 */
-void mt::init_by_array(uint32_t init_key[], int key_length)
+void mt::init_by_array(uint32_t init_key[], size_t key_length)
 {
-    int i, j, k;
+    size_t i, j, k;
     init_genrand(19650218UL);
     i=1;
     j=0;
@@ -109,7 +104,7 @@ uint32_t mt::genrand_int32(void)
 
     if (mti >= _MT_N)
     { /* generate _MT_N words at one time */
-        int kk;
+        size_t kk;
 
         if (mti == _MT_N+1)   /* if init_genrand() has not been called, */
             init_genrand(5489UL); /* a default initial seed is used */

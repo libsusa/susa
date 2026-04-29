@@ -43,6 +43,10 @@ class ccode
 {
   public:
 
+    static constexpr uint32_t MAX_M = 32; // the maximum number of memories is 32 since we are using 32 bit integers to represent the internal state
+    static constexpr uint32_t MAX_K = 1;  // the number of inputs is currently implemented for a single input only
+    static constexpr uint32_t MAX_N = 32;
+
     /**
      * @brief Constructor
      * 
@@ -167,11 +171,11 @@ class ccode
     //! reset the internal state
     void zero_state();
 
-    uint32_t  uint_k;     // Number of inputs (currently implemented for A SINGLE INPUT ONLY)
-    uint32_t  uint_n;     // Number of outputs
-    uint32_t  uint_m;     // Number of memories
-    uint32_t  uint_mmask; // Memory mask
-    uint32_t* uint_gen;   // Dynamic array of generators
+    uint32_t                      uint_k;     // Number of inputs (currently implemented for A SINGLE INPUT ONLY)
+    uint32_t                      uint_n;     // Number of outputs
+    uint32_t                      uint_m;     // Number of memories
+    uint32_t                      uint_mmask; // Memory mask
+    std::array<uint32_t, MAX_N>   uint_gen;   // Dynamic array of generators
 
     //! convert octal numbers to decimal
     uint32_t oct_to_dec(uint32_t);

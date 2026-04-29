@@ -18,7 +18,7 @@
 /**
  * @file ccode.cpp
  * @brief convolutional encoder/decoder implementation.
- * @author Behrooz Kamary
+ * @author Kamary
  */
 
 
@@ -28,40 +28,22 @@ namespace susa {
 
 // Constructors and Destructors
 
-ccode::ccode()
+ccode::ccode() : uint_k(MAX_K), uint_n(0), uint_m(0), uint_mmask(0)
 {
-    uint_k = 1;
-    uint_n = 0;
-    uint_m = 0;
+    uint_gen.fill(0);
 }
 
-ccode::~ccode()
-{
-    if (uint_gen != nullptr)
-    {
-        delete [] uint_gen;
-        uint_gen = nullptr;
-    }
-}
+ccode::~ccode() { }
 
 ccode::ccode(uint32_t uint_n, uint32_t uint_k, uint32_t uint_m)
 {
-    SUSA_ASSERT_MESSAGE(uint_k == 1, "the number of inputs must be one.");
-    SUSA_ASSERT_MESSAGE(uint_m < 32, "the maximum number of memories exceeded.");
-    SUSA_ASSERT_MESSAGE(uint_m > 0,  "the minimum number of memories is one.");
+    SUSA_ASSERT_MESSAGE(uint_k == MAX_K, "the number of inputs must be one.");
+    SUSA_ASSERT_MESSAGE(uint_m < MAX_M, "the maximum number of memories exceeded.");
+    SUSA_ASSERT_MESSAGE(uint_m != 0,  "the minimum number of memories is one.");
     this->uint_k     = uint_k;
     this->uint_n     = uint_n;
     this->uint_m     = uint_m;
     uint_mmask       = susa::pow(2, uint_m) - 1;
-
-    try
-    {
-        uint_gen   = new uint32_t[uint_n];
-    }
-    catch(const std::bad_alloc& e)
-    {
-        SUSA_ABORT("failed to allocate memory for generators.");
-    }
 }
 
 

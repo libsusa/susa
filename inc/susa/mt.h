@@ -19,7 +19,7 @@
  * @file mt.h
  * @brief Mersenne Twister Random Number Generator (declaration).
  *
- * @author Behrooz Kamary
+ * @author Kamary
  *
  * @defgroup RNG Random Number Generator
  */
@@ -28,12 +28,7 @@
 #define SUSA_MT_H
 
 #include <cstdint>
-
-#define _MT_N 624
-#define _MT_M 397
-#define _MT_MATRIX_A   0x9908b0dfUL /* constant vector a */
-#define _MT_UPPER_MASK 0x80000000UL /* most significant w-r bits */
-#define _MT_LOWER_MASK 0x7fffffffUL /* least significant r bits */
+#include <array>
 
 
 namespace susa {
@@ -48,25 +43,15 @@ namespace susa {
 
 class mt {
 
-  private:
-    matrix <double>       mat_probabilities;
-    matrix <unsigned int> mat_sort_indices;
-    matrix <double>       mat_prob_sorted;
-    uint32_t*             uint_mt; /* the array for the state vector  */
-    int                   mti;   /* mti==N+1 means mt[N] is not initialized */
-
-    void init_genrand(uint32_t s);
-    void init_by_array(uint32_t init_key[], int key_length);
-
-    uint32_t genrand_int32(void);      // generates unsigned 32-bit integers.
-    unsigned int genrand_int31(void);  // generates unsigned 31-bit integers.
-
-    double genrand_real1(void);        // generates uniform real in [0,1] (32-bit resolution).
-    double genrand_real2(void);        // generates uniform real in [0,1) (32-bit resolution).
-    double genrand_real3(void);        // generates uniform real in (0,1) (32-bit resolution).
-    double genrand_res53(void);        // generates uniform real in [0,1) with 53-bit resolution.
-
   public:
+
+    static constexpr size_t _MT_N = 624;
+    static constexpr size_t _MT_M = 397;
+
+    static constexpr uint32_t _MT_MATRIX_A   = 0x9908b0dfUL; /* constant vector a */
+    static constexpr uint32_t _MT_UPPER_MASK = 0x80000000UL; /* most significant w-r bits */
+    static constexpr uint32_t _MT_LOWER_MASK = 0x7fffffffUL; /* least significant r bits */
+  
     //! Constructor
     mt(void);
 
@@ -111,6 +96,26 @@ class mt {
     matrix <unsigned int> nonuniform(matrix <double> mat_probabilities, unsigned int uint_length);
     
     matrix <unsigned int> nonuniform(unsigned int uint_length);
+
+
+  private:
+    matrix <double>               mat_probabilities;
+    matrix <unsigned int>         mat_sort_indices;
+    matrix <double>               mat_prob_sorted;
+    std::array<uint32_t, _MT_N>   uint_mt;  /* the array for the state vector  */
+    size_t                        mti;      /* mti==N+1 means mt[N] is not initialized */
+
+    void init_genrand(uint32_t s);
+    void init_by_array(uint32_t init_key[], size_t key_length);
+
+    uint32_t genrand_int32(void);      // generates unsigned 32-bit integers.
+    unsigned int genrand_int31(void);  // generates unsigned 31-bit integers.
+
+    double genrand_real1(void);        // generates uniform real in [0,1] (32-bit resolution).
+    double genrand_real2(void);        // generates uniform real in [0,1) (32-bit resolution).
+    double genrand_real3(void);        // generates uniform real in (0,1) (32-bit resolution).
+    double genrand_res53(void);        // generates uniform real in [0,1) with 53-bit resolution.
+
 };
 
 }        // NAMESPACE SUSA
