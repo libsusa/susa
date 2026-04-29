@@ -18,7 +18,7 @@
 /**
  * @file linalg.h
  * @brief Basic matrix and linear algebra operations (declaration and definition).
- * @author Behrooz Kamary
+ * @author Kamary
  *
  * @defgroup LALG Linear Algebra
  */
@@ -51,7 +51,7 @@ matrix <T, Allocator> matmul(const matrix <T, Allocator> &mat_argl, const matrix
 
     matrix <T, Allocator> mat_ret;
 
-    if (mat_argl._matrix == NULL || mat_argr._matrix == NULL)
+    if (mat_argl._matrix == nullptr || mat_argr._matrix == nullptr)
     {
         SUSA_ABORT("one or both matrices are empty.");
         return mat_ret;

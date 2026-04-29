@@ -27,7 +27,7 @@
  *
  * @defgroup TYPES Types
  *
- * @author Behrooz Kamary
+ * @author Kamary
  */
 
 #ifndef SUSA_ARRAY_H
@@ -103,7 +103,7 @@ namespace susa
 
       SUSA_ASSERT_MESSAGE(uint_index < uint_total, "the element index is out of range.");
 
-      if (uint_index < uint_total && this->_matrix != NULL)
+      if (uint_index < uint_total && this->_matrix != nullptr)
       {
         return this->_matrix[uint_index];
       }

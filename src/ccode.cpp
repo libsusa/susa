@@ -37,7 +37,7 @@ ccode::ccode()
 
 ccode::~ccode()
 {
-    if (uint_gen != NULL)
+    if (uint_gen != nullptr)
     {
         delete [] uint_gen;
         uint_gen = nullptr;
