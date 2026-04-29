@@ -18,7 +18,7 @@
 /**
  * @file fft.cpp
  * @brief Unit Test Suit
- * @author Behrooz Kamary
+ * @author Kamary
  */
 
 #include "test.h"
@@ -70,7 +70,7 @@ int main(void)
     SUSA_TEST_EQ(bool_dft_fft_eq, true, "fast fourier transform (FFT) with Radix-2 (asymetric reals)");
 }
 
-    SUSA_TEST_EQ(susa::memory_tacker::instance().read(), 0, "susa::array memory leak with susa allocator");
+    SUSA_TEST_EQ(susa::memory_tracker::instance().read(), 0, "susa::array memory leak with susa allocator");
 
     SUSA_TEST_PRINT_STATS();
 

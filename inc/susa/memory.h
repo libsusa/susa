@@ -38,23 +38,23 @@ namespace susa
 * @ingroup MEMO
 *
 */
-class memory_tacker 
+class memory_tracker 
 {
     private:
-        memory_tacker() = default;
-        ~memory_tacker() = default;
+        memory_tracker() = default;
+        ~memory_tracker() = default;
         std::atomic_ullong ull_used_memory;
 
     public:
-        memory_tacker(const memory_tacker&) = delete;
-        memory_tacker(memory_tacker&&) = delete;
-        memory_tacker& operator=(const memory_tacker&) = delete;
-        memory_tacker& operator=(memory_tacker&&) = delete;
+        memory_tracker(const memory_tracker&) = delete;
+        memory_tracker(memory_tracker&&) = delete;
+        memory_tracker& operator=(const memory_tracker&) = delete;
+        memory_tracker& operator=(memory_tracker&&) = delete;
 
-        //! Returns the instance of <i>memory_tacker</i>
-        static memory_tacker& instance()
+        //! Returns the instance of <i>memory_tracker</i>
+        static memory_tracker& instance()
         {
-            static memory_tacker INSTANCE;
+            static memory_tracker INSTANCE;
             return INSTANCE;
         }
 
@@ -101,12 +101,11 @@ template <typename T> class allocator_log : public std::allocator<T>
          * Allocates a memory space.
          *
          * @param size the number of elements
-         * @param hint the hint
          */
-        pointer allocate(size_type size, const void *hint = 0)
+        pointer allocate(size_type size)
         {
-            memory_tacker::instance().add(size * sizeof(T));
-            pointer ptr = base::allocate(size, hint);
+            memory_tracker::instance().add(size * sizeof(T));
+            pointer ptr = base::allocate(size);
             SUSA_LOG_INF("allocate " << size * sizeof(T) << " bytes. pointer (" << ptr << ")");
             return ptr;
         }
@@ -120,7 +119,7 @@ template <typename T> class allocator_log : public std::allocator<T>
         void deallocate(pointer ptr, size_type size)
         {
             SUSA_LOG_INF("deallocate " << size * sizeof(T) << " bytes. pointer (" << ptr << ")");
-            memory_tacker::instance().sub(size * sizeof(T));
+            memory_tracker::instance().sub(size * sizeof(T));
             return base::deallocate(ptr, size);
         }
 

@@ -18,7 +18,7 @@
 /**
  * @file memory.cpp
  * @brief Unit Test Suit
- * @author Behrooz Kamary
+ * @author Kamary
  */
 
 
@@ -35,21 +35,21 @@
 
 template <template <typename T, typename AT> typename TYPE> void test()
 {
-    SUSA_LOG_DBG("[before] total allocated memory : " << susa::memory_tacker::instance().read() << " bytes.");
+    SUSA_LOG_DBG("[before] total allocated memory : " << susa::memory_tracker::instance().read() << " bytes.");
     TYPE <unsigned, susa::allocator_log<unsigned>> container;
     for (unsigned cnt = 0; cnt < 1e3; cnt++)
     {
         container.insert(std::end(container), cnt);
     }
 
-    SUSA_LOG_DBG("[after] total allocated memory : " << susa::memory_tacker::instance().read() << " bytes.");
+    SUSA_LOG_DBG("[after] total allocated memory : " << susa::memory_tracker::instance().read() << " bytes.");
 }
 
 template <typename T, typename AT> using set_default_comparator = std::set<T, std::less<>, AT>;
 
 int main()
 {
-    SUSA_TEST_EQ(susa::memory_tacker::instance().read(), 0, "initial memory tracker must be zero");
+    SUSA_TEST_EQ(susa::memory_tracker::instance().read(), 0, "initial memory tracker must be zero");
 
     {
     std::vector<int, susa::allocator_log<int> > int_vec(1024, 0, susa::allocator_log<int>());
@@ -59,7 +59,7 @@ int main()
     test <set_default_comparator>();
     }
 
-    SUSA_TEST_EQ(susa::memory_tacker::instance().read(), 0, "std types memory leak with susa allocator");
+    SUSA_TEST_EQ(susa::memory_tracker::instance().read(), 0, "std types memory leak with susa allocator");
 
 
     {
@@ -80,7 +80,7 @@ int main()
         susa::matrix <float> result = susa::mean(mat_m);
     }
 
-    SUSA_TEST_EQ(susa::memory_tacker::instance().read(), 0, "susa::array memory leak with susa allocator");
+    SUSA_TEST_EQ(susa::memory_tracker::instance().read(), 0, "susa::array memory leak with susa allocator");
 
     SUSA_TEST_PRINT_STATS();
 
